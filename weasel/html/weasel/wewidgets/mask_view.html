@@ -1,0 +1,1982 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>weasel.wewidgets.mask_view API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>weasel.wewidgets.mask_view</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">__all__ = [
+    &#39;MaskView&#39;, 
+    &#39;MaskViewBrush&#39;, 
+    &#39;MaskViewPenFreehand&#39;,
+    &#39;MaskViewPenRectangle&#39;, 
+    &#39;MaskViewPenPolygon&#39;, 
+    &#39;MaskViewPenCircle&#39;
+]
+
+import math
+import numpy as np
+from matplotlib.path import Path as MplPath
+
+from PyQt5.QtCore import Qt, QPointF, QRectF, pyqtSignal
+from PyQt5.QtGui import QPixmap, QImage, qRgb, QIcon, QCursor, QColor, QPen
+from PyQt5.QtWidgets import QGraphicsObject, QAction, QAction, QMenu
+
+from .. import wewidgets as widgets
+
+
+class MaskView(widgets.ImageView):
+    &#34;&#34;&#34;Extends image view with a MaskItem for drawing masks.
+    
+    If no mask instance is provided, this creates
+    a canvas that can be drawn on
+    but the results can&#39;t be saved or retrieved.&#34;&#34;&#34;
+
+    newMask = pyqtSignal()
+
+    def __init__(self, image=None, mask=None): 
+        super().__init__(image)
+      
+        shape = self._shape(mask)
+        self.maskItem = MaskItem(mask, shape)
+        self.maskItem.newMask.connect(self._newMask)
+        self.scene.addItem(self.maskItem)
+
+    @property
+    def mask(self):
+        return self.maskItem.mask
+
+    def _shape(self, mask): # private
+
+        if mask is None:
+            width = self.imageItem.pixMap.width()
+            height = self.imageItem.pixMap.height() 
+        else:            
+            width = mask.Rows
+            height = mask.Columns
+        return width, height
+
+#    def isBlank(self):
+
+#        nrMaskPixels = np.count_nonzero(self.maskItem.bin)
+#        return nrMaskPixels == 0
+        
+    def setMask(self, mask):
+
+        self._updatePixelArray()
+        shape = self._shape(mask)
+        self.maskItem.mask = mask
+        self.maskItem._setMaskImage(shape)
+
+    def getMask(self):
+
+        return self.mask
+
+#    def getPixelArray(self):
+#        return self.maskItem._getMaskImage()
+
+    def _updatePixelArray(self):
+
+        if self.mask is None: return
+        array = self.maskItem._getMaskImage()
+        self.mask.set_array(array)
+
+    def eraseMask(self): # not yet in use
+
+        self.maskItem.eraseMaskImage()
+        self._updatePixelArray()
+
+    def _newMask(self):
+
+        mask = self.image.copy()
+        mask.WindowCenter = 1
+        mask.WindowWidth = 2
+        self.maskItem.mask = mask
+        self._updatePixelArray()
+        self.newMask.emit()
+
+
+class MaskItem(QGraphicsObject):
+    &#34;&#34;&#34;Displays a mask as an overlay on an image.
+    &#34;&#34;&#34;
+
+    newMask = pyqtSignal()
+
+    def __init__(self, mask, shape): 
+        super().__init__()
+
+        self.mask = mask
+        self._setMaskImage(shape)
+
+    def _setMaskImage(self, shape=(128,128)):
+
+        if self.mask is None:
+            self.bin = np.zeros(shape, dtype=bool)
+        else:
+            self.bin = self.mask.array() != 0
+        self.qImage = QImage(self.bin.shape[0], self.bin.shape[1], QImage.Format_RGB32)
+        self.fillQImage()
+        self.update()
+
+    def _getMaskImage(self):
+
+        return self.bin.astype(float)
+
+    def eraseMaskImage(self):
+
+        self.bin.fill(False)
+        self.fillQImage()
+
+    def boundingRect(self): 
+        &#34;&#34;&#34;Abstract method - must be overridden.&#34;&#34;&#34;
+
+        return QRectF(0, 0, self.bin.shape[0], self.bin.shape[1])
+
+    def paint(self, painter, option, widget):
+        &#34;&#34;&#34;Executed by GraphicsView when calling update()&#34;&#34;&#34;
+
+        pixMap = QPixmap.fromImage(self.qImage)
+        width = pixMap.width()
+        height = pixMap.height()
+        painter.setOpacity(0.25)
+        painter.drawPixmap(0, 0, width, height, pixMap)
+ 
+    def fillQImage(self):
+
+        for x in range(self.bin.shape[0]):
+            for y in range(self.bin.shape[1]):
+                self.setPixel(x, y)
+
+    def setPixel(self, x, y, add=None):
+
+        if add is None:
+            add = self.bin[x, y]
+        else:
+            self.bin[x,y] = add
+        if add: 
+            red = 255
+            if self.mask is None:
+                self.newMask.emit()
+        else:
+            red = 0
+        color = qRgb(red, 0, 0)
+        self.qImage.setPixel(x, y, color)
+
+
+class MaskViewBrush(widgets.ImageViewCursor):
+    &#34;&#34;&#34;Painting or erasing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to paint or erase.
+    &gt;&gt;&gt; Right click to change the brush properties
+    (erase or paint, size of the brush).
+    &gt;&gt;&gt; Right click and drag to change the windowing.
+    &#34;&#34;&#34;
+
+    def __init__(self, brushSize=1, mode=&#34;paint&#34;):
+        super().__init__()
+
+        self.setBrushSize(brushSize)
+        self.setMode(mode)
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        super().setView(imageView)
+        self.maskItem = imageView.maskItem
+
+    def setBrushSize(self, brushSize):
+
+        self.brushSize = brushSize
+
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == &#34;paint&#34;:
+            pixMap = QPixmap(widgets.icons.paint_brush)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Paint brush&#39;
+        elif mode == &#34;erase&#34;:
+            pixMap = QPixmap(widgets.icons.eraser)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Eraser&#39;
+        self.icon = QIcon(pixMap)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.paintPixels()
+        elif button == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            self.paintPixels()  
+        self.view.mousePositionMoved.emit()
+
+    def paintPixels(self):
+   
+        w = int((self.brushSize - 1)/2)
+        for x in range(self.x-w, self.x+w+1, 1):
+            if 0 &lt;= x &lt; self.maskItem.bin.shape[0]:
+                for y in range(self.y-w, self.y+w+1, 1):
+                    if 0 &lt;= y &lt; self.maskItem.bin.shape[1]:
+                        self.maskItem.setPixel(x, y, self.mode == &#34;paint&#34;)
+        self.maskItem.update()
+       
+    def launchContextMenu(self, event):
+
+        pickBrush = QAction(QIcon(widgets.icons.paint_brush), &#39;Paint&#39;, None)
+        pickBrush.setCheckable(True)
+        pickBrush.setChecked(self.mode == &#34;paint&#34;)
+        pickBrush.triggered.connect(lambda: self.setMode(&#34;paint&#34;))
+        
+        pickEraser = QAction(QIcon(widgets.icons.eraser), &#39;Erase&#39;, None)
+        pickEraser.setCheckable(True)
+        pickEraser.setChecked(self.mode == &#34;erase&#34;)
+        pickEraser.triggered.connect(lambda: self.setMode(&#34;erase&#34;))
+
+        clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear Region&#39;, None)
+        clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+        onePixel = QAction(&#39;1 pixel&#39;, None)
+        onePixel.setCheckable(True)
+        onePixel.setChecked(self.brushSize == 1)
+        onePixel.triggered.connect(lambda: self.setBrushSize(1))
+
+        threePixels = QAction(&#39;3 pixels&#39;, None)
+        threePixels.setCheckable(True)
+        threePixels.setChecked(self.brushSize == 3)
+        threePixels.triggered.connect(lambda: self.setBrushSize(3))
+
+        fivePixels = QAction(&#39;5 pixels&#39;, None)
+        fivePixels.setCheckable(True)
+        fivePixels.setChecked(self.brushSize == 5)
+        fivePixels.triggered.connect(lambda: self.setBrushSize(5))
+
+        sevenPixels = QAction(&#39;7 pixels&#39;, None)
+        sevenPixels.setCheckable(True)
+        sevenPixels.setChecked(self.brushSize == 7)
+        sevenPixels.triggered.connect(lambda: self.setBrushSize(7))
+
+        ninePixels = QAction(&#39;9 pixels&#39;, None)
+        ninePixels.setCheckable(True)
+        ninePixels.setChecked(self.brushSize == 9)
+        ninePixels.triggered.connect(lambda: self.setBrushSize(9))
+
+        elevenPixels = QAction(&#39;11 pixels&#39;, None)
+        elevenPixels.setCheckable(True)
+        elevenPixels.setChecked(self.brushSize == 11)
+        elevenPixels.triggered.connect(lambda: self.setBrushSize(11))
+
+        twentyOnePixels = QAction(&#39;21 pixels&#39;, None)
+        twentyOnePixels.setCheckable(True)
+        twentyOnePixels.setChecked(self.brushSize == 21)
+        twentyOnePixels.triggered.connect(lambda: self.setBrushSize(21))
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickBrush)
+        contextMenu.addAction(pickEraser)
+        contextMenu.addAction(clearMask)
+
+        subMenu = contextMenu.addMenu(&#39;Brush size&#39;)
+        subMenu.setEnabled(True)
+        # subMenu.clear()
+        subMenu.addAction(onePixel)
+        subMenu.addAction(threePixels)
+        subMenu.addAction(fivePixels)
+        subMenu.addAction(sevenPixels)
+        subMenu.addAction(ninePixels)
+        subMenu.addAction(elevenPixels)
+        subMenu.addAction(twentyOnePixels)
+
+        contextMenu.exec_(event.screenPos())
+
+
+class MaskViewPenFreehand(widgets.ImageViewCursor):
+    &#34;&#34;&#34;Freehand region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__()
+
+        self.icon = QIcon(widgets.icons.layer_shape_curve)
+        self.path = None
+        self.setMode(mode)
+        
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == &#34;draw&#34;:
+            pixMap = QPixmap(widgets.icons.pencil)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Draw&#39;
+        elif mode == &#34;cut&#34;:
+            pixMap = QPixmap(widgets.icons.cutter)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Cut&#39;
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        super().setView(imageView)
+        self.maskItem = imageView.maskItem
+        
+    def paint(self, painter, option, widget):
+
+        if self.path is None: return
+
+        pen = QPen()
+        pen.setColor(QColor(Qt.white))
+        pen.setWidth(0)
+        painter.setPen(pen)
+
+        position = self.path[0]
+        p1 = QPointF(position[0], position[1])
+        for position in self.path[1:]:
+            p2 = QPointF(position[0], position[1])
+            painter.drawLine(p1, p2)
+            p1 = p2
+        position = self.path[0]
+        p2 = QPointF(position[0], position[1])
+        painter.drawLine(p1, p2)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            self.path = [position]
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            if self.path is not None:
+                self.fillPath()
+                self.path = None
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            if position not in self.path:
+                self.path.append(position)
+                self.item.update()
+
+    def fillPath(self):
+
+        if len(self.path) == 0: return
+        roiPath = MplPath(self.path, closed=True)
+        nx, ny = self.maskItem.bin.shape[0], self.maskItem.bin.shape[1]
+        x, y = np.meshgrid(np.arange(0.5, 0.5+nx), np.arange(0.5, 0.5+ny))
+        points = list(zip(x.flatten(),y.flatten()))
+        bin = roiPath.contains_points(points, radius=0.0).reshape((nx, ny))  
+        bin = np.transpose(bin != 0)
+        if self.mode == &#34;draw&#34;:
+            self.maskItem.bin = np.logical_or(self.maskItem.bin, bin)
+        elif self.mode == &#34;cut&#34;:
+            self.maskItem.bin = np.logical_and(self.maskItem.bin, np.logical_not(bin))
+        self.maskItem.fillQImage()
+        self.maskItem.update()
+        
+    def launchContextMenu(self, event):
+
+        pickBrush = QAction(QIcon(widgets.icons.pencil), &#39;Draw&#39;, None)
+        pickBrush.setCheckable(True)
+        pickBrush.setChecked(self.mode == &#34;draw&#34;)
+        pickBrush.triggered.connect(lambda: self.setMode(&#34;draw&#34;))
+        
+        pickEraser = QAction(QIcon(widgets.icons.cutter), &#39;Cut&#39;, None)
+        pickEraser.setCheckable(True)
+        pickEraser.setChecked(self.mode == &#34;cut&#34;)
+        pickEraser.triggered.connect(lambda: self.setMode(&#34;cut&#34;))
+
+        clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear mask&#39;, None)
+        clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickBrush)
+        contextMenu.addAction(pickEraser)
+        contextMenu.addAction(clearMask)
+        contextMenu.exec_(event.screenPos())
+
+
+class MaskViewPenPolygon(MaskViewPenFreehand):
+    &#34;&#34;&#34;Polygon region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape_polygon)
+
+    def itemHoverMoveEvent(self, event):
+
+        if self.path is not None:
+            self.path[-1] = [event.pos().x(), event.pos().y()]
+            self.maskItem.update()
+        super().itemHoverMoveEvent(event)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            if self.path is None:
+                self.path = [position, position]
+            else:
+                self.path[-1] = position
+                self.path.append(position)
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+        pass
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.path[-1] = [event.pos().x(), event.pos().y()]
+        self.maskItem.update()
+
+    def itemMouseDoubleClickEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            if self.path is not None:
+                self.path[-1] = [event.pos().x(), event.pos().y()]
+                self.fillPath()
+                self.maskItem.update()
+                self.path = None
+
+
+class MaskViewPenRectangle(MaskViewPenFreehand):
+    &#34;&#34;&#34;Rectangle region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape)
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            corner1 = self.path[0]
+            corner2 = [event.pos().x(), event.pos().y()]
+            self.path = [
+                [corner1[0], corner1[1]], 
+                [corner2[0], corner1[1]], 
+                [corner2[0], corner2[1]],
+                [corner1[0], corner2[1]],
+                [corner1[0], corner1[1]]]
+            self.maskItem.update()
+
+
+class MaskViewPenCircle(MaskViewPenFreehand):
+    &#34;&#34;&#34;Rectangle region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape_ellipse)
+        self.center = None
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            self.center = [event.pos().x(), event.pos().y()]
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            p = [event.pos().x(), event.pos().y()]
+            self.setCirclePath(p)
+            self.maskItem.update()
+
+    def setCirclePath(self, p):
+        &#34;&#34;&#34;Return a circle with center in c and going through point p&#34;&#34;&#34;
+
+        c = self.center
+        pc = [p[0]-c[0], p[1]-c[1]]
+        radius = math.sqrt(pc[0]**2 + pc[1]**2)
+        if radius == 0: return
+        step = 0.5 # pixel - precision of the circle
+        if step &gt; radius: step = radius
+        angle = math.acos(1-0.5*(step/radius)**2)
+        nsteps = round(2*math.pi/angle)
+        angle = 2*math.pi/nsteps
+        x0 = pc[0]
+        y0 = pc[1]
+        self.path = [p]
+        for _ in range(nsteps):
+            x = math.cos(angle)*x0 - math.sin(angle)*y0
+            y = math.sin(angle)*x0 + math.cos(angle)*y0
+            self.path.append([c[0] + x, c[1] + y])
+            x0 = x
+            y0 = y</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskView"><code class="flex name class">
+<span>class <span class="ident">MaskView</span></span>
+<span>(</span><span>image=None, mask=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extends image view with a MaskItem for drawing masks.</p>
+<p>If no mask instance is provided, this creates
+a canvas that can be drawn on
+but the results can't be saved or retrieved.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskView(widgets.ImageView):
+    &#34;&#34;&#34;Extends image view with a MaskItem for drawing masks.
+    
+    If no mask instance is provided, this creates
+    a canvas that can be drawn on
+    but the results can&#39;t be saved or retrieved.&#34;&#34;&#34;
+
+    newMask = pyqtSignal()
+
+    def __init__(self, image=None, mask=None): 
+        super().__init__(image)
+      
+        shape = self._shape(mask)
+        self.maskItem = MaskItem(mask, shape)
+        self.maskItem.newMask.connect(self._newMask)
+        self.scene.addItem(self.maskItem)
+
+    @property
+    def mask(self):
+        return self.maskItem.mask
+
+    def _shape(self, mask): # private
+
+        if mask is None:
+            width = self.imageItem.pixMap.width()
+            height = self.imageItem.pixMap.height() 
+        else:            
+            width = mask.Rows
+            height = mask.Columns
+        return width, height
+
+#    def isBlank(self):
+
+#        nrMaskPixels = np.count_nonzero(self.maskItem.bin)
+#        return nrMaskPixels == 0
+        
+    def setMask(self, mask):
+
+        self._updatePixelArray()
+        shape = self._shape(mask)
+        self.maskItem.mask = mask
+        self.maskItem._setMaskImage(shape)
+
+    def getMask(self):
+
+        return self.mask
+
+#    def getPixelArray(self):
+#        return self.maskItem._getMaskImage()
+
+    def _updatePixelArray(self):
+
+        if self.mask is None: return
+        array = self.maskItem._getMaskImage()
+        self.mask.set_array(array)
+
+    def eraseMask(self): # not yet in use
+
+        self.maskItem.eraseMaskImage()
+        self._updatePixelArray()
+
+    def _newMask(self):
+
+        mask = self.image.copy()
+        mask.WindowCenter = 1
+        mask.WindowWidth = 2
+        self.maskItem.mask = mask
+        self._updatePixelArray()
+        self.newMask.emit()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.image_view.ImageView" href="image_view.html#weasel.wewidgets.image_view.ImageView">ImageView</a></li>
+<li>PyQt5.QtWidgets.QGraphicsView</li>
+<li>PyQt5.QtWidgets.QAbstractScrollArea</li>
+<li>PyQt5.QtWidgets.QFrame</li>
+<li>PyQt5.QtWidgets.QWidget</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>PyQt5.QtGui.QPaintDevice</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskView.mask"><code class="name">var <span class="ident">mask</span></code></dt>
+<dd>
+<div class="desc"><p>mask(self) -&gt; QRegion</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def mask(self):
+    return self.maskItem.mask</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskView.newMask"><code class="name flex">
+<span>def <span class="ident">newMask</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskView.setMask"><code class="name flex">
+<span>def <span class="ident">setMask</span></span>(<span>self, mask)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>setMask(self, QBitmap)
+setMask(self, QRegion)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMask(self, mask):
+
+    self._updatePixelArray()
+    shape = self._shape(mask)
+    self.maskItem.mask = mask
+    self.maskItem._setMaskImage(shape)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskView.getMask"><code class="name flex">
+<span>def <span class="ident">getMask</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getMask(self):
+
+    return self.mask</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskView.eraseMask"><code class="name flex">
+<span>def <span class="ident">eraseMask</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eraseMask(self): # not yet in use
+
+    self.maskItem.eraseMaskImage()
+    self._updatePixelArray()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush"><code class="flex name class">
+<span>class <span class="ident">MaskViewBrush</span></span>
+<span>(</span><span>brushSize=1, mode='paint')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Painting or erasing tool.</p>
+<h2 id="features">Features</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click and drag to paint or erase.
+&gt;&gt;&gt; Right click to change the brush properties
+(erase or paint, size of the brush).
+&gt;&gt;&gt; Right click and drag to change the windowing.
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskViewBrush(widgets.ImageViewCursor):
+    &#34;&#34;&#34;Painting or erasing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to paint or erase.
+    &gt;&gt;&gt; Right click to change the brush properties
+    (erase or paint, size of the brush).
+    &gt;&gt;&gt; Right click and drag to change the windowing.
+    &#34;&#34;&#34;
+
+    def __init__(self, brushSize=1, mode=&#34;paint&#34;):
+        super().__init__()
+
+        self.setBrushSize(brushSize)
+        self.setMode(mode)
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        super().setView(imageView)
+        self.maskItem = imageView.maskItem
+
+    def setBrushSize(self, brushSize):
+
+        self.brushSize = brushSize
+
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == &#34;paint&#34;:
+            pixMap = QPixmap(widgets.icons.paint_brush)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Paint brush&#39;
+        elif mode == &#34;erase&#34;:
+            pixMap = QPixmap(widgets.icons.eraser)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Eraser&#39;
+        self.icon = QIcon(pixMap)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.paintPixels()
+        elif button == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            self.paintPixels()  
+        self.view.mousePositionMoved.emit()
+
+    def paintPixels(self):
+   
+        w = int((self.brushSize - 1)/2)
+        for x in range(self.x-w, self.x+w+1, 1):
+            if 0 &lt;= x &lt; self.maskItem.bin.shape[0]:
+                for y in range(self.y-w, self.y+w+1, 1):
+                    if 0 &lt;= y &lt; self.maskItem.bin.shape[1]:
+                        self.maskItem.setPixel(x, y, self.mode == &#34;paint&#34;)
+        self.maskItem.update()
+       
+    def launchContextMenu(self, event):
+
+        pickBrush = QAction(QIcon(widgets.icons.paint_brush), &#39;Paint&#39;, None)
+        pickBrush.setCheckable(True)
+        pickBrush.setChecked(self.mode == &#34;paint&#34;)
+        pickBrush.triggered.connect(lambda: self.setMode(&#34;paint&#34;))
+        
+        pickEraser = QAction(QIcon(widgets.icons.eraser), &#39;Erase&#39;, None)
+        pickEraser.setCheckable(True)
+        pickEraser.setChecked(self.mode == &#34;erase&#34;)
+        pickEraser.triggered.connect(lambda: self.setMode(&#34;erase&#34;))
+
+        clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear Region&#39;, None)
+        clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+        onePixel = QAction(&#39;1 pixel&#39;, None)
+        onePixel.setCheckable(True)
+        onePixel.setChecked(self.brushSize == 1)
+        onePixel.triggered.connect(lambda: self.setBrushSize(1))
+
+        threePixels = QAction(&#39;3 pixels&#39;, None)
+        threePixels.setCheckable(True)
+        threePixels.setChecked(self.brushSize == 3)
+        threePixels.triggered.connect(lambda: self.setBrushSize(3))
+
+        fivePixels = QAction(&#39;5 pixels&#39;, None)
+        fivePixels.setCheckable(True)
+        fivePixels.setChecked(self.brushSize == 5)
+        fivePixels.triggered.connect(lambda: self.setBrushSize(5))
+
+        sevenPixels = QAction(&#39;7 pixels&#39;, None)
+        sevenPixels.setCheckable(True)
+        sevenPixels.setChecked(self.brushSize == 7)
+        sevenPixels.triggered.connect(lambda: self.setBrushSize(7))
+
+        ninePixels = QAction(&#39;9 pixels&#39;, None)
+        ninePixels.setCheckable(True)
+        ninePixels.setChecked(self.brushSize == 9)
+        ninePixels.triggered.connect(lambda: self.setBrushSize(9))
+
+        elevenPixels = QAction(&#39;11 pixels&#39;, None)
+        elevenPixels.setCheckable(True)
+        elevenPixels.setChecked(self.brushSize == 11)
+        elevenPixels.triggered.connect(lambda: self.setBrushSize(11))
+
+        twentyOnePixels = QAction(&#39;21 pixels&#39;, None)
+        twentyOnePixels.setCheckable(True)
+        twentyOnePixels.setChecked(self.brushSize == 21)
+        twentyOnePixels.triggered.connect(lambda: self.setBrushSize(21))
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickBrush)
+        contextMenu.addAction(pickEraser)
+        contextMenu.addAction(clearMask)
+
+        subMenu = contextMenu.addMenu(&#39;Brush size&#39;)
+        subMenu.setEnabled(True)
+        # subMenu.clear()
+        subMenu.addAction(onePixel)
+        subMenu.addAction(threePixels)
+        subMenu.addAction(fivePixels)
+        subMenu.addAction(sevenPixels)
+        subMenu.addAction(ninePixels)
+        subMenu.addAction(elevenPixels)
+        subMenu.addAction(twentyOnePixels)
+
+        contextMenu.exec_(event.screenPos())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.setBrushSize"><code class="name flex">
+<span>def <span class="ident">setBrushSize</span></span>(<span>self, brushSize)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setBrushSize(self, brushSize):
+
+    self.brushSize = brushSize</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.setMode"><code class="name flex">
+<span>def <span class="ident">setMode</span></span>(<span>self, mode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMode(self, mode):
+
+    self.mode = mode
+    if mode == &#34;paint&#34;:
+        pixMap = QPixmap(widgets.icons.paint_brush)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = &#39;Paint brush&#39;
+    elif mode == &#34;erase&#34;:
+        pixMap = QPixmap(widgets.icons.eraser)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = &#39;Eraser&#39;
+    self.icon = QIcon(pixMap)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.button()
+    if button == Qt.LeftButton:
+        self.paintPixels()
+    elif button == Qt.RightButton:
+        self.launchContextMenu(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.itemMouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseReleaseEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    buttons = event.buttons()
+    if buttons == Qt.LeftButton:
+        self.paintPixels()  
+    self.view.mousePositionMoved.emit()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.paintPixels"><code class="name flex">
+<span>def <span class="ident">paintPixels</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paintPixels(self):
+
+    w = int((self.brushSize - 1)/2)
+    for x in range(self.x-w, self.x+w+1, 1):
+        if 0 &lt;= x &lt; self.maskItem.bin.shape[0]:
+            for y in range(self.y-w, self.y+w+1, 1):
+                if 0 &lt;= y &lt; self.maskItem.bin.shape[1]:
+                    self.maskItem.setPixel(x, y, self.mode == &#34;paint&#34;)
+    self.maskItem.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewBrush.launchContextMenu"><code class="name flex">
+<span>def <span class="ident">launchContextMenu</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launchContextMenu(self, event):
+
+    pickBrush = QAction(QIcon(widgets.icons.paint_brush), &#39;Paint&#39;, None)
+    pickBrush.setCheckable(True)
+    pickBrush.setChecked(self.mode == &#34;paint&#34;)
+    pickBrush.triggered.connect(lambda: self.setMode(&#34;paint&#34;))
+    
+    pickEraser = QAction(QIcon(widgets.icons.eraser), &#39;Erase&#39;, None)
+    pickEraser.setCheckable(True)
+    pickEraser.setChecked(self.mode == &#34;erase&#34;)
+    pickEraser.triggered.connect(lambda: self.setMode(&#34;erase&#34;))
+
+    clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear Region&#39;, None)
+    clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+    onePixel = QAction(&#39;1 pixel&#39;, None)
+    onePixel.setCheckable(True)
+    onePixel.setChecked(self.brushSize == 1)
+    onePixel.triggered.connect(lambda: self.setBrushSize(1))
+
+    threePixels = QAction(&#39;3 pixels&#39;, None)
+    threePixels.setCheckable(True)
+    threePixels.setChecked(self.brushSize == 3)
+    threePixels.triggered.connect(lambda: self.setBrushSize(3))
+
+    fivePixels = QAction(&#39;5 pixels&#39;, None)
+    fivePixels.setCheckable(True)
+    fivePixels.setChecked(self.brushSize == 5)
+    fivePixels.triggered.connect(lambda: self.setBrushSize(5))
+
+    sevenPixels = QAction(&#39;7 pixels&#39;, None)
+    sevenPixels.setCheckable(True)
+    sevenPixels.setChecked(self.brushSize == 7)
+    sevenPixels.triggered.connect(lambda: self.setBrushSize(7))
+
+    ninePixels = QAction(&#39;9 pixels&#39;, None)
+    ninePixels.setCheckable(True)
+    ninePixels.setChecked(self.brushSize == 9)
+    ninePixels.triggered.connect(lambda: self.setBrushSize(9))
+
+    elevenPixels = QAction(&#39;11 pixels&#39;, None)
+    elevenPixels.setCheckable(True)
+    elevenPixels.setChecked(self.brushSize == 11)
+    elevenPixels.triggered.connect(lambda: self.setBrushSize(11))
+
+    twentyOnePixels = QAction(&#39;21 pixels&#39;, None)
+    twentyOnePixels.setCheckable(True)
+    twentyOnePixels.setChecked(self.brushSize == 21)
+    twentyOnePixels.triggered.connect(lambda: self.setBrushSize(21))
+
+    contextMenu = QMenu()
+    contextMenu.addAction(pickBrush)
+    contextMenu.addAction(pickEraser)
+    contextMenu.addAction(clearMask)
+
+    subMenu = contextMenu.addMenu(&#39;Brush size&#39;)
+    subMenu.setEnabled(True)
+    # subMenu.clear()
+    subMenu.addAction(onePixel)
+    subMenu.addAction(threePixels)
+    subMenu.addAction(fivePixels)
+    subMenu.addAction(sevenPixels)
+    subMenu.addAction(ninePixels)
+    subMenu.addAction(elevenPixels)
+    subMenu.addAction(twentyOnePixels)
+
+    contextMenu.exec_(event.screenPos())</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.pan" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.setView" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.window" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand"><code class="flex name class">
+<span>class <span class="ident">MaskViewPenFreehand</span></span>
+<span>(</span><span>mode='draw')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Freehand region drawing tool.</p>
+<h2 id="features">Features</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click and drag to draw, release to close
+&gt;&gt;&gt; Right click to change the pen properties
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskViewPenFreehand(widgets.ImageViewCursor):
+    &#34;&#34;&#34;Freehand region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__()
+
+        self.icon = QIcon(widgets.icons.layer_shape_curve)
+        self.path = None
+        self.setMode(mode)
+        
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == &#34;draw&#34;:
+            pixMap = QPixmap(widgets.icons.pencil)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Draw&#39;
+        elif mode == &#34;cut&#34;:
+            pixMap = QPixmap(widgets.icons.cutter)
+            self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+            self.toolTip = &#39;Cut&#39;
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        super().setView(imageView)
+        self.maskItem = imageView.maskItem
+        
+    def paint(self, painter, option, widget):
+
+        if self.path is None: return
+
+        pen = QPen()
+        pen.setColor(QColor(Qt.white))
+        pen.setWidth(0)
+        painter.setPen(pen)
+
+        position = self.path[0]
+        p1 = QPointF(position[0], position[1])
+        for position in self.path[1:]:
+            p2 = QPointF(position[0], position[1])
+            painter.drawLine(p1, p2)
+            p1 = p2
+        position = self.path[0]
+        p2 = QPointF(position[0], position[1])
+        painter.drawLine(p1, p2)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            self.path = [position]
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            if self.path is not None:
+                self.fillPath()
+                self.path = None
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            if position not in self.path:
+                self.path.append(position)
+                self.item.update()
+
+    def fillPath(self):
+
+        if len(self.path) == 0: return
+        roiPath = MplPath(self.path, closed=True)
+        nx, ny = self.maskItem.bin.shape[0], self.maskItem.bin.shape[1]
+        x, y = np.meshgrid(np.arange(0.5, 0.5+nx), np.arange(0.5, 0.5+ny))
+        points = list(zip(x.flatten(),y.flatten()))
+        bin = roiPath.contains_points(points, radius=0.0).reshape((nx, ny))  
+        bin = np.transpose(bin != 0)
+        if self.mode == &#34;draw&#34;:
+            self.maskItem.bin = np.logical_or(self.maskItem.bin, bin)
+        elif self.mode == &#34;cut&#34;:
+            self.maskItem.bin = np.logical_and(self.maskItem.bin, np.logical_not(bin))
+        self.maskItem.fillQImage()
+        self.maskItem.update()
+        
+    def launchContextMenu(self, event):
+
+        pickBrush = QAction(QIcon(widgets.icons.pencil), &#39;Draw&#39;, None)
+        pickBrush.setCheckable(True)
+        pickBrush.setChecked(self.mode == &#34;draw&#34;)
+        pickBrush.triggered.connect(lambda: self.setMode(&#34;draw&#34;))
+        
+        pickEraser = QAction(QIcon(widgets.icons.cutter), &#39;Cut&#39;, None)
+        pickEraser.setCheckable(True)
+        pickEraser.setChecked(self.mode == &#34;cut&#34;)
+        pickEraser.triggered.connect(lambda: self.setMode(&#34;cut&#34;))
+
+        clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear mask&#39;, None)
+        clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickBrush)
+        contextMenu.addAction(pickEraser)
+        contextMenu.addAction(clearMask)
+        contextMenu.exec_(event.screenPos())</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenCircle" href="#weasel.wewidgets.mask_view.MaskViewPenCircle">MaskViewPenCircle</a></li>
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon">MaskViewPenPolygon</a></li>
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenRectangle" href="#weasel.wewidgets.mask_view.MaskViewPenRectangle">MaskViewPenRectangle</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.setMode"><code class="name flex">
+<span>def <span class="ident">setMode</span></span>(<span>self, mode)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setMode(self, mode):
+
+    self.mode = mode
+    if mode == &#34;draw&#34;:
+        pixMap = QPixmap(widgets.icons.pencil)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = &#39;Draw&#39;
+    elif mode == &#34;cut&#34;:
+        pixMap = QPixmap(widgets.icons.cutter)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = &#39;Cut&#39;</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paint(self, painter, option, widget):
+
+    if self.path is None: return
+
+    pen = QPen()
+    pen.setColor(QColor(Qt.white))
+    pen.setWidth(0)
+    painter.setPen(pen)
+
+    position = self.path[0]
+    p1 = QPointF(position[0], position[1])
+    for position in self.path[1:]:
+        p2 = QPointF(position[0], position[1])
+        painter.drawLine(p1, p2)
+        p1 = p2
+    position = self.path[0]
+    p2 = QPointF(position[0], position[1])
+    painter.drawLine(p1, p2)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    if event.button() == Qt.LeftButton:
+        position = [event.pos().x(), event.pos().y()]
+        self.path = [position]
+    elif event.button() == Qt.RightButton:
+        self.launchContextMenu(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseReleaseEvent(self, event):
+    
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.button()
+    if button == Qt.LeftButton:
+        if self.path is not None:
+            self.fillPath()
+            self.path = None</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    buttons = event.buttons()
+    if buttons == Qt.LeftButton:
+        position = [event.pos().x(), event.pos().y()]
+        if position not in self.path:
+            self.path.append(position)
+            self.item.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.fillPath"><code class="name flex">
+<span>def <span class="ident">fillPath</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fillPath(self):
+
+    if len(self.path) == 0: return
+    roiPath = MplPath(self.path, closed=True)
+    nx, ny = self.maskItem.bin.shape[0], self.maskItem.bin.shape[1]
+    x, y = np.meshgrid(np.arange(0.5, 0.5+nx), np.arange(0.5, 0.5+ny))
+    points = list(zip(x.flatten(),y.flatten()))
+    bin = roiPath.contains_points(points, radius=0.0).reshape((nx, ny))  
+    bin = np.transpose(bin != 0)
+    if self.mode == &#34;draw&#34;:
+        self.maskItem.bin = np.logical_or(self.maskItem.bin, bin)
+    elif self.mode == &#34;cut&#34;:
+        self.maskItem.bin = np.logical_and(self.maskItem.bin, np.logical_not(bin))
+    self.maskItem.fillQImage()
+    self.maskItem.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenFreehand.launchContextMenu"><code class="name flex">
+<span>def <span class="ident">launchContextMenu</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def launchContextMenu(self, event):
+
+    pickBrush = QAction(QIcon(widgets.icons.pencil), &#39;Draw&#39;, None)
+    pickBrush.setCheckable(True)
+    pickBrush.setChecked(self.mode == &#34;draw&#34;)
+    pickBrush.triggered.connect(lambda: self.setMode(&#34;draw&#34;))
+    
+    pickEraser = QAction(QIcon(widgets.icons.cutter), &#39;Cut&#39;, None)
+    pickEraser.setCheckable(True)
+    pickEraser.setChecked(self.mode == &#34;cut&#34;)
+    pickEraser.triggered.connect(lambda: self.setMode(&#34;cut&#34;))
+
+    clearMask = QAction(QIcon(widgets.icons.arrow_curve_180_left), &#39;Clear mask&#39;, None)
+    clearMask.triggered.connect(self.maskItem.eraseMaskImage)
+
+    contextMenu = QMenu()
+    contextMenu.addAction(pickBrush)
+    contextMenu.addAction(pickEraser)
+    contextMenu.addAction(clearMask)
+    contextMenu.exec_(event.screenPos())</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.pan" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.setView" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.window" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenRectangle"><code class="flex name class">
+<span>class <span class="ident">MaskViewPenRectangle</span></span>
+<span>(</span><span>mode='draw')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rectangle region drawing tool.</p>
+<h2 id="features">Features</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click and drag to draw, release to close
+&gt;&gt;&gt; Right click to change the pen properties
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskViewPenRectangle(MaskViewPenFreehand):
+    &#34;&#34;&#34;Rectangle region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape)
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            corner1 = self.path[0]
+            corner2 = [event.pos().x(), event.pos().y()]
+            self.path = [
+                [corner1[0], corner1[1]], 
+                [corner2[0], corner1[1]], 
+                [corner2[0], corner2[1]],
+                [corner1[0], corner2[1]],
+                [corner1[0], corner1[1]]]
+            self.maskItem.update()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></li>
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenRectangle.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    buttons = event.buttons()
+    if buttons == Qt.LeftButton:
+        corner1 = self.path[0]
+        corner2 = [event.pos().x(), event.pos().y()]
+        self.path = [
+            [corner1[0], corner1[1]], 
+            [corner2[0], corner1[1]], 
+            [corner2[0], corner2[1]],
+            [corner1[0], corner2[1]],
+            [corner1[0], corner1[1]]]
+        self.maskItem.update()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.pan" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.setView" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.window" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon"><code class="flex name class">
+<span>class <span class="ident">MaskViewPenPolygon</span></span>
+<span>(</span><span>mode='draw')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Polygon region drawing tool.</p>
+<h2 id="features">Features</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click and drag to draw, release to close
+&gt;&gt;&gt; Right click to change the pen properties
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskViewPenPolygon(MaskViewPenFreehand):
+    &#34;&#34;&#34;Polygon region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape_polygon)
+
+    def itemHoverMoveEvent(self, event):
+
+        if self.path is not None:
+            self.path[-1] = [event.pos().x(), event.pos().y()]
+            self.maskItem.update()
+        super().itemHoverMoveEvent(event)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            position = [event.pos().x(), event.pos().y()]
+            if self.path is None:
+                self.path = [position, position]
+            else:
+                self.path[-1] = position
+                self.path.append(position)
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseReleaseEvent(self, event):
+        pass
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.path[-1] = [event.pos().x(), event.pos().y()]
+        self.maskItem.update()
+
+    def itemMouseDoubleClickEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            if self.path is not None:
+                self.path[-1] = [event.pos().x(), event.pos().y()]
+                self.fillPath()
+                self.maskItem.update()
+                self.path = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></li>
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemHoverMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemHoverMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemHoverMoveEvent(self, event):
+
+    if self.path is not None:
+        self.path[-1] = [event.pos().x(), event.pos().y()]
+        self.maskItem.update()
+    super().itemHoverMoveEvent(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    if event.button() == Qt.LeftButton:
+        position = [event.pos().x(), event.pos().y()]
+        if self.path is None:
+            self.path = [position, position]
+        else:
+            self.path[-1] = position
+            self.path.append(position)
+    elif event.button() == Qt.RightButton:
+        self.launchContextMenu(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseReleaseEvent(self, event):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    self.path[-1] = [event.pos().x(), event.pos().y()]
+    self.maskItem.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseDoubleClickEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseDoubleClickEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseDoubleClickEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.button()
+    if button == Qt.LeftButton:
+        if self.path is not None:
+            self.path[-1] = [event.pos().x(), event.pos().y()]
+            self.fillPath()
+            self.maskItem.update()
+            self.path = None</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.pan" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.setView" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.window" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenCircle"><code class="flex name class">
+<span>class <span class="ident">MaskViewPenCircle</span></span>
+<span>(</span><span>mode='draw')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rectangle region drawing tool.</p>
+<h2 id="features">Features</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click and drag to draw, release to close
+&gt;&gt;&gt; Right click to change the pen properties
+</code></pre></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MaskViewPenCircle(MaskViewPenFreehand):
+    &#34;&#34;&#34;Rectangle region drawing tool.
+    
+    Features
+    --------
+    &gt;&gt;&gt; Left click and drag to draw, release to close
+    &gt;&gt;&gt; Right click to change the pen properties
+    &#34;&#34;&#34;
+
+    def __init__(self, mode=&#34;draw&#34;):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.layer_shape_ellipse)
+        self.center = None
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            self.center = [event.pos().x(), event.pos().y()]
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        buttons = event.buttons()
+        if buttons == Qt.LeftButton:
+            p = [event.pos().x(), event.pos().y()]
+            self.setCirclePath(p)
+            self.maskItem.update()
+
+    def setCirclePath(self, p):
+        &#34;&#34;&#34;Return a circle with center in c and going through point p&#34;&#34;&#34;
+
+        c = self.center
+        pc = [p[0]-c[0], p[1]-c[1]]
+        radius = math.sqrt(pc[0]**2 + pc[1]**2)
+        if radius == 0: return
+        step = 0.5 # pixel - precision of the circle
+        if step &gt; radius: step = radius
+        angle = math.acos(1-0.5*(step/radius)**2)
+        nsteps = round(2*math.pi/angle)
+        angle = 2*math.pi/nsteps
+        x0 = pc[0]
+        y0 = pc[1]
+        self.path = [p]
+        for _ in range(nsteps):
+            x = math.cos(angle)*x0 - math.sin(angle)*y0
+            y = math.sin(angle)*x0 + math.cos(angle)*y0
+            self.path.append([c[0] + x, c[1] + y])
+            x0 = x
+            y0 = y</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></li>
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenCircle.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    if event.button() == Qt.LeftButton:
+        self.center = [event.pos().x(), event.pos().y()]
+    elif event.button() == Qt.RightButton:
+        self.launchContextMenu(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenCircle.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    buttons = event.buttons()
+    if buttons == Qt.LeftButton:
+        p = [event.pos().x(), event.pos().y()]
+        self.setCirclePath(p)
+        self.maskItem.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.mask_view.MaskViewPenCircle.setCirclePath"><code class="name flex">
+<span>def <span class="ident">setCirclePath</span></span>(<span>self, p)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return a circle with center in c and going through point p</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setCirclePath(self, p):
+    &#34;&#34;&#34;Return a circle with center in c and going through point p&#34;&#34;&#34;
+
+    c = self.center
+    pc = [p[0]-c[0], p[1]-c[1]]
+    radius = math.sqrt(pc[0]**2 + pc[1]**2)
+    if radius == 0: return
+    step = 0.5 # pixel - precision of the circle
+    if step &gt; radius: step = radius
+    angle = math.acos(1-0.5*(step/radius)**2)
+    nsteps = round(2*math.pi/angle)
+    angle = 2*math.pi/nsteps
+    x0 = pc[0]
+    y0 = pc[1]
+    self.path = [p]
+    for _ in range(nsteps):
+        x = math.cos(angle)*x0 - math.sin(angle)*y0
+        y = math.sin(angle)*x0 + math.cos(angle)*y0
+        self.path.append([c[0] + x, c[1] + y])
+        x0 = x
+        y0 = y</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.pan" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.setView" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.window" href="image_view.html#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="weasel.wewidgets" href="index.html">weasel.wewidgets</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskView" href="#weasel.wewidgets.mask_view.MaskView">MaskView</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskView.newMask" href="#weasel.wewidgets.mask_view.MaskView.newMask">newMask</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskView.setMask" href="#weasel.wewidgets.mask_view.MaskView.setMask">setMask</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskView.getMask" href="#weasel.wewidgets.mask_view.MaskView.getMask">getMask</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskView.eraseMask" href="#weasel.wewidgets.mask_view.MaskView.eraseMask">eraseMask</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskView.mask" href="#weasel.wewidgets.mask_view.MaskView.mask">mask</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskViewBrush" href="#weasel.wewidgets.mask_view.MaskViewBrush">MaskViewBrush</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.setBrushSize" href="#weasel.wewidgets.mask_view.MaskViewBrush.setBrushSize">setBrushSize</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.setMode" href="#weasel.wewidgets.mask_view.MaskViewBrush.setMode">setMode</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.itemMousePressEvent" href="#weasel.wewidgets.mask_view.MaskViewBrush.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.itemMouseReleaseEvent" href="#weasel.wewidgets.mask_view.MaskViewBrush.itemMouseReleaseEvent">itemMouseReleaseEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.itemMouseMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewBrush.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.paintPixels" href="#weasel.wewidgets.mask_view.MaskViewBrush.paintPixels">paintPixels</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewBrush.launchContextMenu" href="#weasel.wewidgets.mask_view.MaskViewBrush.launchContextMenu">launchContextMenu</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.setMode" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.setMode">setMode</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.paint" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.paint">paint</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMousePressEvent" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseReleaseEvent" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseReleaseEvent">itemMouseReleaseEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.fillPath" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.fillPath">fillPath</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand.launchContextMenu" href="#weasel.wewidgets.mask_view.MaskViewPenFreehand.launchContextMenu">launchContextMenu</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskViewPenRectangle" href="#weasel.wewidgets.mask_view.MaskViewPenRectangle">MaskViewPenRectangle</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenRectangle.itemMouseMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewPenRectangle.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon">MaskViewPenPolygon</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemHoverMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon.itemHoverMoveEvent">itemHoverMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMousePressEvent" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseReleaseEvent" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseReleaseEvent">itemMouseReleaseEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseDoubleClickEvent" href="#weasel.wewidgets.mask_view.MaskViewPenPolygon.itemMouseDoubleClickEvent">itemMouseDoubleClickEvent</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.mask_view.MaskViewPenCircle" href="#weasel.wewidgets.mask_view.MaskViewPenCircle">MaskViewPenCircle</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenCircle.itemMousePressEvent" href="#weasel.wewidgets.mask_view.MaskViewPenCircle.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenCircle.itemMouseMoveEvent" href="#weasel.wewidgets.mask_view.MaskViewPenCircle.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.mask_view.MaskViewPenCircle.setCirclePath" href="#weasel.wewidgets.mask_view.MaskViewPenCircle.setCirclePath">setCirclePath</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

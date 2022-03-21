@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>weasel.core API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>weasel.core</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">__all__ = [&#39;Main&#39;, &#39;App&#39;, &#39;Action&#39;, &#39;MenuBar&#39;, &#39;Menu&#39;]
+
+from PyQt5.QtWidgets import QMainWindow, QAction, QMenu, QMenuBar
+from PyQt5.QtGui import QIcon
+
+import weasel.wewidgets as widgets
+
+
+class Main(QMainWindow):
+
+    def __init__(self, weasel): 
+        &#34;&#34;&#34;Creates the main window.&#34;&#34;&#34;
+
+        super().__init__()
+
+        self.weasel = weasel
+        self.setWindowTitle(&#34;Weasel&#34;)
+        self.setWindowIcon(QIcon(widgets.icons.favicon))
+
+    def closeEvent(self, event): # dummy for now
+        accept = self.weasel.app.close()
+        if accept:
+            event.accept()
+        else:
+            event.ignore()
+
+
+class App:
+    &#34;&#34;&#34;Base class for all Weasel applications&#34;&#34;&#34;
+
+    def __init__(self, weasel):
+        self.weasel = weasel
+
+    @property
+    def QApp(self):
+        return self.weasel.QApp
+
+    @property
+    def main(self):
+        return self.weasel.main
+
+    @property
+    def log(self):
+        return self.weasel.log
+
+    @property
+    def dialog(self):
+        return self.weasel.dialog
+
+    @property
+    def menubar(self):
+        return self.main.menuBar()
+
+    @property
+    def status(self):
+        return self.main.statusBar()
+
+    def show(self):    
+        self.log.info(&#39;Launching Weasel!&#39;)
+        try:
+            self.main.show()
+            self.QApp.exec()
+            #sys.exit(app.exec())
+        except Exception as e:
+            self.log.exception(&#39;Error: &#39; + str(e))
+
+    def set_menu(self, menu):
+        menubar = MenuBar(self, menu)
+        self.main.setMenuBar(menubar)
+
+    def set_central(self, widget):
+        self.main.setCentralWidget(widget)
+
+    def set_status(self, message):
+        self.status.message(message)
+
+    def set_data(self, data=None):
+        pass
+
+    def get_data(self):
+        pass
+
+    def set_app(self, App):
+        weasel = self.weasel
+        weasel.app = App(weasel)  
+        return weasel.app   
+
+    def close(self):
+        &#34;&#34;&#34;
+        Called when the user attemps to close the main window.
+
+        Returns: True if the window can be closed, False if not.
+        &#34;&#34;&#34;
+        return True
+
+
+class MenuBar(QMenuBar):
+    &#34;&#34;&#34;
+    Programming interfaces for the Weasel menus. 
+    &#34;&#34;&#34;
+
+    def __init__(self, app, menu):
+        super().__init__()
+
+        self._menus = []
+        self.app = app
+        menu(self)
+        self.enable()
+
+    def addMenu(self, menu):
+        super().addMenu(menu)
+        self._menus.append(menu)
+        
+    def menu(self, label = &#34;Menu&#34;):
+        &#34;&#34;&#34;
+        Creates a top level menu in the menuBar.
+        &#34;&#34;&#34;
+        return Menu(self, label)
+
+    def enable(self):
+        &#34;&#34;&#34;
+        Refreshes the enabled status of each menu item.
+        &#34;&#34;&#34;
+        for menu in self._menus:
+            menu.enable()
+
+
+class Menu(QMenu):
+
+    def __init__(self, parent=None, title=&#39;Menu&#39;):
+        super().__init__()
+
+        self._actions = []
+        self._menus = []
+        self.setTitle(title)
+        self.app = parent.app
+        if parent is not None:
+            parent.addMenu(self)
+
+    def addMenu(self, menu):
+        super().addMenu(menu)
+        self._menus.append(menu)
+
+    def menu(self, title=&#39;Submenu&#39;):
+        return Menu(self, title)
+
+    def action(self, action, **kwargs):
+        return action(self, **kwargs)
+        
+    def separator(self):
+        self.addSeparator() 
+
+    def enable(self):
+        &#34;&#34;&#34;
+        Refreshes the enabled status of each menu item.
+        &#34;&#34;&#34;
+        for submenu in self._menus:
+            submenu.enable()
+        for action in self._actions:
+            enable = action.enable(action.app)
+            action.setEnabled(enable)
+
+
+class Action(QAction):
+    &#34;&#34;&#34;Base class for all weasel actions&#34;&#34;&#34;
+
+    def __init__(self, parent,
+        text = None,
+        shortcut = None,
+        tooltip = None, 
+        icon = None):
+        &#34;&#34;&#34;parent: App, Menu or MenuBar&#34;&#34;&#34;
+        super().__init__()
+
+        if hasattr(parent, &#39;app&#39;):
+            self.app = parent.app
+            parent.addAction(self)
+            parent._actions.append(self)
+        else:
+            self.app = parent
+        if text is None:
+            text = self.__class__.__name__
+        self.setText(text)
+        self.triggered.connect(lambda: self.run(self.app))
+    
+        if icon is not None: self.setIcon(QIcon(icon))
+        if shortcut is not None: self.setShortcut(shortcut)
+        if tooltip is not None: self.setToolTip(tooltip)
+
+    def enable(self, app):
+        return True
+
+    def run(self, app):
+        pass</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="weasel.core.Main"><code class="flex name class">
+<span>class <span class="ident">Main</span></span>
+<span>(</span><span>weasel)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>QMainWindow(parent: QWidget = None, flags: Union[Qt.WindowFlags, Qt.WindowType] = Qt.WindowFlags())</p>
+<p>Creates the main window.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Main(QMainWindow):
+
+    def __init__(self, weasel): 
+        &#34;&#34;&#34;Creates the main window.&#34;&#34;&#34;
+
+        super().__init__()
+
+        self.weasel = weasel
+        self.setWindowTitle(&#34;Weasel&#34;)
+        self.setWindowIcon(QIcon(widgets.icons.favicon))
+
+    def closeEvent(self, event): # dummy for now
+        accept = self.weasel.app.close()
+        if accept:
+            event.accept()
+        else:
+            event.ignore()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt5.QtWidgets.QMainWindow</li>
+<li>PyQt5.QtWidgets.QWidget</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>PyQt5.QtGui.QPaintDevice</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.core.Main.closeEvent"><code class="name flex">
+<span>def <span class="ident">closeEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>closeEvent(self, QCloseEvent)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def closeEvent(self, event): # dummy for now
+    accept = self.weasel.app.close()
+    if accept:
+        event.accept()
+    else:
+        event.ignore()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.core.App"><code class="flex name class">
+<span>class <span class="ident">App</span></span>
+<span>(</span><span>weasel)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all Weasel applications</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class App:
+    &#34;&#34;&#34;Base class for all Weasel applications&#34;&#34;&#34;
+
+    def __init__(self, weasel):
+        self.weasel = weasel
+
+    @property
+    def QApp(self):
+        return self.weasel.QApp
+
+    @property
+    def main(self):
+        return self.weasel.main
+
+    @property
+    def log(self):
+        return self.weasel.log
+
+    @property
+    def dialog(self):
+        return self.weasel.dialog
+
+    @property
+    def menubar(self):
+        return self.main.menuBar()
+
+    @property
+    def status(self):
+        return self.main.statusBar()
+
+    def show(self):    
+        self.log.info(&#39;Launching Weasel!&#39;)
+        try:
+            self.main.show()
+            self.QApp.exec()
+            #sys.exit(app.exec())
+        except Exception as e:
+            self.log.exception(&#39;Error: &#39; + str(e))
+
+    def set_menu(self, menu):
+        menubar = MenuBar(self, menu)
+        self.main.setMenuBar(menubar)
+
+    def set_central(self, widget):
+        self.main.setCentralWidget(widget)
+
+    def set_status(self, message):
+        self.status.message(message)
+
+    def set_data(self, data=None):
+        pass
+
+    def get_data(self):
+        pass
+
+    def set_app(self, App):
+        weasel = self.weasel
+        weasel.app = App(weasel)  
+        return weasel.app   
+
+    def close(self):
+        &#34;&#34;&#34;
+        Called when the user attemps to close the main window.
+
+        Returns: True if the window can be closed, False if not.
+        &#34;&#34;&#34;
+        return True</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="weasel.apps.dicom.DicomSeries" href="apps/dicom.html#weasel.apps.dicom.DicomSeries">DicomSeries</a></li>
+<li><a title="weasel.apps.dicom.DicomWindows" href="apps/dicom.html#weasel.apps.dicom.DicomWindows">DicomWindows</a></li>
+<li><a title="weasel.apps.welcome.WeaselAbout" href="apps/welcome.html#weasel.apps.welcome.WeaselAbout">WeaselAbout</a></li>
+<li><a title="weasel.apps.welcome.WeaselWelcome" href="apps/welcome.html#weasel.apps.welcome.WeaselWelcome">WeaselWelcome</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="weasel.core.App.QApp"><code class="name">var <span class="ident">QApp</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def QApp(self):
+    return self.weasel.QApp</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.main"><code class="name">var <span class="ident">main</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def main(self):
+    return self.weasel.main</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.log"><code class="name">var <span class="ident">log</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def log(self):
+    return self.weasel.log</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.dialog"><code class="name">var <span class="ident">dialog</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dialog(self):
+    return self.weasel.dialog</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.menubar"><code class="name">var <span class="ident">menubar</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def menubar(self):
+    return self.main.menuBar()</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.status"><code class="name">var <span class="ident">status</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def status(self):
+    return self.main.statusBar()</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.core.App.show"><code class="name flex">
+<span>def <span class="ident">show</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def show(self):    
+    self.log.info(&#39;Launching Weasel!&#39;)
+    try:
+        self.main.show()
+        self.QApp.exec()
+        #sys.exit(app.exec())
+    except Exception as e:
+        self.log.exception(&#39;Error: &#39; + str(e))</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.set_menu"><code class="name flex">
+<span>def <span class="ident">set_menu</span></span>(<span>self, menu)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_menu(self, menu):
+    menubar = MenuBar(self, menu)
+    self.main.setMenuBar(menubar)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.set_central"><code class="name flex">
+<span>def <span class="ident">set_central</span></span>(<span>self, widget)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_central(self, widget):
+    self.main.setCentralWidget(widget)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.set_status"><code class="name flex">
+<span>def <span class="ident">set_status</span></span>(<span>self, message)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_status(self, message):
+    self.status.message(message)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.set_data"><code class="name flex">
+<span>def <span class="ident">set_data</span></span>(<span>self, data=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_data(self, data=None):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.get_data"><code class="name flex">
+<span>def <span class="ident">get_data</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_data(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.set_app"><code class="name flex">
+<span>def <span class="ident">set_app</span></span>(<span>self, App)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_app(self, App):
+    weasel = self.weasel
+    weasel.app = App(weasel)  
+    return weasel.app   </code></pre>
+</details>
+</dd>
+<dt id="weasel.core.App.close"><code class="name flex">
+<span>def <span class="ident">close</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Called when the user attemps to close the main window.</p>
+<p>Returns: True if the window can be closed, False if not.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def close(self):
+    &#34;&#34;&#34;
+    Called when the user attemps to close the main window.
+
+    Returns: True if the window can be closed, False if not.
+    &#34;&#34;&#34;
+    return True</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.core.Action"><code class="flex name class">
+<span>class <span class="ident">Action</span></span>
+<span>(</span><span>parent, text=None, shortcut=None, tooltip=None, icon=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for all weasel actions</p>
+<p>parent: App, Menu or MenuBar</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Action(QAction):
+    &#34;&#34;&#34;Base class for all weasel actions&#34;&#34;&#34;
+
+    def __init__(self, parent,
+        text = None,
+        shortcut = None,
+        tooltip = None, 
+        icon = None):
+        &#34;&#34;&#34;parent: App, Menu or MenuBar&#34;&#34;&#34;
+        super().__init__()
+
+        if hasattr(parent, &#39;app&#39;):
+            self.app = parent.app
+            parent.addAction(self)
+            parent._actions.append(self)
+        else:
+            self.app = parent
+        if text is None:
+            text = self.__class__.__name__
+        self.setText(text)
+        self.triggered.connect(lambda: self.run(self.app))
+    
+        if icon is not None: self.setIcon(QIcon(icon))
+        if shortcut is not None: self.setShortcut(shortcut)
+        if tooltip is not None: self.setToolTip(tooltip)
+
+    def enable(self, app):
+        return True
+
+    def run(self, app):
+        pass</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt5.QtWidgets.QAction</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="weasel.actions.about.About" href="actions/about.html#weasel.actions.about.About">About</a></li>
+<li><a title="weasel.actions.demo.HelloWorld" href="actions/demo.html#weasel.actions.demo.HelloWorld">HelloWorld</a></li>
+<li><a title="weasel.actions.demo.ToggleApp" href="actions/demo.html#weasel.actions.demo.ToggleApp">ToggleApp</a></li>
+<li><a title="weasel.actions.edit.Copy" href="actions/edit.html#weasel.actions.edit.Copy">Copy</a></li>
+<li><a title="weasel.actions.edit.Delete" href="actions/edit.html#weasel.actions.edit.Delete">Delete</a></li>
+<li><a title="weasel.actions.edit.Group" href="actions/edit.html#weasel.actions.edit.Group">Group</a></li>
+<li><a title="weasel.actions.edit.Merge" href="actions/edit.html#weasel.actions.edit.Merge">Merge</a></li>
+<li><a title="weasel.actions.folder.Close" href="actions/folder.html#weasel.actions.folder.Close">Close</a></li>
+<li><a title="weasel.actions.folder.Open" href="actions/folder.html#weasel.actions.folder.Open">Open</a></li>
+<li><a title="weasel.actions.folder.Read" href="actions/folder.html#weasel.actions.folder.Read">Read</a></li>
+<li><a title="weasel.actions.folder.Restore" href="actions/folder.html#weasel.actions.folder.Restore">Restore</a></li>
+<li><a title="weasel.actions.folder.Save" href="actions/folder.html#weasel.actions.folder.Save">Save</a></li>
+<li><a title="weasel.actions.view.CloseWindows" href="actions/view.html#weasel.actions.view.CloseWindows">CloseWindows</a></li>
+<li><a title="weasel.actions.view.Image" href="actions/view.html#weasel.actions.view.Image">Image</a></li>
+<li><a title="weasel.actions.view.Region" href="actions/view.html#weasel.actions.view.Region">Region</a></li>
+<li><a title="weasel.actions.view.Series" href="actions/view.html#weasel.actions.view.Series">Series</a></li>
+<li><a title="weasel.actions.view.TileWindows" href="actions/view.html#weasel.actions.view.TileWindows">TileWindows</a></li>
+<li>weasel.apps.welcome.DICOM</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.core.Action.enable"><code class="name flex">
+<span>def <span class="ident">enable</span></span>(<span>self, app)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable(self, app):
+    return True</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.Action.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>self, app)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(self, app):
+    pass</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.core.MenuBar"><code class="flex name class">
+<span>class <span class="ident">MenuBar</span></span>
+<span>(</span><span>app, menu)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Programming interfaces for the Weasel menus.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class MenuBar(QMenuBar):
+    &#34;&#34;&#34;
+    Programming interfaces for the Weasel menus. 
+    &#34;&#34;&#34;
+
+    def __init__(self, app, menu):
+        super().__init__()
+
+        self._menus = []
+        self.app = app
+        menu(self)
+        self.enable()
+
+    def addMenu(self, menu):
+        super().addMenu(menu)
+        self._menus.append(menu)
+        
+    def menu(self, label = &#34;Menu&#34;):
+        &#34;&#34;&#34;
+        Creates a top level menu in the menuBar.
+        &#34;&#34;&#34;
+        return Menu(self, label)
+
+    def enable(self):
+        &#34;&#34;&#34;
+        Refreshes the enabled status of each menu item.
+        &#34;&#34;&#34;
+        for menu in self._menus:
+            menu.enable()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt5.QtWidgets.QMenuBar</li>
+<li>PyQt5.QtWidgets.QWidget</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>PyQt5.QtGui.QPaintDevice</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.core.MenuBar.addMenu"><code class="name flex">
+<span>def <span class="ident">addMenu</span></span>(<span>self, menu)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>addMenu(self, QMenu) -&gt; QAction
+addMenu(self, str) -&gt; QMenu
+addMenu(self, QIcon, str) -&gt; QMenu</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addMenu(self, menu):
+    super().addMenu(menu)
+    self._menus.append(menu)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.MenuBar.menu"><code class="name flex">
+<span>def <span class="ident">menu</span></span>(<span>self, label='Menu')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a top level menu in the menuBar.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def menu(self, label = &#34;Menu&#34;):
+    &#34;&#34;&#34;
+    Creates a top level menu in the menuBar.
+    &#34;&#34;&#34;
+    return Menu(self, label)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.MenuBar.enable"><code class="name flex">
+<span>def <span class="ident">enable</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Refreshes the enabled status of each menu item.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable(self):
+    &#34;&#34;&#34;
+    Refreshes the enabled status of each menu item.
+    &#34;&#34;&#34;
+    for menu in self._menus:
+        menu.enable()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.core.Menu"><code class="flex name class">
+<span>class <span class="ident">Menu</span></span>
+<span>(</span><span>parent=None, title='Menu')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>QMenu(parent: QWidget = None)
+QMenu(str, parent: QWidget = None)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Menu(QMenu):
+
+    def __init__(self, parent=None, title=&#39;Menu&#39;):
+        super().__init__()
+
+        self._actions = []
+        self._menus = []
+        self.setTitle(title)
+        self.app = parent.app
+        if parent is not None:
+            parent.addMenu(self)
+
+    def addMenu(self, menu):
+        super().addMenu(menu)
+        self._menus.append(menu)
+
+    def menu(self, title=&#39;Submenu&#39;):
+        return Menu(self, title)
+
+    def action(self, action, **kwargs):
+        return action(self, **kwargs)
+        
+    def separator(self):
+        self.addSeparator() 
+
+    def enable(self):
+        &#34;&#34;&#34;
+        Refreshes the enabled status of each menu item.
+        &#34;&#34;&#34;
+        for submenu in self._menus:
+            submenu.enable()
+        for action in self._actions:
+            enable = action.enable(action.app)
+            action.setEnabled(enable)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt5.QtWidgets.QMenu</li>
+<li>PyQt5.QtWidgets.QWidget</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>PyQt5.QtGui.QPaintDevice</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.core.Menu.addMenu"><code class="name flex">
+<span>def <span class="ident">addMenu</span></span>(<span>self, menu)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>addMenu(self, QMenu) -&gt; QAction
+addMenu(self, str) -&gt; QMenu
+addMenu(self, QIcon, str) -&gt; QMenu</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def addMenu(self, menu):
+    super().addMenu(menu)
+    self._menus.append(menu)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.Menu.menu"><code class="name flex">
+<span>def <span class="ident">menu</span></span>(<span>self, title='Submenu')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def menu(self, title=&#39;Submenu&#39;):
+    return Menu(self, title)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.Menu.action"><code class="name flex">
+<span>def <span class="ident">action</span></span>(<span>self, action, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def action(self, action, **kwargs):
+    return action(self, **kwargs)</code></pre>
+</details>
+</dd>
+<dt id="weasel.core.Menu.separator"><code class="name flex">
+<span>def <span class="ident">separator</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def separator(self):
+    self.addSeparator() </code></pre>
+</details>
+</dd>
+<dt id="weasel.core.Menu.enable"><code class="name flex">
+<span>def <span class="ident">enable</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Refreshes the enabled status of each menu item.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def enable(self):
+    &#34;&#34;&#34;
+    Refreshes the enabled status of each menu item.
+    &#34;&#34;&#34;
+    for submenu in self._menus:
+        submenu.enable()
+    for action in self._actions:
+        enable = action.enable(action.app)
+        action.setEnabled(enable)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="weasel" href="index.html">weasel</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="weasel.core.Main" href="#weasel.core.Main">Main</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.core.Main.closeEvent" href="#weasel.core.Main.closeEvent">closeEvent</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.core.App" href="#weasel.core.App">App</a></code></h4>
+<ul class="two-column">
+<li><code><a title="weasel.core.App.show" href="#weasel.core.App.show">show</a></code></li>
+<li><code><a title="weasel.core.App.set_menu" href="#weasel.core.App.set_menu">set_menu</a></code></li>
+<li><code><a title="weasel.core.App.set_central" href="#weasel.core.App.set_central">set_central</a></code></li>
+<li><code><a title="weasel.core.App.set_status" href="#weasel.core.App.set_status">set_status</a></code></li>
+<li><code><a title="weasel.core.App.set_data" href="#weasel.core.App.set_data">set_data</a></code></li>
+<li><code><a title="weasel.core.App.get_data" href="#weasel.core.App.get_data">get_data</a></code></li>
+<li><code><a title="weasel.core.App.set_app" href="#weasel.core.App.set_app">set_app</a></code></li>
+<li><code><a title="weasel.core.App.close" href="#weasel.core.App.close">close</a></code></li>
+<li><code><a title="weasel.core.App.QApp" href="#weasel.core.App.QApp">QApp</a></code></li>
+<li><code><a title="weasel.core.App.main" href="#weasel.core.App.main">main</a></code></li>
+<li><code><a title="weasel.core.App.log" href="#weasel.core.App.log">log</a></code></li>
+<li><code><a title="weasel.core.App.dialog" href="#weasel.core.App.dialog">dialog</a></code></li>
+<li><code><a title="weasel.core.App.menubar" href="#weasel.core.App.menubar">menubar</a></code></li>
+<li><code><a title="weasel.core.App.status" href="#weasel.core.App.status">status</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.core.Action" href="#weasel.core.Action">Action</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.core.Action.enable" href="#weasel.core.Action.enable">enable</a></code></li>
+<li><code><a title="weasel.core.Action.run" href="#weasel.core.Action.run">run</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.core.MenuBar" href="#weasel.core.MenuBar">MenuBar</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.core.MenuBar.addMenu" href="#weasel.core.MenuBar.addMenu">addMenu</a></code></li>
+<li><code><a title="weasel.core.MenuBar.menu" href="#weasel.core.MenuBar.menu">menu</a></code></li>
+<li><code><a title="weasel.core.MenuBar.enable" href="#weasel.core.MenuBar.enable">enable</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.core.Menu" href="#weasel.core.Menu">Menu</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.core.Menu.addMenu" href="#weasel.core.Menu.addMenu">addMenu</a></code></li>
+<li><code><a title="weasel.core.Menu.menu" href="#weasel.core.Menu.menu">menu</a></code></li>
+<li><code><a title="weasel.core.Menu.action" href="#weasel.core.Menu.action">action</a></code></li>
+<li><code><a title="weasel.core.Menu.separator" href="#weasel.core.Menu.separator">separator</a></code></li>
+<li><code><a title="weasel.core.Menu.enable" href="#weasel.core.Menu.enable">enable</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

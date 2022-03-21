@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>weasel.wewidgets.image_view API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>weasel.wewidgets.image_view</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">__all__ = [&#39;ImageView&#39;, &#39;ImageViewCursor&#39;, &#39;ImageViewZoom&#39;]
+
+from PyQt5.QtCore import Qt, pyqtSignal, QRectF
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsObject
+from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QBrush
+
+from . import icons
+
+class ImageView(QGraphicsView):
+    &#34;&#34;&#34;Wrapper for ImageItem displaying it in a scrollable Widget&#34;&#34;&#34;
+
+    imageUpdated = pyqtSignal()
+    mousePositionMoved = pyqtSignal()
+
+    def __init__(self, image=None): 
+        super().__init__()
+      
+        self.imageItem = ImageItem(image)
+        self.scene = QGraphicsScene(self)
+        self.scene.addItem(self.imageItem)
+        self.setScene(self.scene)
+        self.setBackgroundBrush(QBrush(Qt.black))
+        self.fitInView(self.imageItem, Qt.KeepAspectRatio)
+
+    def setEventHandler(self, eventHandler):
+
+        self.eventHandler = eventHandler
+        eventHandler.setView(self)
+        
+    def setData(self, image):
+
+        self.imageItem.setData(image)
+
+    def getImage(self):
+
+        return self.imageItem.image
+
+    @property
+    def image(self):
+
+        return self.imageItem.image
+
+
+class ImageItem(QGraphicsObject):
+    &#34;&#34;&#34;Displays a mask as an overlay on an image.
+    
+    Needs to be assigned an image to display, but a mask is optional.
+    If no mask is provided, a mask will be created from the image.
+    &#34;&#34;&#34;
+
+    def __init__(self, image): 
+        super().__init__()
+
+        self.boundingRectangle = QRectF(0, 0, 128, 128)
+        self.eventHandler = None
+        self.setData(image)
+
+    def setData(self, image):
+
+        if image is not None:
+            self.boundingRectangle = QRectF(0, 0, image.Columns, image.Rows)
+        self.image = image
+        self._setPixMap()
+        self.update()
+
+    def boundingRect(self): 
+        &#34;&#34;&#34;Abstract method - must be overridden.&#34;&#34;&#34;
+
+        return self.boundingRectangle
+
+    def _setPixMap(self):
+
+        if self.image is None:
+            width = int(self.boundingRectangle.width())
+            height = int(self.boundingRectangle.height())
+            self.pixMap = QPixmap(width, height)
+            self.pixMap.fill(Qt.black)
+        else:
+            self.qImage = self.image.QImage()
+            self.pixMap = QPixmap.fromImage(self.qImage)
+
+    def paint(self, painter, option, widget):
+        &#34;&#34;&#34;Executed by GraphicsView when calling update()&#34;&#34;&#34;
+
+        width = self.pixMap.width()
+        height = self.pixMap.height()
+        painter.drawPixmap(0, 0, width, height, self.pixMap)
+        if self.eventHandler is not None:
+            self.eventHandler.paint(painter, option, widget)
+
+    def setEventHandler(self, eventHandler):
+
+        self.eventHandler = eventHandler
+
+    #
+    # Delegate all event handling to the event handler
+    #
+
+    def hoverEnterEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().hoverEnterEvent(event)
+        else:
+            self.eventHandler.itemHoverEnterEvent(event) 
+
+    def hoverLeaveEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().hoverLeaveEvent(event)
+        else:
+            self.eventHandler.itemHoverLeaveEvent(event) 
+
+    def hoverMoveEvent(self, event): 
+
+        if self.eventHandler is None: 
+            super().hoverMoveEvent(event)
+        else:
+            self.eventHandler.itemHoverMoveEvent(event) 
+
+    def mousePressEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().mousePressEvent(event)
+        else:
+            self.eventHandler.itemMousePressEvent(event) 
+
+    def mouseMoveEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().mouseMoveEvent(event)
+        else:
+            self.eventHandler.itemMouseMoveEvent(event) 
+
+    def mouseReleaseEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().mouseReleaseEvent(event)
+        else:
+            self.eventHandler.itemMouseReleaseEvent(event) 
+
+    def wheelEvent(self, event):
+
+        if self.eventHandler is None: 
+            super().wheelEvent(event) 
+        else:
+            self.eventHandler.itemWheelEvent(event) 
+
+    def mouseDoubleClickEvent(self, event):
+        
+        if self.eventHandler is None:
+            super().mouseDoubleClickEvent(event)
+        else:
+            self.eventHandler.itemMouseDoubleClickEvent(event)
+
+
+class ImageViewCursor():
+    &#34;&#34;&#34;Base class for ImageView Cursor Tools.
+    
+    Features
+    --------
+    Show pixel value: hover over image
+    Pan: one-finger mouse move with left button held
+    Window: one-finger mouse move with right button held
+    Zoom: two-finger up/down or mouse wheel event
+    Zoom in: double-click left mouse button
+    Zoom out: double-click right mouse button
+
+    Can be subclassed to create tools that edit the mask 
+    (e.g. to paint, erase or draw)
+    &#34;&#34;&#34;
+
+    def __init__(self): 
+
+        contrastPixMap = QPixmap(icons.contrast)
+        handPointPixMap = QPixmap(icons.hand_point_090)
+        arrowMovePixMap = QPixmap(icons.arrow_move)
+
+        self.contrastCursor = QCursor(contrastPixMap, hotX=4, hotY=0)
+        self.handPointCursor = QCursor(handPointPixMap, hotX=4, hotY=0)
+        self.arrowMoveCursor = QCursor(arrowMovePixMap, hotX=4, hotY=0)
+
+        self.cursor = QCursor(handPointPixMap, hotX=4, hotY=0)
+        self.icon = QIcon(handPointPixMap)
+        self.toolTip = &#34;Cursor&#34; 
+        self.view = None
+        self.x = None
+        self.y = None
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        self.view = imageView
+        self.view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        self.item = imageView.imageItem
+        self.item.setAcceptHoverEvents(True)
+        self.item.setEventHandler(self)
+
+       # self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+        #QScroller.grabGesture(self.viewport(), QScroller.LeftMouseButtonGesture)
+        #QScroller.grabGesture(self.viewport(), QScroller.TouchGesture)
+
+    def paint(self, painter, option, widget):
+        pass
+             
+    def itemHoverEnterEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.item.setCursor(self.cursor)
+        self.view.mousePositionMoved.emit()
+        
+    def itemHoverLeaveEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.view.mousePositionMoved.emit()
+
+    def itemHoverMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.view.mousePositionMoved.emit()
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.item.setCursor(self.arrowMoveCursor)
+        elif button == Qt.RightButton:
+            self.item.setCursor(self.contrastCursor)
+
+    def itemMouseReleaseEvent(self, event):
+
+        self.item.setCursor(self.handPointCursor)
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.buttons()
+        if button == Qt.LeftButton:
+            self.pan(event)
+        elif button == Qt.RightButton:
+            self.window(event)
+
+    def itemWheelEvent(self, event):
+
+        if event.delta() &lt; 0:
+            zoomFactor = 1.25
+        else:
+            zoomFactor = 1/1.25
+        self.view.scale(zoomFactor, zoomFactor)
+
+    def itemMouseDoubleClickEvent(self, event):
+        pass
+
+    def pan(self, event):
+        &#34;&#34;&#34;Pan the image
+        
+        Note: this can be implemented more easily as
+        self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+        but reimplemented here to control the cursor and as a template
+        &#34;&#34;&#34;
+
+        distance = event.screenPos() - event.lastScreenPos()
+        self.item.blockSignals(True)
+        hBar = self.view.horizontalScrollBar()
+        vBar = self.view.verticalScrollBar()
+        hBar.setValue(hBar.value() - distance.x())
+        vBar.setValue(vBar.value() - distance.y())
+        self.item.blockSignals(False)
+
+    def window(self, event):
+        &#34;&#34;&#34;Change intensity and contrast&#34;&#34;&#34;
+
+        image = self.item.image
+        if image is None: return
+        distance = event.screenPos() - event.lastScreenPos()
+        center = image.WindowCenter
+        width = image.WindowWidth
+        if float(center / image.Columns) &gt; 0.01:
+            step_y = float(center / image.Columns)
+        else:
+            step_y = 0.01
+        if float(width / image.Rows) &gt; 0.01:
+            step_x = float(width/ image.Rows)
+        else:
+            step_x = 0.01
+        horizontalDiff = step_y * distance.y()
+        verticalDiff = step_x * distance.x()
+        newCenter = center + horizontalDiff
+        newWidth = width + verticalDiff
+        image.WindowCenter = newCenter
+        image.WindowWidth = newWidth
+#        print(center-width/2, center+width/2)
+        self.item._setPixMap()
+        self.item.update()
+        self.view.imageUpdated.emit()
+
+
+class ImageViewZoom(ImageViewCursor):
+    &#34;&#34;&#34;Provides zoom/pan/windowing functionality for a MaskOverlay.
+    
+    Features
+    --------
+    Keeps track of cursor position and emits a signal when 
+    it has changed.
+    
+    Comes with a zoom and windowing tool: 
+    &gt;&gt;&gt; Left click to zoom in.
+    &gt;&gt;&gt; Right click to zoom out.
+    &gt;&gt;&gt; Left drag to shift image (pan)
+    &gt;&gt;&gt; Right drag to change contrast and window.
+
+    MaskOverlay can be subclassed to create tools that edit the mask 
+    (e.g. to paint, erase or draw)
+    &#34;&#34;&#34;
+
+    def __init__(self): 
+        super().__init__()
+
+        pixMap = QPixmap(icons.magnifier)
+        self.magnifierCursor = QCursor(pixMap, hotX=10, hotY=4)
+        self.cursor = QCursor(pixMap, hotX=10, hotY=4)
+        self.icon = QIcon(pixMap)
+        self.toolTip = &#39;Zoom tool&#39;
+        self.x0 = None
+        self.y0 = None
+
+    def paint(self, painter, option, widget):
+
+        if self.x0 is not None:
+            width = self.x - self.x0
+            height = self.y - self.y0
+            pen = QPen()
+            pen.setColor(QColor(Qt.white))
+            pen.setWidth(0)
+            painter.setPen(pen)
+            painter.drawRect(self.x0, self.y0, width, height)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.x0 = self.x
+            self.y0 = self.y
+
+    def itemMouseReleaseEvent(self, event):
+
+        if event.button() == Qt.LeftButton:
+            if self.x0 is not None:
+                width = self.x - self.x0
+                height = self.y - self.y0
+                self.view.fitInView(self.x0, self.y0, width, height, Qt.KeepAspectRatio)
+        elif event.button() == Qt.RightButton:
+            self.view.fitInView(self.item, Qt.KeepAspectRatio)
+        self.x0 = None
+        self.y0 = None
+        self.item.setCursor(self.cursor)
+        self.item.update()
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.buttons()
+        if button == Qt.LeftButton:
+            self.item.update()
+
+    def itemWheelEvent(self, event):
+
+        super(self.item.__class__, self.item).wheelEvent(event)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="weasel.wewidgets.image_view.ImageView"><code class="flex name class">
+<span>class <span class="ident">ImageView</span></span>
+<span>(</span><span>image=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wrapper for ImageItem displaying it in a scrollable Widget</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ImageView(QGraphicsView):
+    &#34;&#34;&#34;Wrapper for ImageItem displaying it in a scrollable Widget&#34;&#34;&#34;
+
+    imageUpdated = pyqtSignal()
+    mousePositionMoved = pyqtSignal()
+
+    def __init__(self, image=None): 
+        super().__init__()
+      
+        self.imageItem = ImageItem(image)
+        self.scene = QGraphicsScene(self)
+        self.scene.addItem(self.imageItem)
+        self.setScene(self.scene)
+        self.setBackgroundBrush(QBrush(Qt.black))
+        self.fitInView(self.imageItem, Qt.KeepAspectRatio)
+
+    def setEventHandler(self, eventHandler):
+
+        self.eventHandler = eventHandler
+        eventHandler.setView(self)
+        
+    def setData(self, image):
+
+        self.imageItem.setData(image)
+
+    def getImage(self):
+
+        return self.imageItem.image
+
+    @property
+    def image(self):
+
+        return self.imageItem.image</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>PyQt5.QtWidgets.QGraphicsView</li>
+<li>PyQt5.QtWidgets.QAbstractScrollArea</li>
+<li>PyQt5.QtWidgets.QFrame</li>
+<li>PyQt5.QtWidgets.QWidget</li>
+<li>PyQt5.QtCore.QObject</li>
+<li>sip.wrapper</li>
+<li>PyQt5.QtGui.QPaintDevice</li>
+<li>sip.simplewrapper</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.mask_view.MaskView" href="mask_view.html#weasel.wewidgets.mask_view.MaskView">MaskView</a></li>
+</ul>
+<h3>Instance variables</h3>
+<dl>
+<dt id="weasel.wewidgets.image_view.ImageView.image"><code class="name">var <span class="ident">image</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def image(self):
+
+    return self.imageItem.image</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.image_view.ImageView.imageUpdated"><code class="name flex">
+<span>def <span class="ident">imageUpdated</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageView.mousePositionMoved"><code class="name flex">
+<span>def <span class="ident">mousePositionMoved</span></span>(<span>...)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageView.setEventHandler"><code class="name flex">
+<span>def <span class="ident">setEventHandler</span></span>(<span>self, eventHandler)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setEventHandler(self, eventHandler):
+
+    self.eventHandler = eventHandler
+    eventHandler.setView(self)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageView.setData"><code class="name flex">
+<span>def <span class="ident">setData</span></span>(<span>self, image)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setData(self, image):
+
+    self.imageItem.setData(image)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageView.getImage"><code class="name flex">
+<span>def <span class="ident">getImage</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def getImage(self):
+
+    return self.imageItem.image</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor"><code class="flex name class">
+<span>class <span class="ident">ImageViewCursor</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for ImageView Cursor Tools.</p>
+<h2 id="features">Features</h2>
+<p>Show pixel value: hover over image
+Pan: one-finger mouse move with left button held
+Window: one-finger mouse move with right button held
+Zoom: two-finger up/down or mouse wheel event
+Zoom in: double-click left mouse button
+Zoom out: double-click right mouse button</p>
+<p>Can be subclassed to create tools that edit the mask
+(e.g. to paint, erase or draw)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ImageViewCursor():
+    &#34;&#34;&#34;Base class for ImageView Cursor Tools.
+    
+    Features
+    --------
+    Show pixel value: hover over image
+    Pan: one-finger mouse move with left button held
+    Window: one-finger mouse move with right button held
+    Zoom: two-finger up/down or mouse wheel event
+    Zoom in: double-click left mouse button
+    Zoom out: double-click right mouse button
+
+    Can be subclassed to create tools that edit the mask 
+    (e.g. to paint, erase or draw)
+    &#34;&#34;&#34;
+
+    def __init__(self): 
+
+        contrastPixMap = QPixmap(icons.contrast)
+        handPointPixMap = QPixmap(icons.hand_point_090)
+        arrowMovePixMap = QPixmap(icons.arrow_move)
+
+        self.contrastCursor = QCursor(contrastPixMap, hotX=4, hotY=0)
+        self.handPointCursor = QCursor(handPointPixMap, hotX=4, hotY=0)
+        self.arrowMoveCursor = QCursor(arrowMovePixMap, hotX=4, hotY=0)
+
+        self.cursor = QCursor(handPointPixMap, hotX=4, hotY=0)
+        self.icon = QIcon(handPointPixMap)
+        self.toolTip = &#34;Cursor&#34; 
+        self.view = None
+        self.x = None
+        self.y = None
+
+    def setView(self, imageView):
+        &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+        self.view = imageView
+        self.view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        self.item = imageView.imageItem
+        self.item.setAcceptHoverEvents(True)
+        self.item.setEventHandler(self)
+
+       # self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+        #QScroller.grabGesture(self.viewport(), QScroller.LeftMouseButtonGesture)
+        #QScroller.grabGesture(self.viewport(), QScroller.TouchGesture)
+
+    def paint(self, painter, option, widget):
+        pass
+             
+    def itemHoverEnterEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.item.setCursor(self.cursor)
+        self.view.mousePositionMoved.emit()
+        
+    def itemHoverLeaveEvent(self, event):
+        
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.view.mousePositionMoved.emit()
+
+    def itemHoverMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        self.view.mousePositionMoved.emit()
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.item.setCursor(self.arrowMoveCursor)
+        elif button == Qt.RightButton:
+            self.item.setCursor(self.contrastCursor)
+
+    def itemMouseReleaseEvent(self, event):
+
+        self.item.setCursor(self.handPointCursor)
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.buttons()
+        if button == Qt.LeftButton:
+            self.pan(event)
+        elif button == Qt.RightButton:
+            self.window(event)
+
+    def itemWheelEvent(self, event):
+
+        if event.delta() &lt; 0:
+            zoomFactor = 1.25
+        else:
+            zoomFactor = 1/1.25
+        self.view.scale(zoomFactor, zoomFactor)
+
+    def itemMouseDoubleClickEvent(self, event):
+        pass
+
+    def pan(self, event):
+        &#34;&#34;&#34;Pan the image
+        
+        Note: this can be implemented more easily as
+        self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+        but reimplemented here to control the cursor and as a template
+        &#34;&#34;&#34;
+
+        distance = event.screenPos() - event.lastScreenPos()
+        self.item.blockSignals(True)
+        hBar = self.view.horizontalScrollBar()
+        vBar = self.view.verticalScrollBar()
+        hBar.setValue(hBar.value() - distance.x())
+        vBar.setValue(vBar.value() - distance.y())
+        self.item.blockSignals(False)
+
+    def window(self, event):
+        &#34;&#34;&#34;Change intensity and contrast&#34;&#34;&#34;
+
+        image = self.item.image
+        if image is None: return
+        distance = event.screenPos() - event.lastScreenPos()
+        center = image.WindowCenter
+        width = image.WindowWidth
+        if float(center / image.Columns) &gt; 0.01:
+            step_y = float(center / image.Columns)
+        else:
+            step_y = 0.01
+        if float(width / image.Rows) &gt; 0.01:
+            step_x = float(width/ image.Rows)
+        else:
+            step_x = 0.01
+        horizontalDiff = step_y * distance.y()
+        verticalDiff = step_x * distance.x()
+        newCenter = center + horizontalDiff
+        newWidth = width + verticalDiff
+        image.WindowCenter = newCenter
+        image.WindowWidth = newWidth
+#        print(center-width/2, center+width/2)
+        self.item._setPixMap()
+        self.item.update()
+        self.view.imageUpdated.emit()</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.image_view.ImageViewZoom" href="#weasel.wewidgets.image_view.ImageViewZoom">ImageViewZoom</a></li>
+<li><a title="weasel.wewidgets.mask_view.MaskViewBrush" href="mask_view.html#weasel.wewidgets.mask_view.MaskViewBrush">MaskViewBrush</a></li>
+<li><a title="weasel.wewidgets.mask_view.MaskViewPenFreehand" href="mask_view.html#weasel.wewidgets.mask_view.MaskViewPenFreehand">MaskViewPenFreehand</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.setView"><code class="name flex">
+<span>def <span class="ident">setView</span></span>(<span>self, imageView)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Assign an ImageView instance to handle</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setView(self, imageView):
+    &#34;&#34;&#34;Assign an ImageView instance to handle&#34;&#34;&#34;
+
+    self.view = imageView
+    self.view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+    self.view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+    self.item = imageView.imageItem
+    self.item.setAcceptHoverEvents(True)
+    self.item.setEventHandler(self)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paint(self, painter, option, widget):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemHoverEnterEvent"><code class="name flex">
+<span>def <span class="ident">itemHoverEnterEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemHoverEnterEvent(self, event):
+    
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    self.item.setCursor(self.cursor)
+    self.view.mousePositionMoved.emit()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemHoverLeaveEvent"><code class="name flex">
+<span>def <span class="ident">itemHoverLeaveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemHoverLeaveEvent(self, event):
+    
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    self.view.mousePositionMoved.emit()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemHoverMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemHoverMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemHoverMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    self.view.mousePositionMoved.emit()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.button()
+    if button == Qt.LeftButton:
+        self.item.setCursor(self.arrowMoveCursor)
+    elif button == Qt.RightButton:
+        self.item.setCursor(self.contrastCursor)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemMouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseReleaseEvent(self, event):
+
+    self.item.setCursor(self.handPointCursor)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.buttons()
+    if button == Qt.LeftButton:
+        self.pan(event)
+    elif button == Qt.RightButton:
+        self.window(event)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemWheelEvent"><code class="name flex">
+<span>def <span class="ident">itemWheelEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemWheelEvent(self, event):
+
+    if event.delta() &lt; 0:
+        zoomFactor = 1.25
+    else:
+        zoomFactor = 1/1.25
+    self.view.scale(zoomFactor, zoomFactor)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.itemMouseDoubleClickEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseDoubleClickEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseDoubleClickEvent(self, event):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.pan"><code class="name flex">
+<span>def <span class="ident">pan</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Pan the image</p>
+<p>Note: this can be implemented more easily as
+self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+but reimplemented here to control the cursor and as a template</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def pan(self, event):
+    &#34;&#34;&#34;Pan the image
+    
+    Note: this can be implemented more easily as
+    self.view.setDragMode(QGraphicsView.ScrollHandDrag)
+    but reimplemented here to control the cursor and as a template
+    &#34;&#34;&#34;
+
+    distance = event.screenPos() - event.lastScreenPos()
+    self.item.blockSignals(True)
+    hBar = self.view.horizontalScrollBar()
+    vBar = self.view.verticalScrollBar()
+    hBar.setValue(hBar.value() - distance.x())
+    vBar.setValue(vBar.value() - distance.y())
+    self.item.blockSignals(False)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewCursor.window"><code class="name flex">
+<span>def <span class="ident">window</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Change intensity and contrast</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">    def window(self, event):
+        &#34;&#34;&#34;Change intensity and contrast&#34;&#34;&#34;
+
+        image = self.item.image
+        if image is None: return
+        distance = event.screenPos() - event.lastScreenPos()
+        center = image.WindowCenter
+        width = image.WindowWidth
+        if float(center / image.Columns) &gt; 0.01:
+            step_y = float(center / image.Columns)
+        else:
+            step_y = 0.01
+        if float(width / image.Rows) &gt; 0.01:
+            step_x = float(width/ image.Rows)
+        else:
+            step_x = 0.01
+        horizontalDiff = step_y * distance.y()
+        verticalDiff = step_x * distance.x()
+        newCenter = center + horizontalDiff
+        newWidth = width + verticalDiff
+        image.WindowCenter = newCenter
+        image.WindowWidth = newWidth
+#        print(center-width/2, center+width/2)
+        self.item._setPixMap()
+        self.item.update()
+        self.view.imageUpdated.emit()</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom"><code class="flex name class">
+<span>class <span class="ident">ImageViewZoom</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Provides zoom/pan/windowing functionality for a MaskOverlay.</p>
+<h2 id="features">Features</h2>
+<p>Keeps track of cursor position and emits a signal when
+it has changed.</p>
+<p>Comes with a zoom and windowing tool: </p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Left click to zoom in.
+&gt;&gt;&gt; Right click to zoom out.
+&gt;&gt;&gt; Left drag to shift image (pan)
+&gt;&gt;&gt; Right drag to change contrast and window.
+</code></pre>
+<p>MaskOverlay can be subclassed to create tools that edit the mask
+(e.g. to paint, erase or draw)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class ImageViewZoom(ImageViewCursor):
+    &#34;&#34;&#34;Provides zoom/pan/windowing functionality for a MaskOverlay.
+    
+    Features
+    --------
+    Keeps track of cursor position and emits a signal when 
+    it has changed.
+    
+    Comes with a zoom and windowing tool: 
+    &gt;&gt;&gt; Left click to zoom in.
+    &gt;&gt;&gt; Right click to zoom out.
+    &gt;&gt;&gt; Left drag to shift image (pan)
+    &gt;&gt;&gt; Right drag to change contrast and window.
+
+    MaskOverlay can be subclassed to create tools that edit the mask 
+    (e.g. to paint, erase or draw)
+    &#34;&#34;&#34;
+
+    def __init__(self): 
+        super().__init__()
+
+        pixMap = QPixmap(icons.magnifier)
+        self.magnifierCursor = QCursor(pixMap, hotX=10, hotY=4)
+        self.cursor = QCursor(pixMap, hotX=10, hotY=4)
+        self.icon = QIcon(pixMap)
+        self.toolTip = &#39;Zoom tool&#39;
+        self.x0 = None
+        self.y0 = None
+
+    def paint(self, painter, option, widget):
+
+        if self.x0 is not None:
+            width = self.x - self.x0
+            height = self.y - self.y0
+            pen = QPen()
+            pen.setColor(QColor(Qt.white))
+            pen.setWidth(0)
+            painter.setPen(pen)
+            painter.drawRect(self.x0, self.y0, width, height)
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.button()
+        if button == Qt.LeftButton:
+            self.x0 = self.x
+            self.y0 = self.y
+
+    def itemMouseReleaseEvent(self, event):
+
+        if event.button() == Qt.LeftButton:
+            if self.x0 is not None:
+                width = self.x - self.x0
+                height = self.y - self.y0
+                self.view.fitInView(self.x0, self.y0, width, height, Qt.KeepAspectRatio)
+        elif event.button() == Qt.RightButton:
+            self.view.fitInView(self.item, Qt.KeepAspectRatio)
+        self.x0 = None
+        self.y0 = None
+        self.item.setCursor(self.cursor)
+        self.item.update()
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        button = event.buttons()
+        if button == Qt.LeftButton:
+            self.item.update()
+
+    def itemWheelEvent(self, event):
+
+        super(self.item.__class__, self.item).wheelEvent(event)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="weasel.wewidgets.image_view.ImageViewCursor" href="#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom.paint"><code class="name flex">
+<span>def <span class="ident">paint</span></span>(<span>self, painter, option, widget)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def paint(self, painter, option, widget):
+
+    if self.x0 is not None:
+        width = self.x - self.x0
+        height = self.y - self.y0
+        pen = QPen()
+        pen.setColor(QColor(Qt.white))
+        pen.setWidth(0)
+        painter.setPen(pen)
+        painter.drawRect(self.x0, self.y0, width, height)</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom.itemMousePressEvent"><code class="name flex">
+<span>def <span class="ident">itemMousePressEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMousePressEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.button()
+    if button == Qt.LeftButton:
+        self.x0 = self.x
+        self.y0 = self.y</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom.itemMouseReleaseEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseReleaseEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseReleaseEvent(self, event):
+
+    if event.button() == Qt.LeftButton:
+        if self.x0 is not None:
+            width = self.x - self.x0
+            height = self.y - self.y0
+            self.view.fitInView(self.x0, self.y0, width, height, Qt.KeepAspectRatio)
+    elif event.button() == Qt.RightButton:
+        self.view.fitInView(self.item, Qt.KeepAspectRatio)
+    self.x0 = None
+    self.y0 = None
+    self.item.setCursor(self.cursor)
+    self.item.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom.itemMouseMoveEvent"><code class="name flex">
+<span>def <span class="ident">itemMouseMoveEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemMouseMoveEvent(self, event):
+
+    self.x = int(event.pos().x())
+    self.y = int(event.pos().y())
+    button = event.buttons()
+    if button == Qt.LeftButton:
+        self.item.update()</code></pre>
+</details>
+</dd>
+<dt id="weasel.wewidgets.image_view.ImageViewZoom.itemWheelEvent"><code class="name flex">
+<span>def <span class="ident">itemWheelEvent</span></span>(<span>self, event)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def itemWheelEvent(self, event):
+
+    super(self.item.__class__, self.item).wheelEvent(event)</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="weasel.wewidgets.image_view.ImageViewCursor" href="#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></b></code>:
+<ul class="hlist">
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.pan" href="#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.setView" href="#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.window" href="#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="weasel.wewidgets" href="index.html">weasel.wewidgets</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="weasel.wewidgets.image_view.ImageView" href="#weasel.wewidgets.image_view.ImageView">ImageView</a></code></h4>
+<ul class="two-column">
+<li><code><a title="weasel.wewidgets.image_view.ImageView.imageUpdated" href="#weasel.wewidgets.image_view.ImageView.imageUpdated">imageUpdated</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageView.mousePositionMoved" href="#weasel.wewidgets.image_view.ImageView.mousePositionMoved">mousePositionMoved</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageView.setEventHandler" href="#weasel.wewidgets.image_view.ImageView.setEventHandler">setEventHandler</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageView.setData" href="#weasel.wewidgets.image_view.ImageView.setData">setData</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageView.getImage" href="#weasel.wewidgets.image_view.ImageView.getImage">getImage</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageView.image" href="#weasel.wewidgets.image_view.ImageView.image">image</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.image_view.ImageViewCursor" href="#weasel.wewidgets.image_view.ImageViewCursor">ImageViewCursor</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.setView" href="#weasel.wewidgets.image_view.ImageViewCursor.setView">setView</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.paint" href="#weasel.wewidgets.image_view.ImageViewCursor.paint">paint</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemHoverEnterEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemHoverEnterEvent">itemHoverEnterEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemHoverLeaveEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemHoverLeaveEvent">itemHoverLeaveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemHoverMoveEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemHoverMoveEvent">itemHoverMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemMousePressEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemMouseReleaseEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemMouseReleaseEvent">itemMouseReleaseEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemMouseMoveEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemWheelEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemWheelEvent">itemWheelEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.itemMouseDoubleClickEvent" href="#weasel.wewidgets.image_view.ImageViewCursor.itemMouseDoubleClickEvent">itemMouseDoubleClickEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.pan" href="#weasel.wewidgets.image_view.ImageViewCursor.pan">pan</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewCursor.window" href="#weasel.wewidgets.image_view.ImageViewCursor.window">window</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="weasel.wewidgets.image_view.ImageViewZoom" href="#weasel.wewidgets.image_view.ImageViewZoom">ImageViewZoom</a></code></h4>
+<ul class="">
+<li><code><a title="weasel.wewidgets.image_view.ImageViewZoom.paint" href="#weasel.wewidgets.image_view.ImageViewZoom.paint">paint</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewZoom.itemMousePressEvent" href="#weasel.wewidgets.image_view.ImageViewZoom.itemMousePressEvent">itemMousePressEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewZoom.itemMouseReleaseEvent" href="#weasel.wewidgets.image_view.ImageViewZoom.itemMouseReleaseEvent">itemMouseReleaseEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewZoom.itemMouseMoveEvent" href="#weasel.wewidgets.image_view.ImageViewZoom.itemMouseMoveEvent">itemMouseMoveEvent</a></code></li>
+<li><code><a title="weasel.wewidgets.image_view.ImageViewZoom.itemWheelEvent" href="#weasel.wewidgets.image_view.ImageViewZoom.itemWheelEvent">itemWheelEvent</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
