@@ -69,9 +69,67 @@ class Merge(Action):
         if data.empty: return False
         return data.checked.any()
 
-    def run(self, app):
+    def run(self, app): # temporary - joining series (slow)
 
         app.status.message('Merging..')
+
+        series_list = app.folder.series(checked=True)
+        merged = series_list[0].new_sibling()
+        #parent = merged.parent # should not be a property
+        nr = str(len(series_list))
+        for j, series in enumerate(series_list):
+            msg = 'Merging series ' + series.label() + ' (' + str(j+1) + ' of ' + nr + ')'
+            #series.copy_to(parent, message=msg, UID=merged.UID[-1])
+            series.merge_with(merged, message=msg)
+#            children = series.children()
+#            for i, child in enumerate(children):
+#                app.status.progress(i, len(children), message=msg)
+#                child.copy_to(merged)
+        app.status.hide()
+        app.refresh()
+
+    def run_draft(self, weasel): # Should be faster if not done one-by-one
+
+        df = weasel.folder.data()
+        df = df[df['checked']==True]
+
+        id = df.SeriesInstanceUID.unique()
+        if len(id) == 1:
+            msg = 'The selected images are already merged.'
+            msg = '\n Use group to combine them in a new series.'
+            weasel.dialog.information(msg)
+            return
+        series_id = weasel.folder.new_uid()
+
+        id = df.StudyInstanceUID.unique()
+        if len(id) == 1:    # series in the same study
+            study_id = id[0]
+            patient_id = df.iloc[0].PatientID
+        else:               # series in different studies
+            study_id = weasel.folder.new_uid()
+            id = df.PatientID.unique()
+            if len(id) == 1:    # different studies of the same patient
+                patient_id = id[0]
+            else:               # studies in different patients
+                patient_id = weasel.folder.new_uid()
+
+        dfmerge = df.copy(deep=True)
+        dfmerge['files'] = [weasel.folder.new_file() for _ in range(df.shape[0])]
+        dfmerge.set_index('files', inplace=True)
+        dfmerge.PatientID = patient_id      # dropped .values[:]
+        dfmerge.StudyInstanceUID = study_id
+        dfmerge.SeriesInstanceUID = series_id
+        dfmerge.SOPInstanceUID = [weasel.folder.new_uid() for _ in range(df.shape[0])]
+        dfmerge.checked = True
+        dfmerge.removed = False
+        dfmerge.created = True
+
+        for i in range(df.shape[0]):
+            pass # copy file
+
+
+    def run_orig(self, app): #More general but needs debugging
+
         unchecked = [app.folder]
         
         unchecked = self.merge_children(unchecked)
@@ -119,6 +177,9 @@ class Merge(Action):
         return parent.new_child()
 
     def parents(self, objects):
+
+        parents = [obj.parent for obj in objects]
+        return list(set(parents))
 
         parents = []
         for obj in objects:

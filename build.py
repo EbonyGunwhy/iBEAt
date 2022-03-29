@@ -1,4 +1,5 @@
 import weasel
 
-weasel.doc()
-#weasel.build('myproject', terminal=True, onefile=True)
+#weasel.doc()
+#weasel.install()
+#weasel.build('iBEAt_pilot', terminal=False, onefile=True)

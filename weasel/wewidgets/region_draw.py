@@ -17,8 +17,9 @@ class SeriesViewerROI(QWidget):
     def __init__(self, series): 
         super().__init__()
 
-        if series.on_disk(): 
-            series.read()
+        #Faster access but loading times are prohibitive for large series
+        #if series.on_disk(): 
+        #    series.read()
 
         self._defineWidgets(series)
         self._defineLayout()

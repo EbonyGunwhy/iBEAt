@@ -36,6 +36,7 @@ class DICOMFolderTree(QTreeWidget):
         s=0
         self.blockSignals(True)
         self.clear()
+        self.folder.sortby(['StudyDate','SeriesNumber','AcquisitionTime'])
         for patient in self.folder.patients():
             patientWidgetItem = _treeWidgetItem(patient,  self)
             for study in patient.studies():
@@ -151,7 +152,7 @@ def _set_check_state(item, checked):
     else: 
         item.setCheckState(0, Qt.Unchecked)
 
-# Does not need to be saved in the dataframe. 
+# TODO: Does not need to be saved in the dataframe. 
 # Retrieve on demand
 
 def _save_checked(item): 

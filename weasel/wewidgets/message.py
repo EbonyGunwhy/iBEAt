@@ -122,8 +122,9 @@ class StatusBar(QStatusBar):
         self.showMessage(message)
         QApplication.processEvents() # allow gui to update
 
-    def progress(self, value, total):
+    def progress(self, value, total, message=None):
 
+        if message is not None: self.message(message)
         self.progressBar.show()
         self.progressBar.setRange(0, total)
         self.progressBar.setValue(value)

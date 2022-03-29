@@ -22,12 +22,12 @@ class Open(Action):
         """
         app.status.message("Opening DICOM folder..")
         path = app.dialog.directory("Select a DICOM folder")
-        if path == '': return
+        if path == '':
+            app.status.message('') 
+            return
         app.status.cursorToHourglass()
         app.close()
-        app.folder.open(path)
-        app.menubar.enable()
-        app.display(app.folder)
+        app.open(path)
         app.status.cursorToNormal()
 
 

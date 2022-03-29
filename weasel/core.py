@@ -82,7 +82,9 @@ class App:
 
     def set_app(self, App):
         weasel = self.weasel
-        weasel.app = App(weasel)  
+        weasel.app = App(weasel) 
+        self.__class__ = App 
+        self.__dict__ = weasel.app.__dict__
         return weasel.app   
 
     def close(self):

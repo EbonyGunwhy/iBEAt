@@ -126,7 +126,7 @@ class Instance(Record):
             self.dialog.information(message)            
         return self.ds # return self instead so read can be piped: series.read().copy_to(parent)
 
-    def copy_to(self, ancestor):
+    def _copy_to_OBSOLETE(self, ancestor): # Replaced by copy_to in record
         """copy instance to a new ancestor.
         
         dicom_object: Root, Patient, Study, or Series
@@ -155,7 +155,7 @@ class Instance(Record):
             
         return copy
 
-    def save(self):
+    def save_OBSOLETE(self):
         """
         Saves all changes made in the instance
         """
@@ -195,7 +195,7 @@ class Instance(Record):
         elif not created.empty: # instance has been newly created
             self.folder.dataframe.loc[created.index, 'created'] = False
 
-    def restore(self):
+    def restore_OBSOLETE(self):
         """
         Reverses all changes made since the last save.
         """
@@ -236,6 +236,9 @@ class Instance(Record):
 
     def _initialize(self, ref_ds=None):
         """Initialize the attributes relevant for the Images"""
+
+        self.ds = utilities.initialize(self.ds, UID=self.UID, ref=ref_ds)
+        return
 
         # overwrite UIDs
         self.ds.PatientID = self.UID[0]

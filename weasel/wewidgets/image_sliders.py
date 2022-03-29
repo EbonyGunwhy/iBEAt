@@ -3,25 +3,19 @@ __all__ = ['ImageSliders']
 import pandas as pd
 
 from PyQt5.QtCore import  Qt, pyqtSignal
-from PyQt5.QtWidgets import (QWidget,
-                            QHBoxLayout,
-                            QPushButton)
+from PyQt5.QtWidgets import (
+    QWidget, QHBoxLayout, QPushButton,
+    )
 from PyQt5.QtGui import QIcon
 
 from .. import wewidgets as widgets
-
-demoTags = [
-    "AcquisitionTime", "SliceLocation", "AcquisitionNumber", 
-    "FlipAngle", "InversionTime", "EchoTime", "DiffusionBValue", 
-    "DiffusionGradientOrientation", (0x2005, 0x1572)] 
-
 
 class ImageSliders(QWidget):
     """Widget with sliders to navigate through a DICOM series."""
 
     valueChanged = pyqtSignal()
 
-    def __init__(self, series=None, image=None, tags=demoTags):   
+    def __init__(self, series=None, image=None, tags=["AcquisitionTime", "SliceLocation"]):  
         super().__init__()
 
         self.sliderTags = tags
@@ -104,16 +98,20 @@ class ImageSliders(QWidget):
         Drop tags that are not present in every instance. 
         Drop tags that appear only once.
         """
-        sortby = "InstanceNumber"
-        identifier = 'SOPInstanceUID'
-        tags = self.sliderTags.copy()
-        tags.append(sortby) 
-        tags.append(identifier) 
+        # Add all default tags in the registry and get values
+        tags = self.sliderTags.copy()  
+        tags = list(set(tags + list(self.series.folder.dataframe)))
         if self.series is None:
             self.dataFrame = pd.DataFrame([], index=[], columns=tags)
         else:
-            self.dataFrame = self.series.read_dataframe(tags) 
-        self.dataFrame.sort_values(sortby, inplace=True)
+            # If all required tags are in the register,
+            # then just extract the register for the series;
+            # else read the data from disk.
+            if set(tags) == set(self.series.folder.dataframe):
+                self.dataFrame = self.series.data()
+            else: 
+                self.dataFrame = self.series.read_dataframe(tags)  
+        self.dataFrame.sort_values("InstanceNumber", inplace=True)
         self.dataFrame.dropna(axis=1, inplace=True)  
         self.dataFrame.reset_index()
         # remove tags with one unique value  
@@ -193,7 +191,7 @@ class ImageSliders(QWidget):
 
         imageUIDs = self._getAllSelectedImages()
         index = self.sliders[0].value()
-        self.image = self.series.children(SOPInstanceUID = imageUIDs[index])[0]
+        self._set_image(imageUIDs[index])
         self.valueChanged.emit()
 
     def _sliderValueChanged(self):  
@@ -204,14 +202,24 @@ class ImageSliders(QWidget):
             self.image = None
             self.sliders[0].hide()
         elif len(imageUIDs) == 1:
-            self.image = self.series.children(SOPInstanceUID = imageUIDs[0])[0]
+            #self.image = self.series.children(SOPInstanceUID = imageUIDs[0])[0]
+            self._set_image(imageUIDs[0])
             self.sliders[0].hide()
         else:
             self.sliders[0].setValues(range(len(imageUIDs)))
             index = self.sliders[0].value()
-            self.image = self.series.children(SOPInstanceUID = imageUIDs[index])[0]
+            # self.image = self.series.children(SOPInstanceUID = imageUIDs[index])[0]
+            self._set_image(imageUIDs[index])
             self.sliders[0].show()
         self.valueChanged.emit()
+
+    def _set_image(self, SOPInstanceUID):
+        """
+        Set image based on its UID
+        """
+        df = self.dataFrame[self.dataFrame.SOPInstanceUID == SOPInstanceUID]
+        self.image = self.series.dicm.object(self.series.folder, df.iloc[0], 4)
+#        self.image = self.series.children(SOPInstanceUID = imageUIDs[index])[0]
 
     def _getAllSelectedImages(self):
         """Get the list of all image files selected by the optional sliders"""

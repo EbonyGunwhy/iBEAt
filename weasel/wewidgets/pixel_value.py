@@ -26,8 +26,8 @@ class PixelValueLabel(QLabel):
             if len(coordinates) == 2:
                 x = coordinates[0]
                 y = coordinates[1]
-                if 0 <= x < self.image.Rows:
-                    if 0 <= y < self.image.Columns:
+                if 0 <= x < self.image.Columns:
+                    if 0 <= y < self.image.Rows:
                         pixelArray = self.image.array()
                         pixelValue = pixelArray[x,y]
                         text = "Signal ({}, {}) = {}".format(x, y, pixelValue)

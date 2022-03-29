@@ -1,9 +1,12 @@
 import os
 import sys
+from datetime import datetime
 import math
 import pathlib
 import subprocess
 import pydicom
+from pydicom.dataset import Dataset
+from pydicom.sequence import Sequence
 import pandas as pd
 import numpy as np
 
@@ -40,9 +43,51 @@ def dataframe(files, tags, status=None):
                 row = _read_tags(ds, tags)
                 array.append(row)
                 dicom_files.append(file)
-        if status is not None: status.progress(i, len(files))
+        if status is not None: status.progress(i+1, len(files))
     if status is not None: status.hide()
     return pd.DataFrame(array, index = dicom_files, columns = tags)
+
+def _initialize(ds, UID=None, ref=None):
+
+    # Date and Time of Creation
+    dt = datetime.now()
+    timeStr = dt.strftime('%H%M%S')  # long format with micro seconds
+
+    ds.ContentDate = dt.strftime('%Y%m%d')
+    ds.ContentTime = timeStr
+    ds.AcquisitionDate = dt.strftime('%Y%m%d')
+    ds.AcquisitionTime = timeStr
+    ds.SeriesDate = dt.strftime('%Y%m%d')
+    ds.SeriesTime = timeStr
+    ds.InstanceCreationDate = dt.strftime('%Y%m%d')
+    ds.InstanceCreationTime = timeStr
+
+    if UID is not None:
+
+        # overwrite UIDs
+        ds.PatientID = UID[0]
+        ds.StudyInstanceUID = UID[1]
+        ds.SeriesInstanceUID = UID[2]
+        ds.SOPInstanceUID = UID[3]
+
+    if ref is not None: 
+
+        # Series, Instance and Class for Reference
+        refd_instance = Dataset()
+        refd_instance.ReferencedSOPClassUID = ref.SOPClassUID
+        refd_instance.ReferencedSOPInstanceUID = ref.SOPInstanceUID
+        refd_instance_sequence = Sequence()
+        refd_instance_sequence.append(refd_instance)
+
+        refd_series = Dataset()
+        refd_series.ReferencedInstanceSequence = refd_instance_sequence
+        refd_series.SeriesInstanceUID = ds.SeriesInstanceUID
+        refd_series_sequence = Sequence()
+        refd_series_sequence.append(refd_series)
+
+        ds.ReferencedSeriesSequence = refd_series_sequence
+
+    return ds
 
 def _read_tags(ds, tags):
     """Helper function return a list of values"""

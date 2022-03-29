@@ -1,4 +1,4 @@
-__all__ = ['app', 'doc', 'build']
+__all__ = ['app', 'doc', 'build', 'install']
 
 import os
 import sys
@@ -33,6 +33,29 @@ def app():
 
     return Weasel().app
 
+def activate():
+
+    windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
+    if windows:
+        return '.venv\\scripts\\activate'
+    else: # MacOS and Linux
+        return '.venv/bin/activate' 
+
+
+def install():
+    """Install requirements of weasel and current project"""
+
+    print('Creating virtual environment..')
+    os.system('py -3 -m venv .venv')
+
+    print('Installing weasel requirements..')
+    os.system(activate() + ' && ' + 'py -m pip install -r weasel\\requirements.txt')
+
+    if os.path.exists('requirements.txt'):
+        print('Installing project requirements..')
+        os.system(activate() + ' && ' + 'py -m pip install -r requirements.txt')
+
+
 def doc():
     """Generate weasel documentation"""
 
@@ -42,30 +65,13 @@ def doc():
     # py -m pip install -r requirements.txt
     # pdoc --html -f -c sort_identifiers=False weasel  
 
-    windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
-    if windows:
-        activate = '.venv\\scripts\\activate'
-    else: # MacOS and Linux
-        activate = '.venv/bin/activate' 
-
-    print('Creating virtual environment..')
-    os.system('py -3 -m venv .venv')
-
-    print('Installing requirements..')
-    os.system(activate + ' && ' + 'py -m pip install -r weasel\\requirements.txt')
-
+    install()
     print('Generating documentation..')
-    os.system(activate + ' && ' + 'pdoc --html -f -c sort_identifiers=False weasel')
+    os.system(activate() + ' && ' + 'pdoc --html -f -c sort_identifiers=False weasel')
     
 
 def build(project, onefile=True, terminal=False, data_folders=[]):
     """Generate project executable"""
-
-    # COMMAND LINE SCRIPT
-    # py -3 -m venv .venv
-    # .venv\\scripts\\activate
-    # pip install pyinstaller
-    # pyinstaller config\myproject.py
 
     # COMMENT
     # subprocess.run() is recommended to call commands in python
@@ -73,24 +79,12 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
     # For some reason pip install does not work with subprocess.
     # Using os.system() until this can be resolved.
 
-    windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
-    if windows:
-        activate = '.venv\\scripts\\activate'
-    else: # MacOS and Linux
-        activate = '.venv/bin/activate'
-
-    print('Creating virtual environment..')
-    os.system('py -3 -m venv .venv')
-
-    print('Installing weasel requirements..')
-    os.system(activate + ' && ' + 'py -m pip install -r weasel\\requirements.txt')
-
-    if os.path.exists('requirements.txt'):
-        print('Installing project requirements..')
-        os.system(activate + ' && ' + 'py -m pip install -r requirements.txt')
+    install()
 
 #    hidden_modules = ['matplotlib']
 #    hidden_imports = ' '.join(['--hidden-import '+ mod + ' ' for mod in hidden_modules])
+
+    windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
 
     if windows:
         all_data = [
@@ -106,7 +100,7 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
     add_data = ' '.join(['--add-data='+ mod + ' ' for mod in all_data])
 
     print('Creating executable..')
-    cmd = activate + ' && ' + 'pyinstaller --name "myproject"'
+    cmd = activate() + ' && ' + 'pyinstaller --name "myproject"'
     if onefile: 
         cmd += ' --onefile'
     if not terminal: 

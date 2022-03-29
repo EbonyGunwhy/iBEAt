@@ -35,6 +35,10 @@ class DicomWindows(App):
             self.treeView.setFolder(folder)
         self.menubar.enable()
 
+    def open(self, path):
+        self.folder.open(path)
+        self.display(self.folder)
+
     def close(self):
         """Closes the application."""
 
@@ -44,17 +48,17 @@ class DicomWindows(App):
             for dockwidget in self.main.findChildren(QDockWidget):
                 self.main.removeDockWidget(dockwidget)
             self.menubar.enable()
-            self.set_app(apps.WeaselWelcome)
+        #    self.set_app(apps.WeaselWelcome)
         return accept
 
     def refresh(self):
         """
         Refreshes the Weasel display.
         """
-        self.weasel.status.message('Refreshing display..')
+        self.status.message('Refreshing display..')
         self.treeView.setFolder()
-        self.weasel.menubar.enable()
-        self.weasel.status.message()
+        self.menubar.enable()
+        self.status.message()
 
     def addAsDockWidget(self, widget, title=''):
 
@@ -102,6 +106,7 @@ class DicomWindows(App):
             self.treeView = widgets.DICOMFolderTree(object, self.status)
             self.treeView.itemSelectionChanged.connect(self.menubar.enable)
             self.addAsDockWidget(self.treeView, title=object.path)
+            self.menubar.enable()
         elif object.generation == 1: # No Patient Viewer yet
             pass
         elif object.generation == 2: # No Study Viewer yet

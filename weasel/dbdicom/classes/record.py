@@ -1,7 +1,9 @@
 import os
 import math
+from copy import deepcopy
 import pydicom
 import numpy as np
+import pandas as pd
 from .. import utilities
 
 
@@ -33,14 +35,20 @@ class Record():
         key = ['PatientID', 'StudyInstanceUID', 'SeriesInstanceUID', 'SOPInstanceUID']
         return key[0:self.generation]
 
+    def new_uid(self):
+        
+        return pydicom.uid.generate_uid()
+
     def data(self):
-        """Dataframe with current data - excluding those that were removed"""
+        """Dataframe with current data - excluding those that were removed
+        """
 
         if self.folder.path is None:
             return self.folder.dataframe
         current = self.folder.dataframe.removed == False
         data = self.folder.dataframe[current]
-        if self.UID == []: return data       
+        if self.UID == []: 
+            return data       
         rows = data[self.key[-1]] == self.UID[-1]
         return data[rows]
 
@@ -290,7 +298,7 @@ class Record():
         return self.dicm.parent(self)
         
     def children(self, index=None, checked=None, **kwargs):
-        """List of Patients"""
+        """List of children"""
 
         if self.generation == 4: return []
         if self.in_memory():
@@ -558,7 +566,7 @@ class Record():
         if self.in_memory(): copy.read()
         return copy
 
-    def copy_to(self, ancestor, message=None):
+    def _copy_to_OBSOLETE(self, ancestor, message=None): # functional but slow
         """copy object to a new ancestor.
         
         ancestor: Root, Patient or Study
@@ -579,6 +587,77 @@ class Record():
             child.copy_to(copy)
             self.status.progress(i, len(children))
         self.status.hide()
+        return copy
+
+    def _initialize(self, ref=None):
+
+        if self.generation == 4:
+            self.ds = utilities.initialize(self.ds, UID=self.UID, ref=ref)
+        else:
+            for i, obj in enumerate(self.ds):
+                if ref is not None:
+                    obj._initialize(ref.ds[i])
+                else:
+                    obj._initialize()
+
+    def merge_with(self, obj, message=None):
+
+        if self.generation == 0: return
+        if message is None:
+            message = "Merging " + self.__class__.__name__ + ' ' + self.label()
+        return self._merge_with(obj, obj.parent, message=message)
+
+    def copy_to(self, ancestor, message=None):
+
+        if self.generation == 0: return
+        if message is None:
+            message = "Copying " + self.__class__.__name__ + ' ' + self.label()
+        copy = self.__class__(self.folder, UID=ancestor.UID)
+        return self._merge_with(copy, ancestor, message=message)
+
+    def _merge_with(self, copy, ancestor, message=None):
+
+        if self.in_memory(): # Create the copy in memory
+            copy.__dict__['ds'] = deepcopy(self.ds)
+            copy._initialize(self.ds)
+            if ancestor.in_memory():
+                if ancestor.generation == copy.generation-1:
+                    ancestor.ds.append(copy)
+            return copy
+
+        # Extend dataframe & create new files
+        dfsource = self.data()
+        sourcefiles = dfsource.index.tolist()
+        df = dfsource.copy(deep=True)
+        df['files'] = [self.folder.new_file() for _ in range(df.shape[0])]
+        df.set_index('files', inplace=True)
+        for key in self.folder._columns[self.generation:3]:
+            for id in df[key].unique():
+                uid = self.folder.new_uid()
+                rows = df[key] == id
+                df.loc[rows.index, key] = uid
+            #    for file in rows.index:
+            #        df.at[file, key] = uid
+        df.SOPInstanceUID = self.folder.new_uid(df.shape[0])
+        df.checked = False
+        df.removed = False
+        df.created = True
+        copyfiles = df.index.tolist()
+
+        for i, file in enumerate(copyfiles):
+            self.status.progress(i, len(copyfiles), message=message)
+            df.loc[file, self.folder._columns[0:self.generation]] = copy.UID
+            ds = pydicom.dcmread(sourcefiles[i])
+            ds = utilities._initialize(ds, UID=df.loc[file, self.folder._columns[:4]].values.tolist())
+            ds.save_as(file)
+
+        self.folder.__dict__['dataframe'] = pd.concat([self.folder.dataframe, df])
+        self.status.hide()
+
+        if ancestor.in_memory():
+            if ancestor.generation == copy.generation-1:
+                copy.read() # unnecessary read - can be integrated in loop.
+                ancestor.ds.append(copy)
 
         return copy
 
@@ -601,9 +680,10 @@ class Record():
             self.status.progress(i,len(instances))
         self.status.hide()
 
-    def save(self):
-        """Save all instances."""
+    def save_OBSOLETE(self):
+        """Save all instances of the record."""
 
+        # Slow - edit df directly
         self.status.message("Saving all current instances..")
         instances = self.instances() 
         for i, instance in enumerate(instances):
@@ -625,18 +705,70 @@ class Record():
         self.folder.dataframe.drop(removed.index, inplace=True)
         self.status.hide()
 
-    def restore(self, message = 'Restoring..'):
+    def save(self, message = "Saving changes.."):
+        """Save all instances of the record."""
+
+        self.status.message(message)
+        self.write()
+        if self.generation == 0:
+            data = self.folder.dataframe
+        else:
+            rows = self.folder.dataframe[self.key[-1]] == self.UID[-1]
+            data = self.folder.dataframe[rows] 
+
+        created = data.created[data.created]   
+        removed = data.removed[data.removed]
+
+        files = removed.index.tolist()
+        for i, file in enumerate(files): 
+            self.status.progress(i, len(files), message='Deleting removed files..')
+            if os.path.exists(file): os.remove(file)
+        self.status.hide()
+        self.folder.dataframe.loc[created.index, 'created'] = False
+        self.folder.dataframe.drop(removed.index, inplace=True)
+
+    def restore(self, message = "Restoring saved state.."):
+        """
+        Restore all instances.
+        """
+        self.status.message(message)
+
+        in_memory = self.in_memory() 
+        self.clear()
+
+        if self.generation == 0:
+            data = self.folder.dataframe
+        else:
+            rows = self.folder.dataframe[self.key[-1]] == self.UID[-1]
+            data = self.folder.dataframe[rows] 
+        created = data.created[data.created]   
+        removed = data.removed[data.removed]
+
+        files = created.index.tolist()
+        for i, file in enumerate(files): 
+            self.status.progress(i, len(files), message='Deleting new files..')
+            if os.path.exists(file): os.remove(file)
+        self.status.hide()
+        self.folder.dataframe.loc[removed.index, 'removed'] = False
+        self.folder.dataframe.drop(created.index, inplace=True)
+
+        if in_memory: self.read()
+        return self
+        
+    def restore_OBSOLETE(self, message = 'Restoring..'):
         """
         Restore all instances.
         """
         in_memory = self.in_memory() 
         self.clear()
+
         instances = self.instances()
         self.status.message(message)
         for i, instance in enumerate(instances):
             instance.restore()
             self.status.progress(i,len(instances))
         self.status.hide()
+
         if in_memory: self.read()
         return self
 
@@ -649,16 +781,18 @@ class Record():
         self.status.message(message)
         self.__dict__['ds'] = self.children()
         for i, child in enumerate(self.ds):
-            child.read()
             self.status.progress(i, len(self.ds))
+            child.read()
         self.status.hide()
 
     def write(self):
 
         if self.ds is None: 
             return
-        for child in self.ds:
+        for i, child in enumerate(self.ds):
+            self.status.progress(i, len(self.ds), message='Writing data..')
             child.write()
+        self.status.hide()
 
     def clear(self):
 
