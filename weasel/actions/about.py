@@ -6,8 +6,8 @@ from weasel.wewidgets.icons import question_mark
 
 def menu(parent):
 
-    menu = parent.menu('About')
-    menu.action(About, text='Weasel', icon=question_mark) 
+    #menu = parent.menu('About')
+    parent.action(About, text='Weasel', icon=question_mark) 
 
 
 class About(Action):

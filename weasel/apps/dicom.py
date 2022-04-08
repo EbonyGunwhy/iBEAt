@@ -35,8 +35,8 @@ class DicomWindows(App):
             self.treeView.setFolder(folder)
         self.menubar.enable()
 
-    def open(self, path):
-        self.folder.open(path)
+    def open(self, path, message='Opening folder..'):
+        self.folder.open(path, message=message)
         self.display(self.folder)
 
     def close(self):
@@ -118,7 +118,19 @@ class DicomWindows(App):
             viewer = widgets.ImageViewer(object)
             self.addAsSubWindow(viewer, title=object.label())
 
+    def get_selected(self, generation):
+        
+        if self.treeView is None: return []
+        if generation == 4: return []
+        selected = self.treeView.get_selected(generation)
+        return [self.folder.object(row, generation) for row in selected]
 
+    def nr_selected(self, generation):
+
+        if self.treeView is None: return 0
+        if generation == 4: return 0
+        selected = self.treeView.get_selected(generation)
+        return len(selected)
 
 class DicomSeries(App):
 

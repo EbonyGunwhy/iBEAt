@@ -1,9 +1,9 @@
 __all__ = ['DICOMFolderTree']
 
 from PyQt5.QtCore import  Qt, pyqtSignal
-from PyQt5.QtWidgets import (QApplication, QAbstractItemView,
-                            QHeaderView, QTreeWidget, QTreeWidgetItem)
-
+from PyQt5.QtWidgets import (
+    QApplication, QAbstractItemView,
+    QHeaderView, QTreeWidget, QTreeWidgetItem)
 
 class DICOMFolderTree(QTreeWidget):
     """Displays a DICOM folder as a Tree."""
@@ -30,10 +30,11 @@ class DICOMFolderTree(QTreeWidget):
     def setFolder(self, folder=None):
 
         if folder is not None: 
-            self.folder=folder
+            self.folder = folder
 
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        s=0
+        s = 0
+        nr = len(self.folder.series())
         self.blockSignals(True)
         self.clear()
         self.folder.sortby(['StudyDate','SeriesNumber','AcquisitionTime'])
@@ -42,9 +43,9 @@ class DICOMFolderTree(QTreeWidget):
             for study in patient.studies():
                 studyWidgetItem = _treeWidgetItem(study, patientWidgetItem) 
                 for series in study.series():
-                    s+=1
-                    self.status.message("Building tree view of series " + str(s))
-                    _buildSeriesTreeView(series, studyWidgetItem)
+                    seriesWidgetItem = _treeWidgetItem(series, studyWidgetItem) 
+                    self.status.progress(s, nr, "Building display..")
+                    s += 1
         self.resizeColumnToContents(0) 
         self.blockSignals(False)
         self.status.hide()
@@ -121,16 +122,23 @@ def _buildTreeWidgetItem(parent, object, label, checked, expanded=True):
 
 def _check_parents(item):
     """Check parents where all children are checked.
-    
-    Arguments
-    ---------
-    item : A QTreeWidgetItem
     """
     parent = item.parent()
     if parent:
         checked = parent.object.data().checked.all()
+    #    checked = _all_children_checked(parent) # TEST!
         _set_check_state(parent, checked)
         _check_parents(parent)
+
+def _all_children_checked(item):
+    """Set the checkstate of all children of an item."""
+
+    nrOfChildren = item.childCount()
+    for n in range(nrOfChildren):
+        child = item.child(n) 
+        checked = child.checkState(0) == Qt.Checked
+        if not checked: return False
+    return True
 
 def _toggle_checked(item):
     "Uncheck if checked and check if unchecked."
@@ -152,8 +160,7 @@ def _set_check_state(item, checked):
     else: 
         item.setCheckState(0, Qt.Unchecked)
 
-# TODO: Does not need to be saved in the dataframe. 
-# Retrieve on demand
+
 
 def _save_checked(item): 
     """Save the item checked state."""

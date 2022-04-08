@@ -1,5 +1,6 @@
 import os
 import sys
+import zipfile
 from datetime import datetime
 import math
 import pathlib
@@ -10,7 +11,7 @@ from pydicom.sequence import Sequence
 import pandas as pd
 import numpy as np
 
-def dataframe(files, tags, status=None):
+def dataframe(path, files, tags, status=None, message='Reading DICOM folder..'):
     """Reads a list of tags in a list of files.
 
     Arguments
@@ -35,15 +36,16 @@ def dataframe(files, tags, status=None):
         tags = [tags]
     array = []
     dicom_files = []
-    if status is not None: status.message('Reading DICOM folder..')
+    if status is not None: status.message(message)
     for i, file in enumerate(files):
         ds = pydicom.dcmread(file, force=True)
         if isinstance(ds, pydicom.dataset.FileDataset):
             if 'TransferSyntaxUID' in ds.file_meta:
                 row = _read_tags(ds, tags)
                 array.append(row)
-                dicom_files.append(file)
-        if status is not None: status.progress(i+1, len(files))
+                relpath = os.path.relpath(file, path)
+                dicom_files.append(relpath) 
+        if status is not None: status.progress(i+1, len(files), message)
     if status is not None: status.hide()
     return pd.DataFrame(array, index = dicom_files, columns = tags)
 
@@ -88,6 +90,31 @@ def _initialize(ds, UID=None, ref=None):
         ds.ReferencedSeriesSequence = refd_series_sequence
 
     return ds
+
+def _unzip_files(path, status):
+    """
+    Unzip any zipped files in a directory.
+    
+    Checking for zipped files is slow so this only searches the top folder.
+
+    Returns : a list with unzipped files
+    """
+    files = [entry.path for entry in os.scandir(path) if entry.is_file()]
+    zipfiles = []
+    for i, file in enumerate(files):
+        status.progress(i, len(files), 'Searching for zipped folders..')
+        if zipfile.is_zipfile(file):
+            zipfiles.append(file)
+    if zipfiles == []:
+        return
+    for i, file in enumerate(zipfiles): # unzip any zip files and delete the original zip
+        status.progress(i, len(zipfiles), 'Unzipping file ' + file)
+        with zipfile.ZipFile(file, 'r') as zip_folder:
+            path = ''.join(file.split('.')[:-1]) # remove file extension
+            if not os.path.isdir(path): 
+                os.mkdir(path)
+            zip_folder.extractall(path)
+        os.remove(file)
 
 def _read_tags(ds, tags):
     """Helper function return a list of values"""
@@ -155,6 +182,7 @@ def _set_tags(ds, tags, values):
                 ds.add_new(tag, VR, values[i])
             else:
                 pass # for now
+    return ds
 
 def _filter(objects, **kwargs):
     """
@@ -175,6 +203,8 @@ def _filter(objects, **kwargs):
         if select: 
             filtered.append(obj)
     return filtered
+
+
 
 def split_multiframe(filepath, description):
     """Splits a multi-frame instance into single frames"""
@@ -247,7 +277,8 @@ def _stack_arrays(arrays, align_left=False):
 
     # Create the stack
     n = len(arrays)
-    stack = np.full([n] + dim, 0, dtype=arrays[0].dtype)
+    #stack = np.full([n] + dim, 0, dtype=arrays[0].dtype)
+    stack = np.full([n] + dim, None, dtype=arrays[0].dtype)
     for k, array in enumerate(arrays):
         index = [k]
         for i, d in enumerate(dim):

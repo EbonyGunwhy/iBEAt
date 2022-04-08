@@ -200,7 +200,7 @@ For instance to move a study from one patient to another:
 ```ruby
 study = folder.patients(0).studies(0)
 new_parent = folder.patients(1)
-study.move_to(new_parent)
+study = study.move_to(new_parent)
 ```
 
 Objects can also be moved to objects higher up in the hierarchy.
@@ -209,7 +209,7 @@ Any missing parents will be automatically created. For instance:
 ```ruby
 instance = folder.instances(0)
 study = folder.studies(1)
-instance.move_to(study)
+instance = instance.move_to(study)
 ```
 
 This will move *instance* from its current parent series to *study*. 
@@ -233,7 +233,7 @@ This can be used for instance to copy-paste a study from one patient to another:
 ```ruby
 study = folder.patients(0).studies(0)
 new_parent = folder.patients(1)
-study.copy().move_to(new_parent)
+study = study.copy().move_to(new_parent)
 ```
 
 This is equivalent to using `copy_to()`:
@@ -244,11 +244,39 @@ study.copy_to(new_parent)
 
 To create a new object, call `new_child()` on the parent:
 
-```ruby
+```python
 series = study.new_child()
 ```
 
 *series* will now be a new (empty) series under *study*.
+Alternatively, you can create a new sibling or a new pibling (i.e. sibling of the parent):
+
+```python
+new_series = series.new_sibling()
+new_study = series.new_pibling()
+```
+
+Newly created objects can be assigned any DICOM attributes when they are 
+firstc reated, and these attributes will then be passed on to 
+any dataset that is created in the object. For instance
+
+```python
+new_series = series.new_pibling(SeriesDescription='New Series', SequenceName='Calculated series')
+```
+
+Note: UIDs for Patient, Studies, Series or Instance do not need to be provided 
+as these will be automatically defined when new objects are created. 
+If values are provided anyway, these will be ignored:
+
+```python
+new_series = series.new_sibling(
+    SeriesDescription = 'New Series', 
+    SequenceName = 'Calculated series', 
+    SeriesInstanceUID = 007,
+    )
+```
+
+This will not throw an error but the 007 attribute will not be used or passed on.
 
 
 ### Export and import
@@ -683,3 +711,4 @@ __pdoc__["external"] = False
 __pdoc__["dicm"] = False 
 
 from .folder import *
+from .functions import *

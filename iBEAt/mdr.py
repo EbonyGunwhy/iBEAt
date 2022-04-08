@@ -14,7 +14,7 @@ elastix_pars = os.path.join(os.path.dirname(__file__), 'elastix')
 
 class MDRegT2star(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]
@@ -31,7 +31,7 @@ class MDRegT2star(Action):
 
 class MDRegT2(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]
@@ -48,7 +48,7 @@ class MDRegT2(Action):
 
 class MDRegT1(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]
@@ -65,7 +65,7 @@ class MDRegT1(Action):
 
 class MDRegDWI(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]
@@ -81,7 +81,7 @@ class MDRegDWI(Action):
 
 class MDRegDTI(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]
@@ -101,7 +101,7 @@ class MDRegDTI(Action):
 
 class MDRegMT(Action):
 
-    def run(weasel):
+    def run(self, weasel):
 
         all_series = weasel.folder.series()
         for sery in all_series:
@@ -126,7 +126,7 @@ class MDRegMT(Action):
 
 class MDRegDCE(Action):
 
-    def run(weasel, series=None):
+    def run(self, weasel, series=None):
 
         if series is None:
             series = weasel.folder.series(checked=True)[0]

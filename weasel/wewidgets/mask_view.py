@@ -53,6 +53,9 @@ class MaskView(widgets.ImageView):
 
 #        nrMaskPixels = np.count_nonzero(self.maskItem.bin)
 #        return nrMaskPixels == 0
+
+    def setObject(self, mask):
+        self.maskItem.mask = mask
         
     def setMask(self, mask):
 
@@ -69,6 +72,7 @@ class MaskView(widgets.ImageView):
 #        return self.maskItem._getMaskImage()
 
     def _updatePixelArray(self):
+        """Write the current pixel array in the mask image"""
 
         if self.mask is None: return
         array = self.maskItem._getMaskImage()
@@ -392,6 +396,7 @@ class MaskViewPenFreehand(widgets.ImageViewCursor):
         points = list(zip(x.flatten(),y.flatten()))
         bin = roiPath.contains_points(points, radius=0.0).reshape((nx, ny))  
         bin = np.transpose(bin != 0)
+        #bin = bin != 0
         if self.mode == "draw":
             self.maskItem.bin = np.logical_or(self.maskItem.bin, bin)
         elif self.mode == "cut":

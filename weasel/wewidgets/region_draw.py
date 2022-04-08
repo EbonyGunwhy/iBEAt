@@ -14,21 +14,21 @@ class SeriesViewerROI(QWidget):
 
     dataWritten = pyqtSignal()
 
-    def __init__(self, series): 
+    def __init__(self, series, dimensions=[]): 
         super().__init__()
 
         #Faster access but loading times are prohibitive for large series
         #if series.on_disk(): 
         #    series.read()
 
-        self._defineWidgets(series)
+        self._defineWidgets(series, dimensions=dimensions)
         self._defineLayout()
         self._defineConnections()
         self._setMaskViewTool()
 
-    def _defineWidgets(self, series):
+    def _defineWidgets(self, series, dimensions=[]):
 
-        self.imageSliders = widgets.ImageSliders(series)
+        self.imageSliders = widgets.ImageSliders(series, dimensions=dimensions)
         self.regionList = widgets.RegionList(series)
 
         image = self.imageSliders.getImage()
@@ -91,7 +91,7 @@ class SeriesViewerROI(QWidget):
         image = self.imageSliders.getImage()
         mask = self.regionList.getMask(image)
         self.maskView.setData(image)
-        self.maskView.setMask(mask)
+        self.maskView.setMask(mask) 
         self.pixelValue.setData(image)
 
     def _currentRegionChanged(self):
@@ -104,4 +104,5 @@ class SeriesViewerROI(QWidget):
 
         mask = self.maskView.getMask()
         region = self.regionList.getRegion()
-        mask.move_to(region)
+        mask = mask.move_to(region)
+        self.maskView.setObject(mask)

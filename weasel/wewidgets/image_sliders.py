@@ -15,10 +15,13 @@ class ImageSliders(QWidget):
 
     valueChanged = pyqtSignal()
 
-    def __init__(self, series=None, image=None, tags=["AcquisitionTime", "SliceLocation"]):  
+    def __init__(self, series=None, image=None, dimensions=[]):  
         super().__init__()
 
-        self.sliderTags = tags
+        if dimensions == []:
+            self.sliderTags = ["AcquisitionTime", "SliceLocation"]
+        else: 
+            self.sliderTags = dimensions
 
         self._setWidgets()
         self._setLayout()
@@ -190,8 +193,15 @@ class ImageSliders(QWidget):
         """Change the selected image"""
 
         imageUIDs = self._getAllSelectedImages()
-        index = self.sliders[0].value()
-        self._set_image(imageUIDs[index])
+        if imageUIDs == []:
+            self.image = None
+            self.sliders[0].hide()
+        elif len(imageUIDs) == 1:
+            self._set_image(imageUIDs[0])
+            self.sliders[0].hide()
+        else:
+            index = self.sliders[0].value()
+            self._set_image(imageUIDs[index])
         self.valueChanged.emit()
 
     def _sliderValueChanged(self):  

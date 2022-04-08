@@ -18,14 +18,11 @@ class Series(Action):
         
         if not hasattr(app, 'folder'):
             return False
-        data = app.folder.data()
-        if data.empty:
-            return False
-        return data.checked.any()
+        return app.nr_selected(3) != 0
 
     def run(self, app):
 
-        for series in app.folder.series(checked=True):
+        for series in app.get_selected(3):
             app.display(series)
       
 
@@ -35,14 +32,11 @@ class Image(Action):
         
         if not hasattr(app, 'folder'):
             return False
-        data = app.folder.data()
-        if data.empty: 
-            return False
-        return data.checked.any()
+        return app.nr_selected(4) != 0
 
     def run(self, app):
 
-        for image in app.folder.instances(checked = True):
+        for image in app.get_selected(4):
             app.display(image)
 
 
@@ -52,14 +46,11 @@ class Region(Action):
         
         if app.__class__.__name__ != 'DicomWindows':
             return False
-        data = app.folder.data()
-        if data.empty: 
-            return False
-        return data.checked.any()
+        return app.nr_selected(3) != 0
 
     def run(self, app):
 
-        for series in app.folder.series(checked = True):
+        for series in app.get_selected(3):
 
             viewer = SeriesViewerROI(series)
             viewer.dataWritten.connect(app.treeView.setFolder)
@@ -69,9 +60,7 @@ class CloseWindows(Action):
 
     def enable(self, app):
         
-        if app.__class__.__name__ != 'DicomWindows':
-            return False
-        return True
+        return app.__class__.__name__ != 'DicomWindows'
 
     def run(self, app):
 
@@ -81,9 +70,7 @@ class TileWindows(Action):
 
     def enable(self, app):
         
-        if app.__class__.__name__ != 'DicomWindows':
-            return False
-        return True
+        return app.__class__.__name__ != 'DicomWindows'
 
     def run(self, app):
 

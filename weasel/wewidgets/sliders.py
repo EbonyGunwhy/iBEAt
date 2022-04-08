@@ -1,4 +1,4 @@
-__all__ = ['LabelSlider', 'CheckBoxSlider']
+__all__ = ['IndexSlider', 'LabelSlider', 'CheckBoxSlider']
 
 from PyQt5.QtCore import  Qt, pyqtSignal
 from PyQt5.QtWidgets import (
@@ -18,15 +18,25 @@ QGroupBox
 }
 """
 
+class IndexSlider(QSlider):
+    """
+    Simplest possible slider.
+    """
+
+    def __init__(self, minimum=0, maximum=1): 
+        super().__init__(Qt.Horizontal)
+
+        self.setFocusPolicy(Qt.StrongFocus)   # This makes the slider work with arrow keys on Mac OS
+        self.setSingleStep(1)
+        self.setTickPosition(QSlider.TicksBothSides)
+        self.setTickInterval(1)
+        self.setMinimum(minimum)
+        self.setMaximum(maximum)
+        self.setValue(minimum)
+
 
 class LabelSlider(QGroupBox):
-    """A slider with a label to show the slider state.
-    
-    The checkbox carries a label that describes the values 
-    navigated by the slider.  
-
-    The application is the case where the label is a DICOM tag
-    and the label Values are the unique values of that tag.
+    """A slider with a label to show the slider value.
     """
 
     valueChanged = pyqtSignal()
@@ -76,6 +86,10 @@ class LabelSlider(QGroupBox):
             str(self.label) + " " + str(self.value())
         )
 
+    def setLabel(self, label):
+        self.label = label
+        self.setText()
+
     def setValues(self, values):
 
         previousValue = self.value()
@@ -95,6 +109,9 @@ class LabelSlider(QGroupBox):
 
         index = self.slider.value()
         return self.values[index-1]
+
+    def index(self):
+        return self.slider.index-1
 
 
 class CheckBoxSlider(QGroupBox):
