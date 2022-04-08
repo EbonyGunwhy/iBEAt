@@ -1,6 +1,3 @@
-__all__ = ['MDReg']
-
-
 import time, os, copy
 import multiprocessing
 from tqdm import tqdm
@@ -21,11 +18,13 @@ class MDReg:
 
         # input
         self.array = None
+        self.coreg_mask = None
         self.signal_parameters = None
         self.pixel_spacing = 1.0
         self.signal_model = constant
-        self.elastix = itk.ParameterObject.New()
-        self.elastix.AddParameterFile(os.path.join(default_path, 'BSplines.txt'))
+        self.elastix = _default_bspline()
+        self.parallel = True
+        self.log = False
 
         # mdr optimization
         self.max_iterations = 5
@@ -53,6 +52,11 @@ class MDReg:
         self.coreg = array
         n = self._npdt
         self.coreg = np.reshape(self.coreg, (n[0],n[2]))
+    
+    def set_mask(self, mask_array):
+        self.coreg_mask = mask_array
+        n = self._npdt
+        self.coreg_mask = np.reshape(self.coreg_mask, (n[0],n[2]))
 
     def read_elastix(self, file):
         self.elastix.AddParameterFile(file)
@@ -105,7 +109,7 @@ class MDReg:
         self.pars = np.reshape(pars, shape[:-1] + (pars.shape[-1],))
         print('Finished fitting signal model (' + str((time.time()-start)/60) + ' min)')
 
-    def fit_deformation(self, parallel=True, log=False, mask=None):
+    def fit_deformation(self):
 
         start = time.time()
         print('Performing coregistration..')
@@ -113,22 +117,24 @@ class MDReg:
         deformation = np.empty(self._npdt)
         dict_param = _elastix2dict(self.elastix) # Hack necessary for parallelization
         # If mask isn't same shape as images, then don't use it
-        if isinstance(mask, np.ndarray):
-            if np.shape(mask) != self.array.shape: mask = None  
-        if not parallel:
+        if isinstance(self.coreg_mask, np.ndarray):
+            if np.shape(self.coreg_mask) != self.array.shape: mask = None
+            else: mask = self.coreg_mask
+        else: mask = None
+        if not self.parallel:
             for t in tqdm(range(nt), desc='Coregistration progress'): #dynamics
                 if mask is not None: 
                     mask_t = mask[...,t]
                 else: 
                     mask_t = None
-                args = (self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, log, mask_t)
+                args = (self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, self.log, mask_t)
                 self.coreg[:,t], deformation[:,:,t] = _coregister(args)
         else:
             pool = multiprocessing.Pool(processes=os.cpu_count()-1)
             if mask is None:
-                args = [(self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, log, mask) for t in range(nt)] #dynamics
+                args = [(self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, self.log, mask) for t in range(nt)] #dynamics
             else:
-                args = [(self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, log, mask[...,t]) for t in range(nt)] #dynamics
+                args = [(self.array[...,t], self.model_fit[...,t], dict_param, self.pixel_spacing, self.log, mask[...,t]) for t in range(nt)] #dynamics
             results = list(tqdm(pool.imap(_coregister, args), total=nt, desc='Coregistration progress'))
             for t in range(nt):
                 self.coreg[:,t] = results[t][0]
@@ -174,6 +180,47 @@ class MDReg:
         self.iter.to_csv(os.path.join(path, 'largest_deformations.csv'))
 
 
+def _default_bspline():
+    param_obj = itk.ParameterObject.New()
+    parameter_map_bspline = param_obj.GetDefaultParameterMap('bspline')
+    param_obj.AddParameterMap(parameter_map_bspline)
+    param_obj.SetParameter("FixedInternalImagePixelType", "float")
+    param_obj.SetParameter("MovingInternalImagePixelType", "float")
+    param_obj.SetParameter("FixedImageDimension", "2")
+    param_obj.SetParameter("MovingImageDimension", "2")
+    param_obj.SetParameter("UseDirectionCosines", "true")
+    param_obj.SetParameter("Registration", "MultiResolutionRegistration")
+    param_obj.SetParameter("ImageSampler", "RandomCoordinate")
+    param_obj.SetParameter("Interpolator", "BSplineInterpolator")
+    param_obj.SetParameter("ResampleInterpolator", "FinalBSplineInterpolator")
+    param_obj.SetParameter("Resampler", "DefaultResampler")
+    param_obj.SetParameter("BSplineInterpolationOrder", "1")
+    param_obj.SetParameter("FinalBSplineInterpolationOrder", "1")
+    param_obj.SetParameter("FixedImagePyramid", "FixedSmoothingImagePyramid")
+    param_obj.SetParameter("MovingImagePyramid", "MovingSmoothingImagePyramid")
+    param_obj.SetParameter("Optimizer", "AdaptiveStochasticGradientDescent")
+    param_obj.SetParameter("HowToCombineTransforms", "Compose")
+    param_obj.SetParameter("Transform", "BSplineTransform")
+    param_obj.SetParameter("Metric", "AdvancedMeanSquares")
+    param_obj.SetParameter("NumberOfHistogramBins", "32")
+    param_obj.SetParameter("FinalGridSpacingInPhysicalUnits", ["50.0", "50.0"])
+    param_obj.SetParameter("NumberOfResolutions", "4")
+    param_obj.SetParameter("AutomaticParameterEstimation", "true")
+    param_obj.SetParameter("ASGDParameterEstimationMethod", "Original")
+    param_obj.SetParameter("MaximumNumberOfIterations", "500")
+    param_obj.SetParameter("MaximumStepLength", "0.1")
+    param_obj.SetParameter("NumberOfSpatialSamples", "2048")
+    param_obj.SetParameter("NewSamplesEveryIteration", "true")
+    param_obj.SetParameter("CheckNumberOfSamples", "true")
+    param_obj.SetParameter("ErodeMask", "false")
+    param_obj.SetParameter("ErodeFixedMask", "false")
+    param_obj.SetParameter("DefaultPixelValue", "0")
+    param_obj.SetParameter("WriteResultImage", "true")
+    param_obj.SetParameter("ResultImagePixelType", "float")
+    param_obj.SetParameter("ResultImageFormat", "mhd")
+    return param_obj
+
+
 def _export_animation(array, path, filename):
 
     file = os.path.join(path, filename + '.gif')
@@ -185,6 +232,7 @@ def _export_animation(array, path, filename):
     anim = animation.FuncAnimation(fig, updatefig, interval=50, frames=array.shape[2])
     anim.save(file)
     #plt.show()
+
 
 def _export_imgs(array, path, filename, bounds=[-np.inf, np.inf]):
 
@@ -199,6 +247,7 @@ def _export_imgs(array, path, filename, bounds=[-np.inf, np.inf]):
     plt.savefig(fname=file)
     plt.close()
 
+
 def _maxnorm(d):
     """This function calculates diagnostics from the registration process.
 
@@ -209,6 +258,7 @@ def _maxnorm(d):
     """
     d = d[:,0,:]**2 + d[:,1,:]**2
     return np.nanmax(np.sqrt(d))
+
 
 def _elastix2dict(elastix_model_parameters):
     """
@@ -232,7 +282,6 @@ def _dict2elastix(list_dictionaries_parameters):
     for one_map in list_dictionaries_parameters:
         elastix_model_parameters.AddParameterMap(one_map)
     return elastix_model_parameters
-
 
 
 def _coregister(args):
