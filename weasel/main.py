@@ -123,3 +123,7 @@ def logger():
         format = LOG_FORMAT)
     return logging.getLogger(__name__)
 
+
+if __name__ == '__main__':
+    wsl = app()
+    wsl.show()
