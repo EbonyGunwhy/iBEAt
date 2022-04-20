@@ -85,7 +85,7 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
 #    hidden_imports = ' '.join(['--hidden-import '+ mod + ' ' for mod in hidden_modules])
 
     windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
-
+    print(os.getcwd())
     if windows:
         all_data = [
             'weasel\\wewidgets\\icons\\my_icons;.\\weasel\\wewidgets\\icons\\my_icons',
