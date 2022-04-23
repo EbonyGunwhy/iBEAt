@@ -1,3 +1,4 @@
 xnat
 requests
 mdreg
+dipy

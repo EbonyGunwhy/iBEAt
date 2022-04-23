@@ -13,9 +13,9 @@ with open('README.md', encoding='utf-8') as f:
 with open('requirements.txt', encoding='utf-8') as f:
     required = f.read().splitlines()
 
-# Get latest version published online in PYPI (https://pypi.org/project/dbdicom/) 
+# Get latest version published online in PYPI (https://pypi.org/project/weasel/) 
 # and increment 0.0.1 (or other) so that it's uploaded correctly during Github Actions
-contents = urllib.request.urlopen('https://pypi.org/pypi/dbdicom/json').read()
+contents = urllib.request.urlopen('https://pypi.org/pypi/weasel/json').read()
 data = json.loads(contents)
 LATEST_VERSION = data['info']['version']
 latest_major, latest_minor, latest_patch = LATEST_VERSION.split(".")
@@ -27,17 +27,17 @@ NEW_VERSION = new_major + "." + new_minor + "." + new_patch
 
 if __name__ == '__main__':
     setup(
-        name="dbdicom",
+        name="weasel",
         version=NEW_VERSION,
-        author="Joao Almeida e Sousa and Steven Sourbron",
-        author_email="j.g.sousa@sheffield.ac.uk, s.sourbron@sheffield.ac.uk",
-        description="Reading and writing DICOM databases",
+        author="Joao Almeida e Sousa, Steven Shillitoe and Steven Sourbron",
+        author_email="j.g.sousa@sheffield.ac.uk, s.shillitoe@sheffield.ac.uk, s.sourbron@sheffield.ac.uk",
+        description="DICOM prototyping environment for quantitative medical imaging applications",
         long_description=long_description,
         long_description_content_type="text/markdown",
-        url="https://github.com/QIB-Sheffield/dbdicom",
+        url="https://github.com/QIB-Sheffield/weasel",
         license='Apache Software License (http://www.apache.org/licenses/LICENSE-2.0)',
         python_requires='>=3.6, <4',
-        packages=['dbdicom', 'dbdicom.classes'],
+        packages=['weasel'],
         install_requires=required,
         include_package_data=True,
         keywords=['python', "medical imaging", "DICOM"],
