@@ -1,3 +1,5 @@
+__all__ = ['MDReg', 'elastix_template']
+
 import time, os, copy
 import multiprocessing
 from tqdm import tqdm
@@ -10,7 +12,7 @@ import SimpleITK as sitk
 
 from .models import constant
 
-default_path = os.path.dirname(__file__)
+
 
 class MDReg:
 
@@ -22,7 +24,7 @@ class MDReg:
         self.signal_parameters = None
         self.pixel_spacing = 1.0
         self.signal_model = constant
-        self.elastix = _default_bspline()
+        self.elastix = elastix_template()
         self.parallel = True
         self.log = False
 
@@ -36,7 +38,7 @@ class MDReg:
         self.deformation = None
         self.pars = None
         self.iter = None
-        self.export_path = os.path.join(default_path, 'results')
+        self.export_path = os.path.join(os.path.dirname(__file__), 'results')
         self.export_unregistered = True
 
     @property
@@ -180,7 +182,7 @@ class MDReg:
         self.iter.to_csv(os.path.join(path, 'largest_deformations.csv'))
 
 
-def _default_bspline():
+def elastix_template():
     param_obj = itk.ParameterObject.New()
     parameter_map_bspline = param_obj.GetDefaultParameterMap('bspline')
     param_obj.AddParameterMap(parameter_map_bspline)

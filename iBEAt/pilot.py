@@ -1,6 +1,9 @@
 import os
 import numpy as np
 
+import mdreg.mdreg as mdreg
+from mdreg.mdreg.models import constant
+
 import weasel.dbdicom as db
 from weasel.core import Action
 import weasel.actions as actions
@@ -14,7 +17,6 @@ def menu(parent):
 
     menu = parent.menu('File')
     menu.action(Open, shortcut='Ctrl+O')
-    menu.action(OpenSubFolders, text = 'Read subfolders')
     menu.action(actions.folder.Read)
     menu.action(actions.folder.Save, shortcut='Ctrl+S')
     menu.action(actions.folder.Restore, shortcut='Ctrl+R')
@@ -31,11 +33,12 @@ def menu(parent):
     menu.action(actions.view.TileWindows, text='Tile windows')
 
     menu = parent.menu('TRISTAN lab')
-    menu.action(RenameSeries, text='Rename series..')
+    #menu.action(RenameSeries, text='Rename series..')
+    menu.action(OpenSubFolders, text='Read subfolders')
     menu.separator()
     menu.action(MergeDynamics, text='Merge all FA 15 dynamics')
-    menu.action(MergeTwoScans, text='Merge FA 15 sequences across studies')
-    #menu.action(MergeAll, text='Merge all FA 15 sequences')
+    menu.action(MDRegDynamics, text='Motion-correct dynamics')
+    
 
     menu = parent.menu('iBEAt pilot')
     #menu.action(Download, text='Download data from XNAT') # function download
@@ -138,6 +141,8 @@ class MergeDynamics(Action):
     def run(self, app): 
         """
         Merge the dynamics with FA 15 of all studies in the database.
+
+        TODO: include merge of VFA data for T1-mapping
         """
 
         # Find all series with the correct SeriesDescriptions
@@ -171,50 +176,59 @@ class MergeDynamics(Action):
                 cnt += 1
         app.refresh()
 
+class MDRegDynamics(Action):
 
-class MergeTwoScans(Action):
+    def enable(self, weasel):
 
-    def enable(self, app):
-
-        if not hasattr(app, 'folder'):
+        if not hasattr(weasel, 'folder'):
             return False
-        return app.nr_selected(3) == 2
+        return True
 
-    def run(self, app, series_list=None): 
+    def run(self, weasel): 
+        """
+        Perform model-driven motion correction
+        """
+        series = weasel.get_selected(3)[0]
 
-        # Sort and check if dimensions match
-        if series_list is None:
-            series_list = app.get_selected(3)
-        s0 = series_list[0].dataset(['SliceLocation', 'AcquisitionTime'])
-        s1 = series_list[1].dataset(['SliceLocation', 'AcquisitionTime'])
-        if s0.shape[0] != s1.shape[0]:
-            app.dialog.information('Please select series with the same nr of slice locations')
-            app.status.hide()
-            return
+        array, dataset = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+        # perform mdreg on array
+        fit = series.new_pibling(SeriesDescription = series.SeriesDescription + '_dummy_mdreg')
+        fit.set_array(array, dataset=dataset, pixels_first=True)
 
-        # Match slice locations
-        for z in range(s1.shape[0]):
-            app.status.progress(z, s1.shape[0], 'Matching slice locations..')
-            loc0 = s0[z,0,0].SliceLocation
-            db.set_value(np.squeeze(s1[z,:,0]).tolist(), 
-                SliceLocation = loc0, 
-                PatientID = s0[0,0,0].UID[0],
-                StudyInstanceUID = s0[0,0,0].UID[1],
-                SeriesInstanceUID = s0[0,0,0].UID[2],
-            )
-        app.status.hide()
-        app.refresh()
+        #TO REPLACE BY:
+        #dbarray = db.array(series, sortby=['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+        # perform mdreg on dbarray.tonumpy()
+        #fit = series.new_sibling(SeriesDescription = series.SeriesDescription + '_array')
+        #fit.write_array(dbarray, pixels_first=True)
 
+        weasel.refresh()
+        return
 
-class MergeAll(Action):
+        slice = 18
+        signal_model = constant
 
-    def enable(self, app):
-        return MergeDynamics.enable(self, app)
+        # PERFORM MDR
+        mdr = mdreg.MDReg()
+        mdr.set_array(np.squeeze(array[:,:,slice,:,0]))
+        #mdr.pixel_spacing = header[slice,0,0].PixelSpacing
+        mdr.signal_model = signal_model
+        #mdr.set_elastix(MaximumNumberOfIterations = 256)
+        #mdr.precision = 1
+        #mdr.fit() 
+        mdr.fit_signal()
+        
+        # SAVE RESULTS AS DICOM
+#        parameters = signal_model.par()
+#        for p in range(len(parameters)):
+#            par = series.new_sibling().set_array(mdr.par[...,p], np.squeeze(header[slice,...]))
+#            par.SeriesDescription = series.SeriesDescription + '_mdr_par_' + parameters[p]
+        fit = series.new_sibling().set_array(mdr.model_fit)
+        fit.SeriesDescription = series.SeriesDescription + '_mdr_fit'
+#        moco = series.new_cousin().set_array(mdr.coreg)
+#        moco.SeriesDescription = series.SeriesDescription + '_mdr_moco'
 
-    def run(self, app):
-        merged = MergeDynamics.run(self, app)
-        MergeTwoScans.run(app, series_list=merged)
-
+        # DISPLAY RESULTS
+        weasel.refresh()   
 
 class RenameSeries(Action):
 

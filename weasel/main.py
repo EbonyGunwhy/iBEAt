@@ -113,9 +113,10 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
 
 def logger():
     
-    LOG_FILE_NAME = "log.log"
-    if os.path.exists(LOG_FILE_NAME):
-        os.remove(LOG_FILE_NAME)
+    LOG_FILE_NAME = "weasel_log.log"
+    # creates some sort of conflict with mdreg - commenting out for now
+#    if os.path.exists(LOG_FILE_NAME):
+#        os.remove(LOG_FILE_NAME)
     LOG_FORMAT = "%(levelname)s %(asctime)s - %(message)s"
     logging.basicConfig(
         filename = LOG_FILE_NAME, 

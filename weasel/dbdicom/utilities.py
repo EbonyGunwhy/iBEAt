@@ -269,6 +269,7 @@ def _stack_arrays(arrays, align_left=False):
     """
 
     # Get the dimensions of the stack
+    # For each dimension, look for the largest values across all arrays
     ndim = len(arrays[0].shape)
     dim = [0] * ndim
     for array in arrays:
@@ -276,9 +277,11 @@ def _stack_arrays(arrays, align_left=False):
             dim[i] = max((d, array.shape[i]))
 
     # Create the stack
+    # Add one dimension corresponding to the size of the stack
     n = len(arrays)
     #stack = np.full([n] + dim, 0, dtype=arrays[0].dtype)
     stack = np.full([n] + dim, None, dtype=arrays[0].dtype)
+
     for k, array in enumerate(arrays):
         index = [k]
         for i, d in enumerate(dim):

@@ -1,6 +1,7 @@
-__all__ = ['set_value', 'merge', 'write', 'read', 'find_series']
+__all__ = ['set_value', 'merge', 'write', 'read', 'find_series', 'move', 'copy']
 
 import os
+from copy import deepcopy
 import pandas as pd
 import pydicom
 from . import utilities
@@ -101,6 +102,86 @@ def set_value(instances, status=None, **kwargs):
 
     if status is not None: 
         status.message('Finished changing values..')
+
+def copy(instances, series=None, status=None):
+
+    if not isinstance(instances, list):
+        instances = [instances]
+    #instances = [deepcopy(i) for i in instances if i is not None]
+    instances = [i.__class__(i.folder, UID=i.UID) for i in instances if i is not None]
+    if instances == []:
+        return []
+    dialog = instances[0].dialog
+    folder = instances[0].folder
+    if status is not None: 
+        status.message('Moving datasets..')
+    if series is None:
+        series = instances[0].new_pibling(SeriesDescription='Copy')
+
+    kwargs = {}
+    kwargs['PatientID'] = series.UID[0]
+    kwargs['StudyInstanceUID'] = series.UID[1]
+    kwargs['SeriesInstanceUID'] = series.UID[2]
+
+    # Find the instances in the dataframe. 
+    uids = [i.UID[-1] for i in instances]
+    df = folder.dataframe
+    df = df.loc[df.SOPInstanceUID.isin(uids) & (df.removed == False)]
+
+    if status is not None: 
+        status.message('Extending register with new files..')
+
+    # Create a copy 
+    # Allocate new filenames and append to the dataframe.
+    df_created = df.copy(deep=True)
+    df_created.removed = False
+    df_created.created = True
+    df_created['file'] = [folder.new_file() for _ in range(df_created.shape[0])]
+    df_created.set_index('file', inplace=True)
+    folder.__dict__['dataframe'] = pd.concat([folder.dataframe, df_created])
+
+    if status is not None: 
+        status.message('Writing values to files..')
+
+    # Read all the datasets, update the attributes, 
+    # write the results in the new file
+    cnt, n = 1, df.shape[0]
+    for i, filename in enumerate(df.index.values):
+        if status is not None: status.progress(cnt, n)
+        file = os.path.join(folder.path, filename)
+        newfilename = df_created.index.values[i]
+        newfile = os.path.join(folder.path, newfilename)
+        ds = read(file, dialog)
+        for tag, value in kwargs.items():
+            ds = utilities._set_tags(ds, tag, value)
+            if tag in folder._columns:
+                folder.dataframe.loc[newfilename, tag] = value
+        uid = folder.new_uid()
+        ds = utilities._set_tags(ds, 'SOPInstanceUID', uid)
+        folder.dataframe.loc[newfilename, 'SOPInstanceUID'] = uid
+        instances[i].UID[-1] = uid
+        instances[i].UID[:-1] = series.UID
+        write(ds, newfile, dialog)
+        cnt+=1
+
+    if status is not None: 
+        status.message('Finished changing values..')
+    
+    return instances
+
+def move(instances, series=None, status=None):
+
+    if status is not None: 
+        status.message('Moving datasets..')
+    if series is None:
+        series = instances[0].new_pibling(SeriesDescription='Copy')
+    set_value(instances, 
+        status = status,
+        PatientID = series.UID[0],
+        StudyInstanceUID = series.UID[1],
+        SeriesInstanceUID = series.UID[2],
+    )
+    return instances
 
 def merge(series_list, merged=None, status=None):
 

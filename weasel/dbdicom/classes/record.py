@@ -1,10 +1,10 @@
 import os
-import math
 from copy import deepcopy
 import pydicom
 import numpy as np
 import pandas as pd
 from .. import utilities
+import weasel.dbdicom as db
 
 
 class Record():
@@ -74,7 +74,7 @@ class Record():
                 df = self.folder.dataframe.loc[self.data().index, sortby]
             else:
                 df = utilities.dataframe(self.folder.path, self.files, sortby, self.status)
-            df.sort_values(sortby, inplace=True)
+            df.sort_values(sortby, inplace=True) 
             return self._sorted_dataset_from_df(df, sortby, status=status)
 
     def _sorted_dataset_from_df(self, df, sortby, status=True): 
@@ -187,7 +187,7 @@ class Record():
         with open(file, 'wb') as f:
             np.save(f, array)
 
-    def set_array(self, array, dataset=None, pixels_first=False, inplace=True): 
+    def set_array(self, array, dataset=None, pixels_first=False, inplace=False): 
         """
         Set pixel values of a series from a numpy ndarray.
 
@@ -195,6 +195,7 @@ class Record():
         image such as geometry, or other metainformation,
         a dataset must be provided as well with the same 
         shape as the array except for the slice dimensions. 
+
         If a dataset is not provided, header info is 
         derived from existing instances in order.
 
@@ -261,24 +262,35 @@ class Record():
         if dataset is None:
             dataset = self.dataset()
         # Return with error message if dataset and array do not match.
-        nr_of_slices = math.prod(array.shape[:-2])
-        if nr_of_slices != math.prod(dataset.shape):
-            message = "Array and dataset do not match"
+        nr_of_slices = np.prod(array.shape[:-2])
+        if nr_of_slices != np.prod(dataset.shape):
+            message = 'Error in set_array(): array and dataset do not match'
             message += '\n Array has ' + str(nr_of_slices) + ' elements'
-            message += '\n dataset has ' + str(math.prod(dataset.shape)) + ' elements'
+            message += '\n dataset has ' + str(np.prod(dataset.shape)) + ' elements'
+            message += '\n Check if the keyword pixels_first is set correctly.'
             self.dialog.error(message)
-            return self
+            raise ValueError(message) 
         # If self is not a series, create a new series.
         if self.generation != 3:
             series = self.new_series()
         else:
             series = self
         # Reshape, copy instances and save slices.
-        array = array.reshape((nr_of_slices, array.shape[-2], array.shape[-1]))
-        dataset = dataset.reshape(nr_of_slices)
+        array = array.reshape((nr_of_slices, array.shape[-2], array.shape[-1])) # shape (i,x,y)
+        dataset = dataset.reshape(nr_of_slices) # shape (i,)
+
+        dataset = db.copy(dataset.tolist(), series, status=self.status)
         for i, instance in enumerate(dataset):
-            instance.copy_to(series).set_array(array[i,...])
-            if inplace: instance.remove()
+            self.status.progress(i, len(dataset), 'Writing array to file..')
+            instance.set_array(array[i,...])
+            if inplace: instance.remove() # delete?
+           
+        #for i, instance in enumerate(dataset):
+        #    self.status.progress(i, len(dataset), 'Saving data..')
+        #    instance.copy_to(series).set_array(array[i,...])
+            # instance.set_array(array[i,...])
+        #    if inplace: instance.remove() # delete?
+
         return series
 
 #    def write_array(self, array, dataset): 
@@ -620,11 +632,12 @@ class Record():
                 else:
                     obj._initialize()
 
-    def merge_with(self, obj, message=None):
+    def merge_with(self, obj, message=None): 
 
         if self.generation == 0: return
         if message is None:
             message = "Merging " + self.__class__.__name__ + ' ' + self.label()
+        # replace by db.merge()
         return self._merge_with(obj, obj.parent, message=message)
 
     def copy_to(self, ancestor, message=None):
@@ -633,9 +646,10 @@ class Record():
         if message is None:
             message = "Copying " + self.__class__.__name__ + ' ' + self.label()
         copy = self.__class__(self.folder, UID=ancestor.UID)
+        # replace by db.merge()
         return self._merge_with(copy, ancestor, message=message)
 
-    def _merge_with(self, obj, ancestor, message=None):
+    def _merge_with(self, obj, ancestor, message=None): # obsolete - replace by db.merge()
 
         if self.in_memory(): # Create the copy in memory
             obj.__dict__['ds'] = deepcopy(self.ds)
