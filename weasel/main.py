@@ -2,6 +2,7 @@ __all__ = ['app', 'doc', 'build', 'install']
 
 import os
 import sys
+import venv
 import logging
 
 from PyQt5.QtWidgets import QApplication
@@ -34,12 +35,14 @@ def app():
     return Weasel().app
 
 def activate():
-
+    venv_dir = os.path.join(os.getcwd(), ".venv")
+    os.makedirs(venv_dir, exist_ok=True)
+    venv.create(venv_dir, with_pip=True)
     windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
     if windows:
-        return '.venv\\scripts\\activate'
+        return os.path.join(venv_dir, "Scripts", "activate")
     else: # MacOS and Linux
-        return '.venv/bin/activate' 
+        return '. "' + os.path.join(venv_dir, "bin", "activate")
 
 
 def install():
@@ -49,14 +52,33 @@ def install():
     os.system('py -3 -m venv .venv')
 
     print('Installing weasel requirements..')
+    # When weasel becomes a pip package, run os.system(activate() + ' && ' + 'py -m pip install weasel')
     os.system(activate() + ' && ' + 'py -m pip install -r weasel\\requirements.txt')
 
-    if os.path.exists('requirements.txt'):
+    if os.path.exists(os.path.join(os.getcwd(), 'requirements.txt')):
         print('Installing project requirements..')
         os.system(activate() + ' && ' + 'py -m pip install -r requirements.txt')
 
 
-def doc():
+def post_installation_build_cleanup():
+    print("Cleaning up building and compilation files...")
+    windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
+    if windows:
+        os.system('move dist\* .')
+        os.system('rmdir build /S /Q')
+        os.system('rmdir dist /S /Q')
+        os.system('del myproject.spec')
+        print("Deleting the created Python Virtual Environment for the process...")
+        os.system('rmdir .venv /S /Q')
+    else:
+        os.system('mv dist/* .')
+        os.system('rm -rf build/ dist/')
+        os.system('rm myproject.spec')
+        print("Deleting the created Python Virtual Environment for the process...")
+        os.system('rm -r .venv/')
+
+
+def doc(output_directory=None):
     """Generate weasel documentation"""
 
     # COMMAND LINE SCRIPT
@@ -66,11 +88,15 @@ def doc():
     # pdoc --html -f -c sort_identifiers=False weasel  
 
     install()
+
     print('Generating documentation..')
-    os.system(activate() + ' && ' + 'pdoc --html -f -c sort_identifiers=False weasel')
+    if output_directory:
+        os.system(activate() + ' && ' + 'pdoc --html -f -c sort_identifiers=False --output-dir ' + str(output_directory) + ' weasel')
+    else:
+        os.system(activate() + ' && ' + 'pdoc --html -f -c sort_identifiers=False weasel')
     
 
-def build(project, onefile=True, terminal=False, data_folders=[]):
+def build(project, onefile=True, terminal=False, data_folders=[], hidden_modules=[]):
     """Generate project executable"""
 
     # COMMENT
@@ -79,6 +105,14 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
     # For some reason pip install does not work with subprocess.
     # Using os.system() until this can be resolved.
 
+    # EXAMPLE OF hidden_modules
+    # pyinstaller tells the user which packages failed to detect and import during the build and it recommends to add the package to the hidden imports flag
+    # hidden = ['xnat', 'requests', 'dipy', 'dipy.data', 'matplotlib', 'lmfit', 'fpdf', 
+    #           'reportlab', 'reportlab.platypus', 'joblib', 'cv2', 'SimpleITK ', 'itk',
+    #           'ukat', 'mdreg', 'mdreg.models', 'sklearn.utils._typedefs', 'sklearn.utils._cython_blas',
+    #           'sklearn.neighbors.typedefs', 'sklearn.neighbors.quad_tree', 'sklearn.tree._utils',
+    #           'sklearn.neighbors._partition_nodes']
+
     install()
 
 #    hidden_modules = ['matplotlib']
@@ -86,29 +120,58 @@ def build(project, onefile=True, terminal=False, data_folders=[]):
 
     windows = (sys.platform == "win32") or (sys.platform == "win64") or (os.name == 'nt')
 
+    if 'itk' in hidden_modules:
+        # Pyinstaller doesn't have hooks for the itk package
+        itk_path_win = '.venv\\lib\\site-packages\\itk'
+        intermediate_python_folder = [fldr.name for fldr in os.scandir('venv/lib') if fldr.is_dir()][0] # It's known there's a Python subfolder between 'lib' and 'site-packages' for Unix systems
+        itk_path_unix = '.venv/lib/' + intermediate_python_folder + '/site-packages/itk'
+    
     if windows:
         all_data = [
             'weasel\\wewidgets\\icons\\my_icons;.\\weasel\\wewidgets\\icons\\my_icons',
             'weasel\\wewidgets\\icons\\fugue-icons-3.5.6;.\\weasel\\wewidgets\\icons\\fugue-icons-3.5.6',
+            'weasel;.\\weasel'
             ]
+        if 'itk' in hidden_modules: all_data.append(itk_path_win+';.\\itk')
+        for name in data_folders:
+            all_data.append(name+";./"+name) 
     else:
         all_data = [
-            'weasel/wewidgets/icons/my_icons;./weasel/wewidgets/icons/my_icons',
-            'weasel/wewidgets/icons/fugue-icons-3.5.6;./weasel/wewidgets/icons/fugue-icons-3.5.6',
+            'weasel/wewidgets/icons/my_icons:./weasel/wewidgets/icons/my_icons',
+            'weasel/wewidgets/icons/fugue-icons-3.5.6:./weasel/wewidgets/icons/fugue-icons-3.5.6',
+            'weasel:./weasel'
             ]
-    all_data = all_data + data_folders
+        if 'itk' in hidden_modules: all_data.append(itk_path_unix+':./itk')
+        for name in data_folders:
+            all_data.append(name+":./"+name) 
+
     add_data = ' '.join(['--add-data='+ mod + ' ' for mod in all_data])
+    hidden_imports = ' '.join(['--hidden-import '+ mod + ' ' for mod in hidden_modules])
+    # The following is a special situation for dbdicom and dipy
+    collect_data = ''
+    if 'dbdicom' in hidden_modules:
+        collect_data += ' --collect-datas dbdicom'
+    if 'dipy' in hidden_modules:
+        collect_data += ' --collect-datas dipy'
+    # weasel and wewidgets might be needed at --collect-datas in the future. It's a matter of trying to build with those 2 and see what happens
 
     print('Creating executable..')
-    cmd = activate() + ' && ' + 'pyinstaller --name "myproject"'
+    cmd = activate() + ' && ' + 'pyinstaller --name "myproject" --clean'
     if onefile: 
         cmd += ' --onefile'
     if not terminal: 
         cmd += ' --noconsole'
-#    cmd += ' ' + hidden_imports
+    cmd += ' ' + hidden_imports
     cmd += ' ' + add_data
-    cmd += ' ' + project + '.py'
+    cmd += ' ' + collect_data
+    if os.path.exists(os.path.join(os.getcwd(), project + '.py')):
+        cmd += ' ' + project + '.py'
+    else:
+        # Default option
+        cmd += ' ' + "weasel\\main.py" # This command (and path!) may be different when weasel becomes a pip install package
     os.system(cmd)
+
+    post_installation_build_cleanup()
 
 
 def logger():
@@ -124,3 +187,7 @@ def logger():
         format = LOG_FORMAT)
     return logging.getLogger(__name__)
 
+
+if __name__ == '__main__':
+    wsl = app()
+    wsl.show()
