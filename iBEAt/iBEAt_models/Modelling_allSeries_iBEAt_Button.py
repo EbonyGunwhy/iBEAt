@@ -1,4 +1,3 @@
-from email.utils import decode_params
 import os, sys, time
 import csv
 import numpy as np
@@ -39,7 +38,7 @@ def main(weasel):
     studydate = weasel.unique_elements(weasel.series()[0]['SeriesDate'])[0]
 
     start_time_loop = time.time()
-
+    print('Starting the job')
     for i,series in enumerate (list_series):
         print(str(i) + ' : ' + series[0]['SeriesDescription'])
         if 'T1T2_COR_R' in series[0]['SeriesDescription']:
@@ -173,26 +172,26 @@ def main(weasel):
     for j,series in enumerate (list_series):
         print(str(j) + ' : ' + series[0]['SeriesDescription'])
 
-        if series[0]['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb": #CHANGE TO THE RIGHT MDR OUTPUT PUT IN THE RIGHT ORDER
+        if series[0]['SeriesDescription'] == "Fp_final": #CHANGE TO THE RIGHT MDR OUTPUT PUT IN THE RIGHT ORDER
             try:
                 start_time = time.time()
                 DCE_FP = series.PixelArray
                 for j_1,series in enumerate (list_series):
-                    if series[0]['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                    if series[0]['SeriesDescription'] == "Ps_final":
                         DCE_PS = series.PixelArray
                         for j_1,series in enumerate (list_series):
-                            if series[0]['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                            if series[0]['SeriesDescription'] == "Tp_final":
                                 DCE_TP = series.PixelArray
                                 for j_1,series in enumerate (list_series):
-                                    if series[0]['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                                    if series[0]['SeriesDescription'] == "Te_final":
                                         DCE_TE = series.PixelArray
                                         break
                 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Quantification has started")
                 file.close()
-                #Hct = 0.45
-                #DCE_series = series
+                # Hct = 0.45
+                # DCE_series = series
                 #DCE_series_images = DCE_series.Magnitude.sort("SliceLocation","AcquisitionTime")
                 #pixelArray_DCE = DCE_series_images.PixelArray
                 #pixelArray_DCE = np.transpose(pixelArray_DCE)
@@ -229,28 +228,28 @@ def main(weasel):
                 DCE_BVF  = DCE_FP*DCE_TP/(1-Hct)
                 DCE_TVF = DCE_PS*DCE_TE*(1-f)
                 
-                DCE_PS_KID_R = DCE_PS*np.transpose(mask_DCE_KID_R)
-                DCE_PS_KID_L = DCE_PS*np.transpose(mask_DCE_KID_L)
-                DCE_GFR_KID_R =  np.mean(DCE_PS_KID_R[DCE_PS_KID_R!=0])*PAR_VOL_R
-                DCE_GFR_KID_L =  np.mean(DCE_PS_KID_L[DCE_PS_KID_L!=0])*PAR_VOL_L
+                DCE_PS_KID_R = np.transpose(DCE_PS)*np.transpose(mask_DCE_KID_R)
+                DCE_PS_KID_L = np.transpose(DCE_PS)*np.transpose(mask_DCE_KID_L)
+                DCE_GFR_KID_R =  np.mean(DCE_PS_KID_R[DCE_PS_KID_R!=0])*PAR_VOL_R_ml*60
+                DCE_GFR_KID_L =  np.mean(DCE_PS_KID_L[DCE_PS_KID_L!=0])*PAR_VOL_L_ml*60
 
-                DCE_PERF_KID_R = DCE_PERF*np.transpose(mask_DCE_KID_R)
-                DCE_PERF_KID_L = DCE_PERF*np.transpose(mask_DCE_KID_L)
-                DCE_RBF_KID_R  = np.mean(DCE_PERF_KID_R[DCE_PERF_KID_R!=0])*PAR_VOL_R
-                DCE_RBF_KID_L  = np.mean(DCE_PERF_KID_L[DCE_PERF_KID_L!=0])*PAR_VOL_L
+                DCE_PERF_KID_R = np.transpose(DCE_PERF)*np.transpose(mask_DCE_KID_R)
+                DCE_PERF_KID_L = np.transpose(DCE_PERF)*np.transpose(mask_DCE_KID_L)
+                DCE_RBF_KID_R  = np.mean(DCE_PERF_KID_R[DCE_PERF_KID_R!=0])*PAR_VOL_R_ml*60
+                DCE_RBF_KID_L  = np.mean(DCE_PERF_KID_L[DCE_PERF_KID_L!=0])*PAR_VOL_L_ml*60
 
-                DCE_PERF_COR_R = DCE_PERF*np.transpose(mask_DCE_COR_R)
-                DCE_PERF_COR_L = DCE_PERF*np.transpose(mask_DCE_COR_L)
-                DCE_FILT_KID_R = DCE_FILT*np.transpose(mask_DCE_KID_R)
-                DCE_FILT_KID_L = DCE_FILT*np.transpose(mask_DCE_KID_L)
-                DCE_BVF_MED_R = DCE_BVF*np.transpose(mask_DCE_MED_R)
-                DCE_BVF_MED_L = DCE_BVF*np.transpose(mask_DCE_MED_L)
-                DCE_BVF_COR_R = DCE_BVF*np.transpose(mask_DCE_COR_R)
-                DCE_BVF_COR_L = DCE_BVF*np.transpose(mask_DCE_COR_L)
-                DCE_TVF_COR_R = DCE_TVF*np.transpose(mask_DCE_COR_R)
-                DCE_TVF_COR_L = DCE_TVF*np.transpose(mask_DCE_COR_L)
-                DCE_TVF_MED_R = DCE_TVF*np.transpose(mask_DCE_MED_R)
-                DCE_TVF_MED_L = DCE_TVF*np.transpose(mask_DCE_MED_L)
+                DCE_PERF_COR_R = np.transpose(DCE_PERF)*np.transpose(mask_DCE_COR_R)*6000
+                DCE_PERF_COR_L = np.transpose(DCE_PERF)*np.transpose(mask_DCE_COR_L)*6000
+                DCE_FILT_KID_R = np.transpose(DCE_FILT)*np.transpose(mask_DCE_KID_R)*6000
+                DCE_FILT_KID_L = np.transpose(DCE_FILT)*np.transpose(mask_DCE_KID_L)*6000
+                DCE_BVF_MED_R = np.transpose(DCE_BVF)*np.transpose(mask_DCE_MED_R)
+                DCE_BVF_MED_L = np.transpose(DCE_BVF)*np.transpose(mask_DCE_MED_L)
+                DCE_BVF_COR_R = np.transpose(DCE_BVF)*np.transpose(mask_DCE_COR_R)
+                DCE_BVF_COR_L = np.transpose(DCE_BVF)*np.transpose(mask_DCE_COR_L)
+                DCE_TVF_COR_R = np.transpose(DCE_TVF)*np.transpose(mask_DCE_COR_R)
+                DCE_TVF_COR_L = np.transpose(DCE_TVF)*np.transpose(mask_DCE_COR_L)
+                DCE_TVF_MED_R = np.transpose(DCE_TVF)*np.transpose(mask_DCE_MED_R)
+                DCE_TVF_MED_L = np.transpose(DCE_TVF)*np.transpose(mask_DCE_MED_L)
 
                 row_DCE_GFR_RBF = [
                             [studydate,site,subject,'GFR','R','KID','Mean','mL/min',str(DCE_GFR_KID_R)],
@@ -495,9 +494,10 @@ def main(weasel):
 
         if series[0]['SeriesDescription'] == "PC_RenalArtery_Right_EcgTrig_fb_120_phase":
             try:
+                PC_R_series = series
                 PC_R = series.PixelArray
                 PC_R_timecourse = np.zeros(np.shape(PC_R)[0])
-                PC_Area_R = np.zeros(np.shape(PC_L)[0])
+                PC_Area_R = np.zeros(np.shape(PC_R)[0])
 
                 #plt.imshow(PC_R[0,:,:])
                 #plt.imshow(mask_PC_ART_R[0,:,:])
@@ -514,11 +514,13 @@ def main(weasel):
                     PC_Area_R[k] = len(tempMaskArea[tempMaskArea!=0])
                     PC_R_timecourse[k] = np.abs(np.median(tempPixelMask[tempPixelMask!=0]))
                     #ACTION NEEDED: multiply PC by a constant
+                
+                PC_Area_R_cm2 =PC_Area_R*PC_R_series[0]['PixelSpacing'][0]*PC_R_series[0]['PixelSpacing'][1]/100
 
-                PC_SIS_R = np.max(PC_R_timecourse)
-                PC_DIA_R = np.min(PC_R_timecourse)
-                PC_MVEL_R =np.mean(PC_R_timecourse)
-                PC_MFLW_R =np.mean(PC_R_timecourse)*np.mean(PC_Area_R)/1000
+                PC_SIS_R = np.max(PC_R_timecourse)/4096*120/2
+                PC_DIA_R = np.min(PC_R_timecourse)/4096*120/2
+                PC_MVEL_R =np.mean(PC_R_timecourse)/4096*120/2
+                PC_MFLW_R =np.mean(PC_R_timecourse/4096*120/2*PC_Area_R_cm2*60)
 
                 row_T1w_PR =[
                             [studydate,site,subject,'Arterial Blood Velocity','R','None','Mean','cm/s',str(PC_MVEL_R)],
@@ -548,6 +550,7 @@ def main(weasel):
 
         if series[0]['SeriesDescription'] == "PC_RenalArtery_Left_EcgTrig_fb_120_phase":
             try:
+                PC_L_series = series
                 PC_L = series.PixelArray
                 PC_L_timecourse = np.zeros(np.shape(PC_L)[0])
                 PC_Area_L = np.zeros(np.shape(PC_L)[0])
@@ -565,11 +568,12 @@ def main(weasel):
                     PC_L_timecourse[k] = np.abs(np.median(tempPixelMask[tempPixelMask!=0]))
                     #ACTION NEEDED: multiply PC by a constant
                 
+                PC_Area_L_cm2 =PC_Area_L*PC_L_series[0]['PixelSpacing'][0]*PC_L_series[0]['PixelSpacing'][1]/100
 
-                PC_SIS_L = np.max(PC_L_timecourse)
-                PC_DIA_L = np.min(PC_L_timecourse)
-                PC_MVEL_L =np.mean(PC_L_timecourse)
-                PC_MFLW_L =np.mean(PC_L_timecourse)*np.mean(PC_Area_L)/1000
+                PC_SIS_L = np.max(PC_L_timecourse)/4096*120/2
+                PC_DIA_L = np.min(PC_L_timecourse)/4096*120/2
+                PC_MVEL_L =np.mean(PC_L_timecourse)/4096*120/2
+                PC_MFLW_L =np.mean(PC_L_timecourse/4096*120/2*PC_Area_L_cm2*60)
 
                 row_T1w_PL =[
                             [studydate,site,subject,'Arterial Blood Velocity','L','None','Mean','cm/s',str(PC_MVEL_L)],
@@ -1537,8 +1541,9 @@ def main(weasel):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": ASL Mapping was NOT completed; error: "  + str(e))
                 file.close()
 
-        elif series[0]['SeriesDescription'] == "T1w_abdomen_post_contrast_dixon_cor":
+        elif series[0]['SeriesDescription'] == "T1w_abdomen_dixon_cor_bh_post_contrast_______" :
             try:
+                start_time = time.time()
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": Pelvis Volume Quantification has started")
                 file.close()
