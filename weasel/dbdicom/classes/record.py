@@ -156,12 +156,12 @@ class Record():
                 array.append(im.array())
         self.status.hide()
         #array = [im.array() for im in dataset.ravel() if im is not None]
-        array = utilities._stack_arrays(array)
+        array = utilities._stack_arrays(array) #db.stack(array)
         array = array.reshape(dataset.shape + array.shape[1:])
         if pixels_first:
             array = np.moveaxis(array, -1, 0)
             array = np.moveaxis(array, -1, 0)
-        return array, dataset
+        return array, dataset # REPLACE BY DBARRAY
 
     def npy(self):
 
@@ -269,7 +269,7 @@ class Record():
             message += '\n dataset has ' + str(np.prod(dataset.shape)) + ' elements'
             message += '\n Check if the keyword pixels_first is set correctly.'
             self.dialog.error(message)
-            raise ValueError(message) 
+            raise ValueError(message)
         # If self is not a series, create a new series.
         if self.generation != 3:
             series = self.new_series()

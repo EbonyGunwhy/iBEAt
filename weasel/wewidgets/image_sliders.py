@@ -128,6 +128,7 @@ class ImageSliders(QWidget):
             if tag not in self.dataFrame:
                 self.sliderTags.remove(tag)
 
+
     def _slidersButtonClicked(self):
         """Show or hide the other sliders that can be added."""
 

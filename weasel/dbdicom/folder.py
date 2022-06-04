@@ -308,14 +308,18 @@ class Folder(Database):
 #        if not os.path.isdir(path): os.mkdir(path)
 #        file = os.path.join(path, pydicom.uid.generate_uid() + '.dcm') 
 
-        # Add a new row in the dataframe
-        labels = self._columns + ['removed','created']
-#        row = pd.DataFrame([['']*len(labels)], index=[file], columns=labels)
-        row = pd.Series(data=['']*len(labels), index=labels, name=file)
+        row = pd.DataFrame([]*len(self._columns), index=[file], columns=self._columns)
         row['removed'] = False
         row['created'] = True
-        self.__dict__['dataframe'] = self.dataframe.append(row) # REPLACE BY CONCAT
-    #    self.__dict__['dataframe'] = pd.concat([self.dataframe, row])
+        self.__dict__['dataframe'] = pd.concat([self.dataframe, row]) 
+        
+        # REPLACED BY CONCAT on 03 june 2022
+        # labels = self._columns + ['removed','created']
+        #row = pd.Series(data=['']*len(labels), index=labels, name=file)
+        #row['removed'] = False
+        #row['created'] = True
+        #self.__dict__['dataframe'] = self.dataframe.append(row) # REPLACE BY CONCAT
+
         self._update(file, ds)
 
     def _update(self, file, ds):

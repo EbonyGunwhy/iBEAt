@@ -189,46 +189,34 @@ class MDRegDynamics(Action):
         Perform model-driven motion correction
         """
         series = weasel.get_selected(3)[0]
-
         array, dataset = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-        # perform mdreg on array
-        fit = series.new_pibling(SeriesDescription = series.SeriesDescription + '_dummy_mdreg')
-        fit.set_array(array, dataset=dataset, pixels_first=True)
+
+    #    mdr = mdreg.MDReg()
+    #    mdr.signal_parameters = []
+    #    mdr.signal_model = constant
+    #    #mdr.read_elastix(os.path.join(elastix_pars, elastix_file))
+    #    #mdr.set_elastix(MaximumNumberOfIterations = 256)
+    #    #mdr.precision = 1
+    #    for z in range(array.shape[2]):
+    #        tmp = np.squeeze(array[:,:,z,:,0])
+    #        array[:,:,z,:,0] = tmp[:]
+            #mdr.pixel_spacing = dataset[z,0,0].PixelSpacing
+            #mdr.set_array(np.squeeze(array[:,:,z,:,0]))
+            ##mdr.fit()   # Add status bar option like in dbdicom
+            #mdr.fit_signal()
+            #array[:,:,z,:,0] = mdr.model_fit[:]
+
+    #    array[:,:,slice,:,0] = mdr.coreg
+        fit = series.new_cousin(SeriesDescription = series.SeriesDescription + '_coreg')
+        fit.set_array(array, dataset, pixels_first=True)
 
         #TO REPLACE BY:
-        #dbarray = db.array(series, sortby=['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-        # perform mdreg on dbarray.tonumpy()
+        #xarray = db.array(series, sortby=['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+        #perform mdreg on dbarray.tonumpy()
         #fit = series.new_sibling(SeriesDescription = series.SeriesDescription + '_array')
-        #fit.write_array(dbarray, pixels_first=True)
+        #fit.write_array(xarray, pixels_first=True)
 
-        weasel.refresh()
-        return
-
-        slice = 18
-        signal_model = constant
-
-        # PERFORM MDR
-        mdr = mdreg.MDReg()
-        mdr.set_array(np.squeeze(array[:,:,slice,:,0]))
-        #mdr.pixel_spacing = header[slice,0,0].PixelSpacing
-        mdr.signal_model = signal_model
-        #mdr.set_elastix(MaximumNumberOfIterations = 256)
-        #mdr.precision = 1
-        #mdr.fit() 
-        mdr.fit_signal()
-        
-        # SAVE RESULTS AS DICOM
-#        parameters = signal_model.par()
-#        for p in range(len(parameters)):
-#            par = series.new_sibling().set_array(mdr.par[...,p], np.squeeze(header[slice,...]))
-#            par.SeriesDescription = series.SeriesDescription + '_mdr_par_' + parameters[p]
-        fit = series.new_sibling().set_array(mdr.model_fit)
-        fit.SeriesDescription = series.SeriesDescription + '_mdr_fit'
-#        moco = series.new_cousin().set_array(mdr.coreg)
-#        moco.SeriesDescription = series.SeriesDescription + '_mdr_moco'
-
-        # DISPLAY RESULTS
-        weasel.refresh()   
+        weasel.refresh() 
 
 class RenameSeries(Action):
 

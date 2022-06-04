@@ -118,20 +118,28 @@ def copy(instances, series=None, status=None):
     if series is None:
         series = instances[0].new_pibling(SeriesDescription='Copy')
 
-    kwargs = {}
-    kwargs['PatientID'] = series.UID[0]
-    kwargs['StudyInstanceUID'] = series.UID[1]
-    kwargs['SeriesInstanceUID'] = series.UID[2]
+    attributes = {}
+    attributes['PatientID'] = series.UID[0]
+    attributes['StudyInstanceUID'] = series.UID[1]
+    attributes['SeriesInstanceUID'] = series.UID[2]
+    if series.attributes is not None:
+        attributes.update(series.attributes)
+        #for key, value in series.attributes.items():
+        #    attributes[key] = value
 
     # Find the instances in the dataframe. 
     uids = [i.UID[-1] for i in instances]
     df = folder.dataframe
     df = df.loc[df.SOPInstanceUID.isin(uids) & (df.removed == False)]
+    instance_ind = []
+    for filename in df.index.values:
+        uid = df.at[filename, 'SOPInstanceUID']
+        instance_ind.append(uids.index(uid))
 
     if status is not None: 
         status.message('Extending register with new files..')
 
-    # Create a copy 
+    # Create a copy of the df
     # Allocate new filenames and append to the dataframe.
     df_created = df.copy(deep=True)
     df_created.removed = False
@@ -147,20 +155,21 @@ def copy(instances, series=None, status=None):
     # write the results in the new file
     cnt, n = 1, df.shape[0]
     for i, filename in enumerate(df.index.values):
-        if status is not None: status.progress(cnt, n)
+        if status is not None: 
+            status.progress(cnt, n)
         file = os.path.join(folder.path, filename)
         newfilename = df_created.index.values[i]
         newfile = os.path.join(folder.path, newfilename)
         ds = read(file, dialog)
-        for tag, value in kwargs.items():
+        for tag, value in attributes.items():
             ds = utilities._set_tags(ds, tag, value)
             if tag in folder._columns:
                 folder.dataframe.loc[newfilename, tag] = value
         uid = folder.new_uid()
         ds = utilities._set_tags(ds, 'SOPInstanceUID', uid)
         folder.dataframe.loc[newfilename, 'SOPInstanceUID'] = uid
-        instances[i].UID[-1] = uid
-        instances[i].UID[:-1] = series.UID
+        instances[instance_ind[i]].UID[-1] = uid
+        instances[instance_ind[i]].UID[:-1] = series.UID
         write(ds, newfile, dialog)
         cnt+=1
 

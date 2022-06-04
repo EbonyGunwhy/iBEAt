@@ -153,7 +153,7 @@ def _convert_attribute_type(value):
     if value.__class__.__name__ == 'UID': 
         return str(value) 
     if value.__class__.__name__ == 'IS': 
-        return str(value)
+        return int(value)
     if value.__class__.__name__ == 'DT': 
         return str(value)
     if value.__class__.__name__ == 'DA': 
@@ -264,6 +264,7 @@ def scan_tree(directory):
 def _stack_arrays(arrays, align_left=False):
     """Stack a list of arrays of different shapes but same number of dimensions.
     
+    This generalises numpy.stack to arrays of different sizes.
     The stack has the size of the largest array.
     If an array is smaller it is zero-padded and centred on the middle.
     """
@@ -274,7 +275,9 @@ def _stack_arrays(arrays, align_left=False):
     dim = [0] * ndim
     for array in arrays:
         for i, d in enumerate(dim):
-            dim[i] = max((d, array.shape[i]))
+            dim[i] = max((d, array.shape[i])) # changing the variable we are iterating over!!
+    #    for i in range(ndim):
+    #        dim[i] = max((dim[i], array.shape[i]))
 
     # Create the stack
     # Add one dimension corresponding to the size of the stack

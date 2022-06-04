@@ -46,7 +46,7 @@ class MDReg:
         """
         (nr of pixels, nr of dimensions, nr of time points)
         """
-        shape = self.array.shape  
+        shape = self.array.shape
         return np.prod(shape[:-1]), len(shape)-1, shape[-1]
 
     def set_array(self, array):
