@@ -1,24 +1,31 @@
-from weasel.core import Action
+import weasel
+import dbdicom as db
 
-class Leeds(Action):
 
-    def run(weasel):
+class Leeds(weasel.Action):
 
-        list_of_series = weasel.folder.series(checked=True)
+    def run(self, app):
+
+        list_of_series = app.get_selected(3)
 
         series_names = []  
         for i, series in enumerate(list_of_series):
-            weasel.status.progress(i+1, len(list_of_series), message="Identifying series {}")
-            series_names.append(rename_leeds(series))
-        weasel.status.message()
+            app.status.progress(i+1, len(list_of_series), "Identifying series {}")
+            series_names.append(leeds_rename(series))
+        app.status.message()
 
-        series_names = extend_leeds_name(series_names)
+        series_names = leeds_name_extend(series_names)
 
         for i, series in enumerate(list_of_series):
-            weasel.status.progress(i+1, len(list_of_series), message="Renaming series {}")
-            series["SeriesDescription"] = series_names[i]
+            app.status.progress(i+1, len(list_of_series), message="Renaming series {}")
+            db.set_value(series.instances(), SeriesDescription=series_names[i])
 
-        weasel.refresh()
+            # Note - the following should work but needs to be added 
+            # in dbdicom record __setitem__ and tested
+            #
+            # series["SeriesDescription"] = series_names[i] 
+
+        app.refresh()
         """
         ####### THE IVIM PART NEEDS REVIEW AND THIS 2ND PART TAKES A LOT LONGER. WOULD RECOMMEND TO PUT THIS IN A SEPARATE SCRIPT ##############
 
@@ -72,14 +79,14 @@ class Leeds(Action):
         weasel.refresh()
         """
         
-def rename_leeds(series): 
+def leeds_rename(series): 
     """
     The sequence names in Leeds have been removed by the anonymisation
     procedure and must be recovered from other attributes
     """
     im = series.children(0)
 
-    if im.SequenceName == '*tfi2d1_192':
+    if im["SequenceName"] == '*tfi2d1_192':
         if im["FlipAngle"] > 30:
             return 'localizer_bh_fix'
         else: 
@@ -159,7 +166,7 @@ def rename_leeds(series):
     return 'Sequence not recognized'
 
 
-def extend_leeds_name(series_names): 
+def leeds_name_extend(series_names): 
     """
     For some series the name must be extended
     """
