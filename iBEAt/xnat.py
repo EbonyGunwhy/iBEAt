@@ -10,16 +10,16 @@ import warnings
 import requests
 import xnat
 
-from weasel.core import Action
+import weasel
 
-class Download(Action):
+class Download(weasel.Action):
 
-    def run(self, weasel):
+    def run(self, app):
         try:
             url_input = {"type":"string", "label":"URL", "value":"https://qib.shef.ac.uk"}
             username_input = {"type":"string", "label":"Username", "value":"your.xnat.username"}
             password_input = {"type":"string", "label":"Password"}
-            cancel, loginDetails = weasel.dialog.input(url_input, username_input, password_input, title="XNAT Login")
+            cancel, loginDetails = app.dialog.input(url_input, username_input, password_input, title="XNAT Login")
             if cancel: return
             url = loginDetails[0]['value'] # https://qib.shef.ac.uk 
             username = loginDetails[1]['value']
@@ -27,7 +27,7 @@ class Download(Action):
             with xnat.connect(url, user=username, password=password) as session:
                 xnatProjects = [project.secondary_id for project in session.projects.values()]
                 projectWindow = {"type":"dropdownlist", "label":"Project", "list":xnatProjects}
-                cancel, project = weasel.dialog.input(projectWindow, title="XNAT Download")
+                cancel, project = app.dialog.input(projectWindow, title="XNAT Download")
                 if cancel: return
                 projectID = project[0]['list'][project[0]['value']]
                 projectName = [project.name for project in session.projects.values() if project.secondary_id == projectID][0]
@@ -35,77 +35,77 @@ class Download(Action):
                     xnatSubjects = [subject.label for subject in session.projects[projectName].subjects.values()]
                     xnatSubjects.insert(0, "All")
                     subjectWindow = {"type":"dropdownlist", "label":"Subject", "list":xnatSubjects}
-                    cancel, subject = weasel.dialog.input(subjectWindow, title="XNAT Download")
+                    cancel, subject = app.dialog.input(subjectWindow, title="XNAT Download")
                     if cancel: return
                     subjectName = subject[0]['list'][subject[0]['value']]
                     if subjectName:
                         if subjectName == "All":
                             dataset = session.projects[projectName]
-                            downloadFolder = weasel.dialog.directory("Where to download the data?")
+                            downloadFolder = app.dialog.directory("Where to download the data?")
                             if downloadFolder == '': return
-                            weasel.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using Weasel.", "XNAT Download")
+                            app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download")
                             dataset.download_dir(downloadFolder)
-                            weasel.status.message("Download completed!", "XNAT Download")
+                            app.status.message("Download completed!", "XNAT Download")
                         else:
                             xnatExperiments = [experiment.label for experiment in session.projects[projectName].subjects[subjectName].experiments.values()]
                             xnatExperiments.insert(0, "All")
                             experimentWindow = {"type":"dropdownlist", "label":"Experiment", "list":xnatExperiments}
-                            cancel, experiment = weasel.dialog.input(experimentWindow, title="XNAT Download")
+                            cancel, experiment = app.dialog.input(experimentWindow, title="XNAT Download")
                             if cancel: return
                             experimentName = experiment[0]['list'][experiment[0]['value']]
                             if experimentName:
                                 if experimentName == "All":
                                     dataset = session.projects[projectName].subjects[subjectName]
-                                    downloadFolder = weasel.dialog.directory("Where to download the data?")
+                                    downloadFolder = app.dialog.directory("Where to download the data?")
                                     if downloadFolder == '': return
-                                    weasel.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using Weasel.", "XNAT Download")
+                                    app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download")
                                     dataset.download_dir(downloadFolder)
-                                    weasel.status.message("Download completed!", "XNAT Download")
+                                    app.status.message("Download completed!", "XNAT Download")
                                 else:
                                     xnatScans = [scan.series_description for scan in session.projects[projectName].subjects[subjectName].experiments[experimentName].scans.values()]
                                     xnatScans.insert(0, "All")
                                     scanWindow = {"type":"dropdownlist", "label":"Scan", "list":xnatScans}
-                                    cancel, scan = weasel.dialog.input(scanWindow, title="XNAT Download")
+                                    cancel, scan = app.dialog.input(scanWindow, title="XNAT Download")
                                     if cancel: return
                                     scanName = scan[0]['list'][scan[0]['value']]
                                     if scanName:
                                         if scanName == "All":
                                             dataset = session.projects[projectName].subjects[subjectName].experiments[experimentName]
-                                            downloadFolder = weasel.dialog.directory("Where to download the data?")
+                                            downloadFolder = app.dialog.directory("Where to download the data?")
                                             if downloadFolder == '': return
-                                            weasel.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using Weasel.", "XNAT Download")
+                                            app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download")
                                             dataset.download_dir(downloadFolder)
-                                            weasel.status.message("Download completed!", "XNAT Download")
+                                            app.status.message("Download completed!", "XNAT Download")
                                         else:
                                             dataset = session.projects[projectName].subjects[subjectName].experiments[experimentName].scans[scanName]
-                                            downloadFolder = weasel.dialog.directory("Where to download the data?")
+                                            downloadFolder = app.dialog.directory("Where to download the data?")
                                             if downloadFolder == '': return
-                                            weasel.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using Weasel.", "XNAT Download") 
+                                            app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download") 
                                             dataset.download_dir(downloadFolder)
-                                            weasel.status.message("Download completed!", "XNAT Download")
+                                            app.status.message("Download completed!", "XNAT Download")
             # Load the directory again
-            # This loads the whole directory again, so it might take some time. It would be quicker if there was an incremental weaselroach to the TreeView (.xml or .csv).
+            # This loads the whole directory again, so it might take some time. It would be quicker if there was an incremental approach to the TreeView (.xml or .csv).
             if downloadFolder != '':
-                weasel.open(os.path.join(downloadFolder, dataset.label))
+                app.open(os.path.join(downloadFolder, dataset.label))
             # Delete Login Details
             del loginDetails, url, username, password
             session.disconnect()
             return
 
         except Exception as e:
-            weasel.log.error('Error in function XNATapp.download: ' + str(e))
+            app.log.error('Error in function XNATapp.download: ' + str(e))
             if "Could not determine if login was successful!" in str(e):
-                weasel.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
+                app.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
 
 
-class Upload(Action):
+class Upload(weasel.Action):
 
-    def run(self, weasel):
+    def run(self, app):
         try:
             url_input = {"type":"string", "label":"URL", "value":"https://qib.shef.ac.uk"}
             username_input = {"type":"string", "label":"Username", "value":"your.xnat.username"}
             password_input = {"type":"string", "label":"Password"}
-            cancel, loginDetails = weasel.dialog.input(url_input, username_input, password_input, title="XNAT Login")
+            cancel, loginDetails = app.dialog.input(url_input, username_input, password_input, title="XNAT Login")
             if cancel: return
             url = loginDetails[0]['value'] # https://qib.shef.ac.uk 
             username = loginDetails[1]['value']
@@ -113,7 +113,7 @@ class Upload(Action):
             with xnat.connect(url, user=username, password=password) as session:
                 xnatProjects = [project.secondary_id for project in session.projects.values()]
                 projectWindow = {"type":"dropdownlist", "label":"Project", "list":xnatProjects}
-                cancel, project = weasel.dialog.input(projectWindow, title="XNAT Upload")
+                cancel, project = app.dialog.input(projectWindow, title="XNAT Upload")
                 if cancel: return
                 projectID = project[0]['list'][project[0]['value']]
                 projectName = [project.name for project in session.projects.values() if project.secondary_id == projectID][0]
@@ -121,51 +121,51 @@ class Upload(Action):
                     xnatSubjects = [subject.label for subject in session.projects[projectName].subjects.values()]
                     xnatSubjects.insert(0, "Upload at Project Level")
                     subjectWindow = {"type":"dropdownlist", "label":"Subject", "list":xnatSubjects}
-                    cancel, subject = weasel.dialog.input(subjectWindow, title="XNAT Upload")
+                    cancel, subject = app.dialog.input(subjectWindow, title="XNAT Upload")
                     if cancel: return
                     subjectName = subject[0]['list'][subject[0]['value']]
                     if subjectName:
                         if subjectName == "Upload at Project Level":
-                            uploadPaths = [image.file for image in weasel.folder.instances()]
+                            uploadPaths = [image.file for image in app.folder.instances()]
                             uploadZipFile = zipFiles(uploadPaths)
-                            weasel.dialog.information("The selected images will be uploaded to the selected project. The upload progress can be checked in the terminal and you may continue using Weasel.", "XNAT Upload")
+                            app.dialog.information("The selected images will be uploaded to the selected project. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
                             try:
-                                weasel.status.message("Uploading files to XNAT...", "XNAT Upload")
+                                app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                 session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, content_type='application/zip')
                             except:
-                                weasel.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
                                 warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                            weasel.status.message("Upload completed!", "XNAT Upload")
+                            app.status.message("Upload completed!", "XNAT Upload")
                         else:
                             xnatExperiments = [experiment.label for experiment in session.projects[projectName].subjects[subjectName].experiments.values()]
                             xnatExperiments.insert(0, "Upload at Subject Level")
                             experimentWindow = {"type":"dropdownlist", "label":"Experiment", "list":xnatExperiments}
-                            cancel, experiment = weasel.dialog.input(experimentWindow, title="XNAT Upload")
+                            cancel, experiment = app.dialog.input(experimentWindow, title="XNAT Upload")
                             if cancel: return
                             experimentName = experiment[0]['list'][experiment[0]['value']]
                             if experimentName:
                                 if experimentName == "Upload at Subject Level":
-                                    uploadPaths = [image.file for image in weasel.folder.instances()]
+                                    uploadPaths = [image.file for image in app.folder.instances()]
                                     uploadZipFile = zipFiles(uploadPaths)
-                                    weasel.dialog.information("The selected images will be uploaded to the selected subject. The upload progress can be checked in the terminal and you may continue using Weasel.", "XNAT Upload")
+                                    app.dialog.information("The selected images will be uploaded to the selected subject. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
                                     try:
-                                        weasel.status.message("Uploading files to XNAT...", "XNAT Upload")
+                                        app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                         session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, subject=session.projects[projectName].subjects[subjectName].id, content_type='application/zip')
                                     except:
-                                        weasel.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                        app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
                                         warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                                    weasel.status.message("Upload completed!", "XNAT Upload")
+                                    app.status.message("Upload completed!", "XNAT Upload")
                                 else:
-                                    uploadPaths = [image.file for image in weasel.folder.instances()]
+                                    uploadPaths = [image.file for image in app.folder.instances()]
                                     uploadZipFile = zipFiles(uploadPaths)
-                                    weasel.dialog.information("The selected images will be uploaded to the selected experiment. The upload progress can be checked in the terminal and you may continue using Weasel.", "XNAT Upload")
+                                    app.dialog.information("The selected images will be uploaded to the selected experiment. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
                                     try:
-                                        weasel.status.message("Uploading files to XNAT...", "XNAT Upload")
+                                        app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                         session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, subject=session.projects[projectName].subjects[subjectName].id, experiment=session.projects[projectName].subjects[subjectName].experiments[experimentName].id, content_type='application/zip')
                                     except:
-                                        weasel.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                        app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
                                         warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                                    weasel.status.message("Upload completed!", "XNAT Upload")
+                                    app.status.message("Upload completed!", "XNAT Upload")
             # Curl Command
             headers = {"Content-Type": "application/json", "Accept": "*/*"}
             # Update the project's indices
@@ -178,9 +178,9 @@ class Upload(Action):
             os.remove(uploadZipFile)
             session.disconnect()
         except Exception as e:
-            weasel.log.error('Error in function XNATapp.upload: ' + str(e))
+            app.log.error('Error in function XNATapp.upload: ' + str(e))
             if "Could not determine if login was successful!" in str(e):
-                weasel.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
+                app.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
 
 
 
