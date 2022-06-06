@@ -25,7 +25,7 @@ QComboBox::drop-down
 }
 QComboBox:down-arrow 
 {
-    image: url("weasel/wewidgets/icons/fugue-icons-3.5.6/spectrum.png");
+    image: url("weasel/widgets/icons/fugue-icons-3.5.6/spectrum.png");
 }
 """
 

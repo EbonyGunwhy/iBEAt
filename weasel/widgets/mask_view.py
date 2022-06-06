@@ -15,7 +15,7 @@ from PyQt5.QtCore import Qt, QPointF, QRectF, pyqtSignal
 from PyQt5.QtGui import QPixmap, QImage, qRgb, QIcon, QCursor, QColor, QPen
 from PyQt5.QtWidgets import QGraphicsObject, QAction, QAction, QMenu
 
-from .. import wewidgets as widgets
+from .. import widgets as widgets
 
 
 class MaskView(widgets.ImageView):

@@ -1,9 +1,0 @@
-matplotlib==3.2.2
-nibabel>=3.0.2
-numpy>=1.17.3
-pandas>=1.0.0,<1.2
-pdoc3>=0.10.0
-pydicom>=2.0.0,<2.2.0
-PyQt5==5.15.1
-pyinstaller
-pyqtgraph

@@ -3,7 +3,7 @@ __all__ = ['Main', 'App', 'Action', 'MenuBar', 'Menu']
 from PyQt5.QtWidgets import QMainWindow, QAction, QMenu, QMenuBar
 from PyQt5.QtGui import QIcon
 
-import weasel.wewidgets as widgets
+import weasel.widgets as widgets
 
 
 class Main(QMainWindow):

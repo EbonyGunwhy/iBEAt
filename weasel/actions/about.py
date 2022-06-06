@@ -1,7 +1,7 @@
 import webbrowser
 from weasel.core import Action
 
-from weasel.wewidgets.icons import question_mark
+from weasel.widgets.icons import question_mark
 
 
 def menu(parent):

@@ -1,13 +1,13 @@
 import os
 import numpy as np
 
-import mdreg.mdreg as mdreg
-from mdreg.mdreg.models import constant
+import mdreg
+from mdreg.models import constant
 
-import weasel.dbdicom as db
-from weasel.core import Action
+import dbdicom as db
+import weasel as wsl
 import weasel.actions as actions
-from weasel.wewidgets import SeriesViewerROI, FourDimViewer
+from weasel.widgets import SeriesViewerROI, FourDimViewer
 
 #from iBEAt.xnat import Upload, Download
 #from iBEAt.rename import Leeds
@@ -75,7 +75,7 @@ attributes = [
 ]
 
 
-class Open(Action):
+class Open(wsl.Action):
 
     def enable(self, app):
 
@@ -100,7 +100,7 @@ class Open(Action):
         app.status.cursorToNormal()
 
 
-class OpenSubFolders(Action):
+class OpenSubFolders(wsl.Action):
 
     def enable(self, app):
 
@@ -130,7 +130,7 @@ class OpenSubFolders(Action):
         app.display(app.folder)
 
 
-class MergeDynamics(Action):
+class MergeDynamics(wsl.Action):
 
     def enable(self, app):
 
@@ -176,7 +176,7 @@ class MergeDynamics(Action):
                 cnt += 1
         app.refresh()
 
-class MDRegDynamics(Action):
+class MDRegDynamics(wsl.Action):
 
     def enable(self, weasel):
 
@@ -191,22 +191,23 @@ class MDRegDynamics(Action):
         series = weasel.get_selected(3)[0]
         array, dataset = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
-    #    mdr = mdreg.MDReg()
+        mdr = mdreg.MDReg()
     #    mdr.signal_parameters = []
     #    mdr.signal_model = constant
-    #    #mdr.read_elastix(os.path.join(elastix_pars, elastix_file))
-    #    #mdr.set_elastix(MaximumNumberOfIterations = 256)
+        mdr.set_elastix(MaximumNumberOfIterations = 256)
     #    #mdr.precision = 1
-    #    for z in range(array.shape[2]):
-    #        tmp = np.squeeze(array[:,:,z,:,0])
-    #        array[:,:,z,:,0] = tmp[:]
-            #mdr.pixel_spacing = dataset[z,0,0].PixelSpacing
-            #mdr.set_array(np.squeeze(array[:,:,z,:,0]))
-            ##mdr.fit()   # Add status bar option like in dbdicom
-            #mdr.fit_signal()
-            #array[:,:,z,:,0] = mdr.model_fit[:]
+        mdr.status = weasel.status
 
-    #    array[:,:,slice,:,0] = mdr.coreg
+        for z in range(array.shape[2]):
+            mdr.pinned_message = 'MDR for slice ' + str(z) + ' of ' + str(array.shape[2])
+            # weasel.status.progress(z, array.shape[2], 'Fitting model..')
+            mdr.pixel_spacing = dataset[z,0,0].PixelSpacing
+            mdr.set_array(np.squeeze(array[:,:,z,:,0]))
+            mdr.fit()   # Add status bar option like in dbdicom
+            array[:,:,z,:,0] = mdr.coreg
+            #mdr.fit_signal()
+            #array[:,:,z,:,0] = mdr.model_fit
+
         fit = series.new_cousin(SeriesDescription = series.SeriesDescription + '_coreg')
         fit.set_array(array, dataset, pixels_first=True)
 
@@ -218,7 +219,7 @@ class MDRegDynamics(Action):
 
         weasel.refresh() 
 
-class RenameSeries(Action):
+class RenameSeries(wsl.Action):
 
     def enable(self, app):
         if not hasattr(app, 'folder'):
@@ -235,11 +236,11 @@ class RenameSeries(Action):
         app.refresh()
 
 
-class Region(Action):
+class Region(wsl.Action):
 
     def enable(self, app):
         
-        if app.__class__.__name__ != 'DicomWindows':
+        if app.__class__.__name__ != 'Windows':
             return False
         return app.nr_selected(3) != 0
 
@@ -252,7 +253,7 @@ class Region(Action):
             app.addAsSubWindow(viewer, title=series.label())
 
 
-class FourDimArrayDisplay(Action):
+class FourDimArrayDisplay(wsl.Action):
 
     def enable(self, weasel):
         return weasel.nr_selected(3) != 0
@@ -275,25 +276,25 @@ class FourDimArrayDisplay(Action):
         weasel.status.message('')
 
 
-class MDR_iBEAt_MT_Button(Action):
+class MDR_iBEAt_MT_Button(wsl.Action):
     pass
 
-class MDR_allSeries_iBEAt_Button(Action):
+class MDR_allSeries_iBEAt_Button(wsl.Action):
     pass
 
-class MDR_allSeries_iBEAt_Button_NO_importing(Action):
+class MDR_allSeries_iBEAt_Button_NO_importing(wsl.Action):
     pass
 
-class iBEAt_SiemensT1T2MapButton(Action):
+class iBEAt_SiemensT1T2MapButton(wsl.Action):
     pass
 
-class iBEAt_SiemensT2sMapButton(Action):
+class iBEAt_SiemensT2sMapButton(wsl.Action):
     pass
 
-class iBEAt_SiemensIVIMButton(Action):
+class iBEAt_SiemensIVIMButton(wsl.Action):
     pass
 
-class iBEAt_SiemensDTIButton(Action):
+class iBEAt_SiemensDTIButton(wsl.Action):
     pass
 
 

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QLabel, 
     QToolBar,
 )
-from .. import wewidgets as widget
+from .. import widgets as widget
 from . import icons
 
 class ImageViewer(QWidget):

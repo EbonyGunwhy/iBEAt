@@ -3,7 +3,7 @@ __all__ = ['MaskViewToolBox']
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton
 
-from .. import wewidgets as widgets
+from .. import widgets as widgets
 
 class MaskViewToolBox(QWidget):
 

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QPushButton)
 from PyQt5.QtGui import QPixmap, QCursor, QIcon, QColor, QPen, QBrush
 
-from weasel.dbdicom.classes.image import QImage
+from dbdicom.classes.image import QImage
 from . import icons
 
 

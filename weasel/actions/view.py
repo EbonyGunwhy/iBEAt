@@ -1,5 +1,5 @@
 from weasel.core import Action
-from weasel.wewidgets import SeriesViewerROI
+from weasel.widgets import SeriesViewerROI
 
 def menu(parent):
    

@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     QToolBar, 
 )                          
 
-from .. import wewidgets as widgets
+from .. import widgets
 
 class SeriesViewer(QWidget):
     """Display a single series."""

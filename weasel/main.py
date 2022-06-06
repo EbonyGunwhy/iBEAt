@@ -9,9 +9,9 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
-import weasel.wewidgets as widgets
+import weasel.widgets as widgets
 from weasel.core import Main
-from weasel.apps import WeaselWelcome
+from weasel.apps.welcome import Weasel as WeaselWelcome
 
 QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
@@ -128,8 +128,8 @@ def build(project, onefile=True, terminal=False, data_folders=[], hidden_modules
     
     if windows:
         all_data = [
-            'weasel\\wewidgets\\icons\\my_icons;.\\weasel\\wewidgets\\icons\\my_icons',
-            'weasel\\wewidgets\\icons\\fugue-icons-3.5.6;.\\weasel\\wewidgets\\icons\\fugue-icons-3.5.6',
+            'weasel\\widgets\\icons\\my_icons;.\\weasel\\widgets\\icons\\my_icons',
+            'weasel\\widgets\\icons\\fugue-icons-3.5.6;.\\weasel\\wwidgets\\icons\\fugue-icons-3.5.6',
             'weasel;.\\weasel'
             ]
         if 'itk' in hidden_modules: all_data.append(itk_path_win+';.\\itk')
@@ -137,8 +137,8 @@ def build(project, onefile=True, terminal=False, data_folders=[], hidden_modules
             all_data.append(name+";./"+name) 
     else:
         all_data = [
-            'weasel/wewidgets/icons/my_icons:./weasel/wewidgets/icons/my_icons',
-            'weasel/wewidgets/icons/fugue-icons-3.5.6:./weasel/wewidgets/icons/fugue-icons-3.5.6',
+            'weasel/widgets/icons/my_icons:./weasel/widgets/icons/my_icons',
+            'weasel/widgets/icons/fugue-icons-3.5.6:./weasel/widgets/icons/fugue-icons-3.5.6',
             'weasel:./weasel'
             ]
         if 'itk' in hidden_modules: all_data.append(itk_path_unix+':./itk')
@@ -153,7 +153,7 @@ def build(project, onefile=True, terminal=False, data_folders=[], hidden_modules
         collect_data += ' --collect-datas dbdicom'
     if 'dipy' in hidden_modules:
         collect_data += ' --collect-datas dipy'
-    # weasel and wewidgets might be needed at --collect-datas in the future. It's a matter of trying to build with those 2 and see what happens
+    # weasel and widgets might be needed at --collect-datas in the future. It's a matter of trying to build with those 2 and see what happens
 
     print('Creating executable..')
     cmd = activate() + ' && ' + 'pyinstaller --name "myproject" --clean'

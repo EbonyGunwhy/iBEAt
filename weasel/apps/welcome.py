@@ -1,12 +1,11 @@
 __all__ = ['WeaselWelcome', 'WeaselAbout']
 
-import weasel.wewidgets as widgets
+import weasel.widgets as widgets
 import weasel.actions as actions
-import weasel.apps as apps
 from weasel.core import App, Action
-from weasel import dbdicom
+import dbdicom as db
 
-class WeaselAbout(App):
+class About(App):
     """Entry weasel application"""
 
     def __init__(self, weasel):
@@ -16,7 +15,7 @@ class WeaselAbout(App):
         self.set_menu(actions.about.menu)
         self.set_status("Welcome to Weasel!")
 
-class WeaselWelcome(App):
+class Weasel(App):
     """Entry weasel application"""
 
     def __init__(self, weasel):
@@ -48,7 +47,7 @@ class DICOM(Action):
         if path == '': return
 
         app.status.cursorToHourglass()
-        folder = dbdicom.Folder(status=app.status, dialog=app.dialog)
+        folder = db.Folder(status=app.status, dialog=app.dialog)
         folder.open(path)
         
         app = app.set_app(apps.DicomWindows)

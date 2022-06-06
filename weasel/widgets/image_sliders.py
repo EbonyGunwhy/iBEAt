@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     )
 from PyQt5.QtGui import QIcon
 
-from .. import wewidgets as widgets
+from .. import widgets as widgets
 
 class ImageSliders(QWidget):
     """Widget with sliders to navigate through a DICOM series."""

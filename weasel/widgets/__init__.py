@@ -1,5 +1,5 @@
 """
-`wewidgets` is a collection of PyQt widgets that can be used as components 
+`widgets` is a collection of PyQt widgets that can be used as components 
 in `weasel` applications.
 
 """

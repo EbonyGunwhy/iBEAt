@@ -1,4 +1,4 @@
-import weasel.dbdicom as db
+import dbdicom as db
 from weasel.core import Action
 
 def menu(parent):

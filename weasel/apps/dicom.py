@@ -3,13 +3,14 @@ __all__ = ['DicomWindows', 'DicomSeries']
 from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtCore import Qt
 
-from weasel import wewidgets as widgets
-from weasel import dbdicom as dicom
-from weasel import actions, apps
-from weasel.core import App
+import dbdicom as db
+import weasel as wsl
+
+from weasel import widgets
+from weasel import actions
 
 
-class DicomWindows(App):
+class Windows(wsl.App):
 
     def __init__(self, weasel): 
         """Creates the default main window."""
@@ -17,7 +18,7 @@ class DicomWindows(App):
         super().__init__(weasel)
 
         self.treeView = None
-        self.folder = dicom.Folder(status=self.status, dialog=self.dialog)
+        self.folder = db.Folder(status=self.status, dialog=self.dialog)
         self.central = widgets.MainMultipleDocumentInterface()
         self.main.setCentralWidget(self.central)
         self.set_menu(actions.demo.menu)
@@ -132,14 +133,14 @@ class DicomWindows(App):
         selected = self.treeView.get_selected(generation)
         return len(selected)
 
-class DicomSeries(App):
+class Series(wsl.App):
 
     def __init__(self, weasel): 
         """Creates a central window showing series only."""
 
         super().__init__(weasel)
 
-        self.folder = dicom.Folder(status=weasel.status, dialog=weasel.dialog)
+        self.folder = db.Folder(status=weasel.status, dialog=weasel.dialog)
         self.central = widgets.SeriesViewer()
         self.main.setCentralWidget(self.central)
         self.set_menu(actions.demo.menu) 

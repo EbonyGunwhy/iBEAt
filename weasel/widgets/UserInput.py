@@ -302,7 +302,7 @@ class ParameterInputDialog(QDialog):
   
   title - optional string containing the input dialog title. Has a default string "Input Parameters"
 
-  helpText - optional help text to be displayed above the input wewidgets.
+  helpText - optional help text to be displayed above the input widgets.
   """
 class ParameterInputDialog(QDialog):
     def __init__(self, paramDict, title="Input Parameters", helpText=None, lists=None):

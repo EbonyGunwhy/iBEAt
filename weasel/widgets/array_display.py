@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QSplitter, 
 )
-from .. import wewidgets as widgets
+from .. import widgets as widgets
 
 class FourDimViewer(QSplitter):
     """

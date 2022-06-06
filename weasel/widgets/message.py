@@ -118,7 +118,8 @@ class StatusBar(QStatusBar):
 
     def message(self, message=None):
 
-        if message == None: message = ''
+        if message == None: 
+            message = ''
         self.showMessage(message)
         QApplication.processEvents() # allow gui to update
 

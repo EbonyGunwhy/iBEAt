@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QWidget,
                             QVBoxLayout, 
                             QHBoxLayout)
 
-from .. import wewidgets as widgets
+from .. import widgets
 
 class SeriesViewerROI(QWidget):
     """
