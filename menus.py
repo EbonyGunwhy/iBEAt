@@ -1,11 +1,11 @@
 import weasel
 
-import iBEAt.modelling as modelling
-import iBEAt.macros as macros
-import iBEAt.tools as tools
-import iBEAt.xnat as xnat
-import iBEAt.rename as rename
-import iBEAt.mdr as mdr
+import actions.modelling as modelling
+import actions.macros as macros
+import actions.tools as tools
+import actions.xnat as xnat
+import actions.rename as rename
+import actions.mdr as mdr
 
 def pilot(parent): 
 
@@ -28,25 +28,27 @@ def pilot(parent):
     menu = parent.menu('Edit')
     weasel.actions.edit.menu(menu)
 
-    menu = parent.menu('iBEAt Auto')
+    menu = parent.menu('iBEAt-Auto')
     menu.action(macros.MDRegMacro, text='MDR-Auto')
     menu.action(macros.MDRegMacroNoImport, text='MDR-Auto (No XNAT importing)')
     menu.separator()
     menu.action(tools.TimeMIP, text='DCE create AIF (Siemens)')
-    #pipeline = 'iBEAt_DCE_Button_modelling_only'
+    menu.action(modelling.DCE_Button_modelling_only, text='DCE modelling - pilot (Siemens)')
     menu.separator()
-    #pipeline = 'Modelling_allSeries_iBEAt_Button'
+    menu.action(modelling.allSeries, text='All modelling - pilot (Siemens)')
 
     menu = parent.menu('iBEAt-MDR')
     menu.action(xnat.Download, text='XNAT Download') 
     menu.action(rename.Leeds, text='Rename DICOMs (Leeds)')
+    menu.separator()
     menu.action(mdr.MDRegT2star, text='T2* MDR (Siemens)')
     menu.action(mdr.MDRegT2, text='T2 MDR (Siemens)')
     menu.action(mdr.MDRegT1, text='T1 MDR (Siemens)')
     menu.action(mdr.MDRegDWI, text='IVIM MDR (Siemens)')
     menu.action(mdr.MDRegDTI, text='DTI MDR (Siemens)')
-    #menu.action(mdr.MDRegDCE, text='DCE MDR (Siemens)')
+    menu.action(mdr.MDRegDCE, text='DCE MDR (Siemens)')
     menu.action(mdr.MDRegMT, text='MT MDR (Siemens)')
+    menu.separator()
     menu.action(xnat.Upload, text = 'XNAT Upload') 
     
     menu = parent.menu('iBEAt-Modelling')

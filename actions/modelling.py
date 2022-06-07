@@ -1,5 +1,11 @@
 import weasel
 
+class allSeries(weasel.Action):
+    pass
+
+class DCE_Button_modelling_only(weasel.Action):
+    pass
+
 class SiemensT1T2MapButton(weasel.Action):
     pass
 

@@ -3,9 +3,9 @@ import datetime
 
 import weasel
 
-import iBEAt.xnat as xnat
-import iBEAt.rename as rename
-import iBEAt.mdr as mdr
+import actions.xnat as xnat
+import actions.rename as rename
+import actions.mdr as mdr
 
 class MDRegMacro(weasel.Action):
 
