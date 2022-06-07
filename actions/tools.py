@@ -99,7 +99,7 @@ class FourDimArrayDisplay(weasel.Action):
         if array.ndim != 4:
             app.dialog.information("Please select a 4D array for this viewer")
             return
-        viewer = weasel.widgets.FourDimViewer(weasel.status, array)
+        viewer = weasel.widgets.FourDimViewer(app.status, array)
         app.addAsSubWindow(viewer, title=series.label())
         app.status.message('Saving array for rapid access..')
         if no_array:
