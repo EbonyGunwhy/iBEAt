@@ -1,6 +1,15 @@
 from weasel.core import Action
 import weasel.apps as apps
-import weasel.actions as actions
+#import weasel.actions as actions
+from weasel.actions.about import menu as aboutmenu
+from weasel.actions.folder import menu as foldermenu
+from weasel.actions.edit import menu as editmenu
+from weasel.actions.view import Image
+from weasel.actions.view import Series
+from weasel.actions.view import Region
+from weasel.actions.view import CloseWindows
+from weasel.actions.view import TileWindows
+
 
 def hello_world(parent):
 
@@ -24,21 +33,22 @@ def menu_hello(parent):
     subSubMenu.action(HelloWorld, text="Hello World (And again again)")
     subSubMenu.action(HelloWorld, text="Hello World (And again again again)")
     
-    actions.about.menu(parent.menu('About'))
+    #actions.about.menu(parent.menu('About'))
+    aboutmenu(parent.menu('About'))
 
 def menu(parent): 
 
-    actions.folder.menu(parent.menu('File'))
-    actions.edit.menu(parent.menu('Edit'))
+    foldermenu(parent.menu('File'))
+    editmenu(parent.menu('Edit'))
 
     view = parent.menu('View')
     view.action(ToggleApp, text='Toggle application')
-    view.action(actions.view.Image, text='Display image')
-    view.action(actions.view.Series, text='Display series')
-    view.action(actions.view.Region, text='Draw region')
+    view.action(Image, text='Display image')
+    view.action(Series, text='Display series')
+    view.action(Region, text='Draw region')
     view.separator()
-    view.action(actions.view.CloseWindows, text='Close windows')
-    view.action(actions.view.TileWindows, text='Tile windows')
+    view.action(CloseWindows, text='Close windows')
+    view.action(TileWindows, text='Tile windows')
 
     tutorial = parent.menu('Tutorial')
     tutorial.action(HelloWorld, text="Hello World")
@@ -51,7 +61,7 @@ def menu(parent):
     subSubMenu.action(HelloWorld, text="Hello World (And again again)")
     subSubMenu.action(HelloWorld, text="Hello World (And again again again)")
 
-    actions.about.menu(parent.menu('About'))
+    aboutmenu(parent.menu('About'))
 
 
 class HelloWorld(Action):
