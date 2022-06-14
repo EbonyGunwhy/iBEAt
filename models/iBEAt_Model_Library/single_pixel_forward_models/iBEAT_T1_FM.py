@@ -143,7 +143,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
     ####### 2nd SET: 8 TI's ########
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
-    M_current = M_eq*(-1*Eff)
+    M_current = M_current*(-1*Eff)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)
@@ -171,7 +171,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
     
     ####### 3rd SET: 4 TI's ########
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
-    M_current = M_eq*(-1*Eff)
+    M_current = M_current*(-1*Eff)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
