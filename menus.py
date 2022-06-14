@@ -41,6 +41,7 @@ def pilot(parent):
     menu.action(xnat.Download, text='XNAT Download') 
     menu.action(rename.Leeds, text='Rename DICOMs (Leeds)')
     menu.separator()
+    menu.action(mdr.MDRegConst, text='Constant')
     menu.action(mdr.MDRegT2star, text='T2* MDR (Siemens)')
     menu.action(mdr.MDRegT2, text='T2 MDR (Siemens)')
     menu.action(mdr.MDRegT1, text='T1 MDR (Siemens)')
