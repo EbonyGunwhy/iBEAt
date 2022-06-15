@@ -50,9 +50,9 @@ def main(T2s_images_to_be_fitted, sequenceParam,GUI_object=None):
 
         for xi in tqdm(range((np.size(tempImpageSlice_T2s,0))),desc="Rows Completed..."):
 
-            if GUI_object:
-                GUI_object.progress_bar(max=np.size(tempImpageSlice_T2s,0), index=xi+1)
-                GUI_object.update_progress_bar(index=xi+1)
+            #if GUI_object:
+            #    GUI_object.progress_bar(max=np.size(tempImpageSlice_T2s,0), index=xi+1)
+            #    GUI_object.update_progress_bar(index=xi+1)
             
             for yi in range((np.size(tempImpageSlice_T2s,1))):
                 
