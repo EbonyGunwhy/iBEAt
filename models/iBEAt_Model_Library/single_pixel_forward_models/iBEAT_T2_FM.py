@@ -125,24 +125,24 @@ def T2_fitting(images_to_be_fitted, T2_prep_times, sequenceParam):
     TR = sequenceParam[3] 
     N = sequenceParam[4]
     Trec = sequenceParam[5]
-    FA_Eff = sequenceParam[6]
 
 
-    lb = [0,0]
-    ub = [np.inf,np.inf]
-    initial_guess = [np.max(images_to_be_fitted),80] 
+    lb = [0,0,0]
+    ub = [np.inf,np.inf,1]
+    initial_guess = [np.max(images_to_be_fitted),80,1] 
 
-    popt, pcov = curve_fit(lambda Tprep, M_eq, T2: signalSequenceT2prep(Tprep, M_eq, T2, T1, Tspoil, FA,FA_Eff, TR, N, Trec), xdata = T2_prep_times, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf')
+    popt, pcov = curve_fit(lambda Tprep, M_eq, T2, FA_Eff: signalSequenceT2prep(Tprep, M_eq, T2, T1, Tspoil, FA,FA_Eff, TR, N, Trec), xdata = T2_prep_times, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf')
     
     T2_prep_times
     fit = []
 
-    fit.append(signalSequenceT2prep(T2_prep_times, popt[0],popt[1],sequenceParam[0],sequenceParam[1],sequenceParam[2],sequenceParam[6],sequenceParam[3],sequenceParam[4],sequenceParam[5]))
+    fit.append(signalSequenceT2prep(T2_prep_times, popt[0],popt[1],sequenceParam[0],sequenceParam[1],sequenceParam[2],popt[2],sequenceParam[3],sequenceParam[4],sequenceParam[5]))
 
     S0 = popt[0]
     T2 = popt[1]
+    FA_Eff = popt[2]
 
-    return fit, S0, T2
+    return fit, S0, T2,FA_Eff
 
 #T2_fitting(signalSequenceT2prep(np.array([0,30,40,50,60,70,80,90,100,110,120]),1, 100, 1000, 1, 0.3, 3, 30, 1000), np.array([0,30,40,50,60,70,80,90,100,110,120]), [1000,1,0.3,3,30,1000])
 
@@ -168,7 +168,8 @@ def main(images_to_be_fitted, T2_prep_times, sequenceParam):
     fit = results[0]
     S0 = results[1]
     T2 = results[2]
+    FA_Eff = results[3]
     
-    fitted_parameters = [S0, T2]
+    fitted_parameters = [S0, T2,FA_Eff]
 
     return fit, fitted_parameters
