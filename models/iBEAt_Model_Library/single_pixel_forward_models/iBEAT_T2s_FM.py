@@ -46,7 +46,7 @@ def T2s_fitting(images_to_be_fitted, TE_list, ModelParam):
     T2sf = ModelParam
 
     lb = [0,     0,     0]
-    ub = [np.inf,1,np.inf]
+    ub = [np.inf,1, 100]
     initial_guess = [np.max(images_to_be_fitted),1,60] 
 
 
