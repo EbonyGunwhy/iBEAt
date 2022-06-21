@@ -41,8 +41,8 @@ class SiemensT1T2MapButton(weasel.Action):
         header_T1 = np.squeeze(header_T1)
         header_T2 = np.squeeze(header_T2)
 
-        array_T1 = array_T1[227:304,125:242,2:3,:]
-        array_T2 = array_T2[227:304,125:242,2:3,:]
+        #array_T1 = array_T1[227:304,125:242,2:3,:]
+        #array_T2 = array_T2[227:304,125:242,2:3,:]
 
         #array_T1 = np.squeeze(array_T1[5:50,10:30,0,:])
         #array_T2 = np.squueze(array_T2[5:50,20:30,0,:])
@@ -57,11 +57,11 @@ class SiemensT1T2MapButton(weasel.Action):
             #array_T2_avg[0,slice] = np.mean(np.squeeze(array_T2[:,:,slice]))
 
 
-        TR = 4.6
-        FA = header_T1[0,0]['FlipAngle']
-        FA_rad = FA/360*(2*np.pi)
-        N_T1 = 66
-        FA_Cat  = [(-FA/5)/360*(2*np.pi), (2*FA/5)/360*(2*np.pi), (-3*FA/5)/360*(2*np.pi), (4*FA/5)/360*(2*np.pi), (-5*FA/5)/360*(2*np.pi)]
+        TR = 4.6                            #in ms
+        FA = header_T1[0,0]['FlipAngle']    #in degrees
+        FA_rad = FA/360*(2*np.pi)           #convert to rads
+        N_T1 = 66                           #number of k-space lines
+        FA_Cat  = [(-FA/5)/360*(2*np.pi), (2*FA/5)/360*(2*np.pi), (-3*FA/5)/360*(2*np.pi), (4*FA/5)/360*(2*np.pi), (-5*FA/5)/360*(2*np.pi)] #cat module
 
         
         #T1 FIT
@@ -102,41 +102,54 @@ class SiemensT1T2MapButton(weasel.Action):
                     Kidney_pixel_T1 = np.squeeze(np.array(array_T1_temp[xi,yi,:]))
                     Kidney_pixel_T2 = np.squeeze(np.array(array_T2_temp[xi,yi,:]))
 
-                    fit_T1, fitted_parameters_T1 = models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM.main (Kidney_pixel_T1, TI_temp, [FA_rad, TR, N_T1,FA_Cat])
-                                                                                                            
+                    try:
 
-                    S0_T1,T1,FA_eff = fitted_parameters_T1
+                        fit_T1, fitted_parameters_T1 = models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM.main (Kidney_pixel_T1, TI_temp, [FA_rad, TR, N_T1,FA_Cat])
+                                                                                                                
 
-                    fit_T2, fitted_parameters_T2 = models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T2_FM.main (Kidney_pixel_T2, TE,[T1,Tspoil,FA_rad,TR, N_T2,Trec,FA_eff])
+                        S0_T1,T1,FA_eff = fitted_parameters_T1
 
-                    S0_T2, T2, FA_eff_2 =  fitted_parameters_T2
+                        fit_T2, fitted_parameters_T2 = models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T2_FM.main (Kidney_pixel_T2, TE,[T1,Tspoil,FA_rad,TR, N_T2,Trec,FA_eff])
 
-                    T1_S0_map[xi,yi,slice] = S0_T1
-                    T1_map[xi,yi,slice]     = T1
-                    FA_Eff_map[xi,yi,slice] = FA_eff
-                    #Ref_Eff_map[xi,yi,slice] = Eff
-                    T2_S0_map[xi,yi,slice] = S0_T2
-                    T2_map[xi,yi,slice] = T2
+                        S0_T2, T2, FA_eff_2 =  fitted_parameters_T2
 
-                    residuals_T1 = Kidney_pixel_T1-np.squeeze(fit_T1) 
-                    residuals_T2 = Kidney_pixel_T2-np.squeeze(fit_T2) 
+                        T1_S0_map[xi,yi,slice] = S0_T1
+                        T1_map[xi,yi,slice]     = T1
+                        FA_Eff_map[xi,yi,slice] = FA_eff
+                        #Ref_Eff_map[xi,yi,slice] = Eff
+                        T2_S0_map[xi,yi,slice] = S0_T2
+                        T2_map[xi,yi,slice] = T2
 
-                    #r squared calculation 
-                    ss_res_T1 = np.sum(residuals_T1**2)
-                    ss_res_T2 = np.sum(residuals_T2**2)
+                        residuals_T1 = Kidney_pixel_T1-np.squeeze(fit_T1) 
+                        residuals_T2 = Kidney_pixel_T2-np.squeeze(fit_T2) 
 
-                    ss_tot_T1 = np.sum((Kidney_pixel_T1-np.mean(Kidney_pixel_T1))**2)
-                    ss_tot_T2 = np.sum((Kidney_pixel_T2-np.mean(Kidney_pixel_T2))**2)
+                        #r squared calculation 
+                        ss_res_T1 = np.sum(residuals_T1**2)
+                        ss_res_T2 = np.sum(residuals_T2**2)
 
-                    r_squared_T1 = 1 - (ss_res_T1 / ss_tot_T1)
-                    r_squared_T2 = 1 - (ss_res_T2 / ss_tot_T2)
+                        ss_tot_T1 = np.sum((Kidney_pixel_T1-np.mean(Kidney_pixel_T1))**2)
+                        ss_tot_T2 = np.sum((Kidney_pixel_T2-np.mean(Kidney_pixel_T2))**2)
 
-                    #replace possible nan (from division by 0: ss_res_T1 / ss_tot_T1) to 0
-                    if (np.isnan(r_squared_T1)): r_squared_T1 = 0
-                    if (np.isnan(r_squared_T2)): r_squared_T2 = 0
-                    
-                    T1_rsquare_map[xi,yi,slice] = r_squared_T1
-                    T2_rsquare_map[xi,yi,slice] = r_squared_T2
+                        r_squared_T1 = 1 - (ss_res_T1 / ss_tot_T1)
+                        r_squared_T2 = 1 - (ss_res_T2 / ss_tot_T2)
+
+                        #replace possible nan (from division by 0: ss_res_T1 / ss_tot_T1) to 0
+                        if (np.isnan(r_squared_T1)): r_squared_T1 = 0
+                        if (np.isnan(r_squared_T2)): r_squared_T2 = 0
+                        
+                        T1_rsquare_map[xi,yi,slice] = r_squared_T1
+                        T2_rsquare_map[xi,yi,slice] = r_squared_T2
+
+                    except:
+                        T1_S0_map[xi,yi,slice] = 0
+                        T1_map[xi,yi,slice]     = 0
+                        FA_Eff_map[xi,yi,slice] = 0
+                        #Ref_Eff_map[xi,yi,slice] = Eff
+                        T2_S0_map[xi,yi,slice] = 0
+                        T2_map[xi,yi,slice] = 0
+
+                        T1_rsquare_map[xi,yi,slice] = 0
+                        T2_rsquare_map[xi,yi,slice] = 0
 
 
         T1_S0_map_series = series_T1.SeriesDescription + "_T1_" + "S0_Map"
