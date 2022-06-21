@@ -72,7 +72,7 @@ def freeDecayMagnetization(M_init, t, T2):
     return E * M_init
 
 
-def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
+def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
     """ All shots of a T2 prep sequence.
 
     M_eq, T1: tissue parameters
@@ -91,33 +91,32 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
 
 
 #SLICE 1
-    #M_current = M_eq*(-1*Eff)                                          # 180 in z-
+    #M_current = M_eq*(-1)                                          # 180 in z-
     #M_current = freeRecoveryMagnetization(M_current, 9120, M_eq, T1)
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
     #M_current = freeRecoveryMagnetization(M_current, 5060, M_eq, T1)
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
     #M_current = freeRecoveryMagnetization(M_current, 10200, M_eq, T1)
 
 #SLICE 2
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
     #M_current = freeRecoveryMagnetization(M_current, 9120, M_eq, T1)
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
     #M_current = freeRecoveryMagnetization(M_current, 5060, M_eq, T1)
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
     #M_current = freeRecoveryMagnetization(M_current, 10200, M_eq, T1)
-    #M_current = M_current*(-1*Eff)
+    #M_current = M_current*(-1)
 
     # Inversion                                              
-    M_current = M_eq*(-1*Eff)                                          # 180 in z-
-
+    M_current = M_eq*(-1)                                          # 180 in z-
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)     # half of inversion pulse delay
     
     # TIfill  
-    M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)     # TIfill delay
+    M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)     # TIfill delay
     
     # Catalization Module (25ms)
-    M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5) 
-    M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2ms to make 25ms
+    M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)
+    #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2ms to make 25ms
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   
     #Acquisition (66 lines: 13 + 53) 
     M_result.append(M_current)                                          # save result (13 lines)
@@ -128,27 +127,37 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)  # fixed 80ms delay Siemens
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)  # fixed 80ms delay Siemens
         M_current = freeRecoveryMagnetization(M_current, 13, M_eq, T1)  # inversion pulse duration
-        M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1) # TI fill delay
+        M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1) # TI fill delay
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5) 
-        M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2ms to make 25ms
+       # M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2ms to make 25ms
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   # k-space center
         M_result.append(M_current)                                      # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)   # rest of the readout
     
     ####### Recovery ########
     #Beat 1  2
-    M_current = freeRecoveryMagnetization(M_current, 2*507, M_eq, T1)   # recovery time (2 beats: ms)
+    M_current = freeRecoveryMagnetization(M_current, 507*2, M_eq, T1)   # recovery time (2 beats: ms)
+    #M_current = freeRecoveryMagnetization(M_current, 80+80+13, M_eq, T1)  
+    #M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)
+    #M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N)
+    #M_current = freeRecoveryMagnetization(M_current, 507-80-80-13-23, M_eq, T1)
+
+    #M_current = freeRecoveryMagnetization(M_current, 80+80+13, M_eq, T1)  
+    #M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)
+    #M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N)
+    #M_current = freeRecoveryMagnetization(M_current, 507-80-80-13-23, M_eq, T1)
+
 
     
     ####### 2nd SET: 8 TI's ########
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
-    M_current = M_current*(-1*Eff)
+    M_current = M_current*(-1)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
-    M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)
+    M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)           
-    M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       
+    #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       
     M_result.append(M_current)                                          
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
@@ -158,26 +167,35 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
         M_current = freeRecoveryMagnetization(M_current, 13, M_eq, T1)
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
-        M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)
+        M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
-        M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2m spoiler gradient in z
+        #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2m spoiler gradient in z
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   # k-space center
         M_result.append(M_current)                                      # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
      
     ####### Recovery 2 ########
     #Beat 1 & 2
-    M_current = freeRecoveryMagnetization(M_current, 2*507, M_eq, T1)   # recovery time (2 beats: ms)
+    M_current = freeRecoveryMagnetization(M_current, 507*2, M_eq, T1)   # recovery time (2 beats: ms)
+    #M_current = freeRecoveryMagnetization(M_current, 80+80+13, M_eq, T1)  
+    #M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)
+    #M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N)
+    #M_current = freeRecoveryMagnetization(M_current, 507-80-80-13-23, M_eq, T1)
+
+    #M_current = freeRecoveryMagnetization(M_current, 80+80+13, M_eq, T1)  
+    #M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)
+    #M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N)
+    #M_current = freeRecoveryMagnetization(M_current, 507-80-80-13-23, M_eq, T1)
     
     ####### 3rd SET: 4 TI's ########
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
-    M_current = M_current*(-1*Eff)
+    M_current = M_current*(-1)
     M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
     M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
-    M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)
+    M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
     M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
-    M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
+    #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       # k-space center
     M_result.append(M_current)                                          # save result
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
@@ -187,9 +205,9 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, Eff, FA_Cat):
         M_current = freeRecoveryMagnetization(M_current, 13, M_eq, T1)
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
         M_current = freeRecoveryMagnetization(M_current, 80, M_eq, T1)
-        M_current = freeRecoveryMagnetization(M_current, 8.7, M_eq, T1)
+        M_current = freeRecoveryMagnetization(M_current, 6.5, M_eq, T1)
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
-        M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
+        #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       # k-space center
         M_result.append(M_current)                                          # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
@@ -216,27 +234,24 @@ def T1_fitting(images_to_be_fitted, TI, sequenceParam):
     FA     = sequenceParam[0]
     TR     = sequenceParam[1] 
     N      = sequenceParam[2]
-    Eff    = sequenceParam[3]
-    FA_Cat = sequenceParam[4]
-    FA_Eff = sequenceParam[5]
+    FA_Cat = sequenceParam[3]
     
 
-    lb = [0,     0,    0,0]
-    ub = [np.inf,np.inf,1,1]
-    initial_guess = [np.max(images_to_be_fitted),1200,1,1] 
+    lb = [0,     0,    0]
+    ub = [np.inf,np.inf,1]
+    initial_guess = [np.max(images_to_be_fitted),1200,1] 
 
-    popt, pcov = curve_fit(lambda TI, M_eq, T1,FA_Eff,Eff: signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N,Eff,FA_Cat), xdata = TI, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=5000)
+    popt, pcov = curve_fit(lambda TI, M_eq, T1,FA_Eff: signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N,FA_Cat), xdata = TI, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=5000)
 
     fit = []
 
-    fit.append(signalSequenceT1_FLASH(popt[0],popt[1],TI,sequenceParam[0],popt[2],sequenceParam[1],sequenceParam[2],popt[3],sequenceParam[4]))
+    fit.append(signalSequenceT1_FLASH(popt[0],popt[1],TI,sequenceParam[0],popt[2],sequenceParam[1],sequenceParam[2],sequenceParam[3]))
 
     S0 = popt[0]
     T1 = popt[1]
     FA_Eff = popt[2]
-    Eff = popt[3]
 
-    return fit, S0, T1,FA_Eff,Eff
+    return fit, S0, T1,FA_Eff
 
 #T2_fitting(signalSequenceT2prep(np.array([0,30,40,50,60,70,80,90,100,110,120]),1, 100, 1000, 1, 0.3, 3, 30, 1000), np.array([0,30,40,50,60,70,80,90,100,110,120]), [1000,1,0.3,3,30,1000])
 
@@ -263,9 +278,8 @@ def main(images_to_be_fitted, TI, sequenceParam):
     S0 = results[1]
     T1 = results[2]
     FA_eff = results[3]
-    Eff = results[4]
 
     
-    fitted_parameters = [S0, T1,FA_eff,Eff]
+    fitted_parameters = [S0, T1,FA_eff]
 
     return fit, fitted_parameters
