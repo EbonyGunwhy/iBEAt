@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join('..', 'GitHub')))
 
 import numpy as np
 from numpy.core.numeric import NaN
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 import time
 
@@ -67,6 +68,8 @@ def main(T2s_images_to_be_fitted, sequenceParam,GUI_object=None):
                 ss_res = np.sum(residuals**2)
                 ss_tot = np.sum((Kidney_pixel_T2s-np.mean(Kidney_pixel_T2s))**2)
                 r_squared = 1 - (ss_res / ss_tot)
+
+                if (np.isnan(r_squared)): r_squared = 0
 
                 M0map[xi, yi,i] = Fitted_Parameters[0]
                 fwmap[xi, yi,i] = Fitted_Parameters[1]
