@@ -6,21 +6,23 @@ class Leeds(weasel.Action):
 
     def run(self, app):
 
-        list_of_series = app.get_selected(3)
+        list_of_series = app.folder.series()
 
         series_names = []  
-        for i, series in enumerate(list_of_series):
-            app.status.progress(i+1, len(list_of_series), "Identifying series {}")
+        
+        
+        for series in list_of_series:
+            #app.status.progress(i+1, len(list_of_series), "Identifying series {}")
             series_names.append(leeds_rename(series))
-        app.status.message()
+        #app.status.message()
 
         series_names = leeds_name_extend(series_names)
 
-        for i, series in enumerate(list_of_series):
-            app.status.progress(i+1, len(list_of_series), message="Renaming series {}")
+        for i,series in enumerate (list_of_series):
+            #app.status.progress(i+1, len(list_of_series), message="Renaming series {}")
             db.set_value(series.instances(), SeriesDescription=series_names[i])
 
-            # Note - the following should work but needs to be added 
+            # Note - the folmlowing should work but needs to be added 
             # in dbdicom record __setitem__ and tested
             #
             # series["SeriesDescription"] = series_names[i] 
@@ -145,7 +147,7 @@ def leeds_rename(series):
         if im["ImageType"][2] == 'P': return sequence + '_phase'
 
     if im["SequenceName"][:5] == '*ep_b':
-        if series.nr_of_instances() < 1000:
+        if len(series.files) < 1000:
             return 'IVIM_kidneys_cor-oblique_fb'
         else:
             return 'DTI_kidneys_cor-oblique_fb'

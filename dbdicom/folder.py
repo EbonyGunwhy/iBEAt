@@ -58,6 +58,7 @@ class Folder(Database):
     @property
     def _columns(self):
 
+        if self.__dict__['attributes']=={}:self.__dict__['attributes']=[]
         return self.required + self.__dict__['attributes']
 
     def set_attributes(self, attributes, scan=True):

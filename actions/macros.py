@@ -1,5 +1,6 @@
 import time
 import datetime
+import os, sys
 
 import weasel
 
@@ -11,7 +12,7 @@ class MDRegMacro(weasel.Action):
 
     def run(self, app):
       
-        filename_log = datetime.datetime.now().strftime('%Y%m%d_%H%M_') + app.folder.path.split('/')[-1] + "_MDRauto_LogFile.txt"
+        filename_log = weasel.__file__.split('__')[0] + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
         file = open(filename_log, 'a')
         file.write(str(datetime.datetime.now())[0:19] + ":MDR Auto Button started!")
         file.close()
@@ -22,7 +23,7 @@ class MDRegMacro(weasel.Action):
         file.close()
         
         try:
-            xnat.Download.run(app)
+            xnat.Download.run(self, app)
             file = open(filename_log, 'a')
             file.write("\n"+str(datetime.datetime.now())[0:19] + ": Importing was completed --- %s seconds ---" % (int(time.time() - start_time)))
             file.close()
@@ -36,8 +37,8 @@ class MDRegMacro(weasel.Action):
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming has started!")
         file.close()
         try:
-            app.status.message(msg="Renaming Data")
-            rename.Leeds.run(app)
+            #app.status.message(msg="Renaming Data")
+            rename.Leeds.run(self, app)
             file = open(filename_log, 'a')
             file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
             file.close()
@@ -50,6 +51,7 @@ class MDRegMacro(weasel.Action):
 
         start_time_loop = time.time()
         for i,series in enumerate(list_series):
+            print(series['SeriesDescription'])
             #print(str(i) + ' : ' + series[0]['SeriesDescription'])
             #print(series[0]['SeriesDescription'])
             if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
@@ -59,8 +61,9 @@ class MDRegMacro(weasel.Action):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 Motion correction has started")
                 file.close()
                 try:
-                    app.status.message(msg="Performing motion correction in T1 scan")
-                    mdr.MDRegT1.run(app, series)
+                    #app.status.message(msg="Performing motion correction in T1 scan")
+                    print("Performing motion correction in T1 scan")
+                    mdr.MDRegT1.run(self,app, series)
                 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -76,8 +79,9 @@ class MDRegMacro(weasel.Action):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Motion correction has started")
                 file.close()
                 try:
-                    app.status.message(msg="Performing motion correction in T2* scan")
-                    mdr.MDRegT2star.run(app, series)
+                    #app.status.message(msg="Performing motion correction in T2* scan")
+                    print("Performing motion correction in T2* scan")
+                    mdr.MDRegT2star.run(self,app, series)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -94,8 +98,9 @@ class MDRegMacro(weasel.Action):
                 file.close()
                 
                 try:
-                    app.status.message(msg="Performing motion correction in T2 scan")
-                    mdr.MDRegT2.run(app, series)
+                    #app.status.message(msg="Performing motion correction in T2 scan")
+                    print("Performing motion correction in T2 scan")
+                    mdr.MDRegT2.run(self,app, series)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -112,8 +117,9 @@ class MDRegMacro(weasel.Action):
                 file.close()
                     
                 try:
-                    app.status.message(msg="Performing motion correction in IVIM scan")
-                    mdr.MDRegDWI.run(app, series)
+                    #app.status.message(msg="Performing motion correction in IVIM scan")
+                    print("Performing motion correction in IVIM scan")
+                    mdr.MDRegDWI.run(self,app, series)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -128,8 +134,8 @@ class MDRegMacro(weasel.Action):
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction has started")
                 file.close()
-                app.status.message(msg="Performing motion correction in DTI scan")
-                mdr.MDRegDTI.run(app, series)
+                #app.status.message(msg="Performing motion correction in DTI scan")
+                mdr.MDRegDTI.run(self,app, series)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -149,8 +155,9 @@ class MDRegMacro(weasel.Action):
                 file.close()
 
                 try:
-                    app.status.message(msg="Performing motion correction in MT scan")
-                    mdr.MDRegMT.run(app, [MT_OFF, MT_ON])
+                    #app.status.message(msg="Performing motion correction in MT scan")
+                    print("Performing motion correction in MT scan")
+                    mdr.MDRegMT.run(self,app, [MT_OFF, MT_ON])
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -217,7 +224,8 @@ class MDRegMacroNoImport(weasel.Action):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 Motion correction has started")
                 file.close()
                 try:
-                    app.status.message(msg="Performing motion correction in T1 scan")
+                    #app.status.message(msg="Performing motion correction in T1 scan")
+                    print("Performing motion correction in T1 scan")
                     mdr.MDRegT1.run(app, series)
                 
                     file = open(filename_log, 'a')
@@ -234,7 +242,8 @@ class MDRegMacroNoImport(weasel.Action):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Motion correction has started")
                 file.close()
                 try:
-                    app.status.message(msg="Performing motion correction in T2* scan")
+                    #app.status.message(msg="Performing motion correction in T2* scan")
+                    print("Performing motion correction in T2* scan")
                     mdr.MDRegT2star.run(app, series)
 
                     file = open(filename_log, 'a')

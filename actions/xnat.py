@@ -75,16 +75,17 @@ class Download(weasel.Action):
                                             if downloadFolder == '': return
                                             app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download")
                                             dataset.download_dir(downloadFolder)
-                                            app.status.message("Download completed!", "XNAT Download")
+                                            #app.status.message("Download completed!", "XNAT Download")
                                         else:
                                             dataset = session.projects[projectName].subjects[subjectName].experiments[experimentName].scans[scanName]
                                             downloadFolder = app.dialog.directory("Where to download the data?")
                                             if downloadFolder == '': return
                                             app.dialog.information("The selected images will be downloaded to the root folder of the TreeView. The download progress can be checked in the terminal and you may continue using app.", "XNAT Download") 
                                             dataset.download_dir(downloadFolder)
-                                            app.status.message("Download completed!", "XNAT Download")
+                                            #app.status.message("Download completed!", "XNAT Download")
             # Load the directory again
             # This loads the whole directory again, so it might take some time. It would be quicker if there was an incremental approach to the TreeView (.xml or .csv).
+            #print('hi')
             if downloadFolder != '':
                 app.open(os.path.join(downloadFolder, dataset.label))
             # Delete Login Details
