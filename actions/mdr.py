@@ -194,7 +194,7 @@ class MDRegMT(weasel.Action):
         elastix_file = 'BSplines_MT.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
 
 
 class MDRegDCE(weasel.Action):
