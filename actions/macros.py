@@ -151,6 +151,25 @@ class MDRegMacro(weasel.Action):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction was NOT completed; error: "+str(e)) 
                     file.close()
 
+            elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                start_time = time.time()
+                file = open(filename_log, 'a')
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction has started")
+                file.close()
+
+                try:
+                    print("Performing motion correction in DCE scan")
+                    mdr.MDRegDTI.run(self,app, series, parent=study)
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close() 
+
+                except Exception as e:
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
+
             elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh":
                 MT_OFF = series
                 for i_2,series in enumerate (list_series):
