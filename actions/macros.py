@@ -49,7 +49,7 @@ class MDRegMacro(weasel.Action):
             file.close()
         
         list_series = app.folder.series()
-        current_study = list_series[0].parent()
+        current_study = list_series[0].parent
         study = list_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
         start_time_loop = time.time()
