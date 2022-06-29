@@ -262,7 +262,7 @@ class Record():
         if dataset is None:
             dataset = self.dataset()
         # Return with error message if dataset and array do not match.
-        nr_of_slices = np.prod(array.shape[:-2])
+        nr_of_slices = int(np.prod(array.shape[:-2]))
         if nr_of_slices != np.prod(dataset.shape):
             message = 'Error in set_array(): array and dataset do not match'
             message += '\n Array has ' + str(nr_of_slices) + ' elements'
