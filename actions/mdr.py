@@ -114,7 +114,7 @@ class MDRegT2(weasel.Action):
 class MDRegT1(weasel.Action):
     """Perform MDR on all slices using a T1 mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -126,7 +126,7 @@ class MDRegT1(weasel.Action):
         elastix_file = 'BSplines_T1.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime', study=study)
 
 
 class MDRegDWI(weasel.Action):
@@ -218,7 +218,7 @@ class MDRegDCE(weasel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE')
 
 
-def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,signal_pars,sort_by):
+def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars,sort_by, study=None):
     """ MDR fit function.  
 
     Args:
@@ -287,15 +287,25 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,s
 
                         seeds = [reg.Point(maxLoc1[1],maxLoc1[0]),reg.Point(maxLoc2[1],maxLoc2[0]),reg.Point(maxLoc3[1],maxLoc3[0])]
                         aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,2)
+                        aif_mask = aif_mask[..., np.newaxis]
+
+
+
+                        aif_maskToWeasel = series.SeriesDescription + '_DCE_ART'
+                        aif_maskToWeasel = series.new_sibling(SeriesDescription=aif_maskToWeasel)
+
+                        aif_maskToWeasel.set_array(np.squeeze(aif_mask), (header[0,0]), pixels_first=True)
 
                         aif =[]
                         for z in range(aortaImgs_cut.shape[2]):
                             tmask = np.squeeze(aortaImgs[:,:,z]) * np.squeeze(aif_mask)
-                            aif.append(np.median(tmask[tmask!=0]))
+                            aif.append(np.mean(tmask[tmask!=0]))
 
-                        time = [hdr.AcquisitionTime for hdr in header[slice,:,0]]
-                        #time -= time[0] ASK STEVEN
-                        time = time[1:]
+                        time = [float(hdr.AcquisitionTime) for hdr in header[slice,:,0]]
+                        time = np.array(time)
+                        time -= time[0] 
+                        #
+                        # time = time[1:]
                
                         baseline = 15
                         hematocrit = 0.45
@@ -323,17 +333,19 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,s
    # pars = [x,y,z,2]
    # model_fit = [x,y,z,TE]
    # coreg = [x,y,z,TE]
-    
+    if study is None:
+        study = series.parent()
     #EXPORT RESULTS TO WEASEL GUI USING DICOM
     for p in range(len(parameters)):
         par = series.SeriesDescription + '_mdr_par_' + parameters[p]
-        par = series.new_sibling(SeriesDescription=par)
+        par = study.new_series(SeriesDescription=par)
+        #par = series.new_sibling(SeriesDescription=par)
         par.set_array(np.squeeze(pars[...,p]), np.squeeze(header[:,0]), pixels_first=True)
     fit = series.SeriesDescription + '_mdr_fit'
-    fit = series.new_sibling(SeriesDescription=fit)
+    fit = study.new_series(SeriesDescription=fit)
     fit.set_array(model_fit, np.squeeze(header[:,:]), pixels_first=True)
     moco = series.SeriesDescription + '_mdr_moco'
-    moco = series.new_sibling(SeriesDescription = moco)
+    moco = study.new_series(SeriesDescription = moco)
     moco.set_array(coreg, np.squeeze(header[:,:]), pixels_first=True)
 
     # DISPLAY RESULTS
