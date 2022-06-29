@@ -49,7 +49,7 @@ class MDRegMacro(weasel.Action):
             file.close()
         
         list_series = app.folder.series()
-        current_study = list_series[0].parent()
+        current_study = list_series[0].study
         study = list_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
         start_time_loop = time.time()
@@ -66,7 +66,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T1 scan")
                     print("Performing motion correction in T1 scan")
-                    mdr.MDRegT1.run(self,app, series, parent=study)
+                    mdr.MDRegT1.run(self,app, series, study=study)
                 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -84,7 +84,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T2* scan")
                     print("Performing motion correction in T2* scan")
-                    mdr.MDRegT2star.run(self,app, series,parent=study)
+                    mdr.MDRegT2star.run(self,app, series,study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -103,7 +103,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T2 scan")
                     print("Performing motion correction in T2 scan")
-                    mdr.MDRegT2.run(self,app, series, parent=study)
+                    mdr.MDRegT2.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -122,7 +122,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in IVIM scan")
                     print("Performing motion correction in IVIM scan")
-                    mdr.MDRegDWI.run(self,app, series, parent=study)
+                    mdr.MDRegDWI.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -140,7 +140,7 @@ class MDRegMacro(weasel.Action):
 
                 try:
                     print("Performing motion correction in DTI scan")
-                    mdr.MDRegDTI.run(self,app, series, parent=study)
+                    mdr.MDRegDTI.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -159,7 +159,7 @@ class MDRegMacro(weasel.Action):
 
                 try:
                     print("Performing motion correction in DCE scan")
-                    mdr.MDRegDTI.run(self,app, series, parent=study)
+                    mdr.MDRegDTI.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -186,7 +186,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in MT scan")
                     print("Performing motion correction in MT scan")
-                    mdr.MDRegMT.run(self,app, [MT_OFF, MT_ON], parent=study)
+                    mdr.MDRegMT.run(self,app, [MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 

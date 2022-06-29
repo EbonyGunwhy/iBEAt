@@ -27,8 +27,8 @@ class MDReg:
         self.log = False
 
         # mdr optimization
-        self.max_iterations = 0
-        self.precision = 20.0
+        self.max_iterations = 5
+        self.precision = 1.0
 
         # output
         self.coreg = None
