@@ -31,6 +31,10 @@ import mdreg.models.T1_simple
 import mdreg.models.DWI_simple
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
+import actions.reggrow as reg
+import cv2
+import matplotlib.pyplot as plt
+
 
 
 
@@ -260,17 +264,34 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,s
                         mdr.signal_parameters = [b_values, b_vectors, orientation]
             elif sort_by =="DCE" and signal_pars==0:                                                
                         # GET AIF
-                        for sery in app.folder.series():
-                            if 'DCE_ART' in sery.SeriesDescription:
-                                mask, _ = sery.array()
-                                loc = sery.SliceLocation
-                                break
-                        aif = []
-                        for z in range(array.shape[2]):
-                            if header[z,0,0].SliceLocation == loc:
-                                for t in range(array.shape[3]): #loop to average ROIs
-                                    tmask = np.squeeze(array[:,:,z,t,0]) * np.squeeze(mask)
-                                    aif.append(np.median(tmask[tmask!=0]))
+                        
+                        aortaImgs = array[:,:,8,...]
+                        verticalCenter = int(np.shape(aortaImgs)[0]/2)
+                        horizontalCenter = int(np.shape(aortaImgs)[1]/2)
+                        cutRatio = 0.25
+                        verticalLimInf = int(verticalCenter-verticalCenter*cutRatio)
+                        verticalLimSup = int(verticalCenter+verticalCenter*cutRatio)
+                        horizontalLimInf  = int(horizontalCenter-horizontalCenter*cutRatio)
+                        horizontalLimSup = int(horizontalCenter+horizontalCenter*cutRatio)
+
+                        aortaImgs_cut = np.empty(np.shape(aortaImgs))
+                        aortaImgs_cut[verticalLimInf:verticalLimSup,horizontalLimInf:horizontalLimSup,...] = aortaImgs [verticalLimInf:verticalLimSup,horizontalLimInf:horizontalLimSup,...]
+                        aortaImgs_cutMaxMin = np.squeeze(np.max(aortaImgs_cut,axis=2)-np.min(aortaImgs_cut,axis=2))
+
+                        aortaImgs_cutMaxMinBlurred = cv2.GaussianBlur(aortaImgs_cutMaxMin, (15,15),cv2.BORDER_DEFAULT)
+                        (minVal1, maxVal1, minLoc1, maxLoc1) = cv2.minMaxLoc(aortaImgs_cutMaxMinBlurred)
+                        aortaImgs_cutMaxMinBlurred [maxLoc1[1],maxLoc1[0]] = 0
+                        (minVal2, maxVal2, minLoc2, maxLoc2) = cv2.minMaxLoc(aortaImgs_cutMaxMinBlurred)
+                        aortaImgs_cutMaxMinBlurred [maxLoc2[1],maxLoc2[0]] = 0
+                        (minVal3, maxVal3, minLoc3, maxLoc3) = cv2.minMaxLoc(aortaImgs_cutMaxMinBlurred)
+
+                        seeds = [reg.Point(maxLoc1[1],maxLoc1[0]),reg.Point(maxLoc2[1],maxLoc2[0]),reg.Point(maxLoc3[1],maxLoc3[0])]
+                        aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,2)
+
+                        aif =[]
+                        for z in range(aortaImgs_cut.shape[2]):
+                            tmask = np.squeeze(aortaImgs[:,:,z]) * np.squeeze(aif_mask)
+                            aif.append(np.median(tmask[tmask!=0]))
 
                         time = [hdr.AcquisitionTime for hdr in header[slice,:,0]]
                         #time -= time[0] ASK STEVEN

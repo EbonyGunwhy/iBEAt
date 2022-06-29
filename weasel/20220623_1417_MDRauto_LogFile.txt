@@ -1,0 +1,12 @@
+2022-06-23 14:17:19:MDR Auto Button started!
+2022-06-23 14:17:19: Importing has started!
+2022-06-23 14:36:40: Importing was completed --- 1160 seconds ---
+2022-06-23 14:36:40: Renaming has started!
+2022-06-23 14:38:00: Renaming was completed --- 79 seconds ---
+2022-06-23 14:38:01: T1 Motion correction has started
+2022-06-23 14:38:01: T1 Motion correction was NOT completed; error: message() got an unexpected keyword argument 'msg'
+2022-06-23 14:38:01: T2 Motion correction has started
+2022-06-23 14:38:01: T2 Motion correction was NOT completed; error: message() got an unexpected keyword argument 'msg'
+2022-06-23 14:38:02: T2* Motion correction has started
+2022-06-23 14:38:02: T2* Motion correction was NOT completed; error: message() got an unexpected keyword argument 'msg'
+2022-06-23 14:38:02: DTI Motion correction has started

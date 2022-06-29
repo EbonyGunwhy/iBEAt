@@ -1,0 +1,5 @@
+2022-06-23 14:08:37:MDR Auto Button started!
+2022-06-23 14:08:37: Importing has started!
+2022-06-23 14:16:33: Importing was completed --- 475 seconds ---
+2022-06-23 14:16:33: Renaming has started!
+2022-06-23 14:16:33: Renaming was NOT completed; error: can only concatenate list (not "dict") to list

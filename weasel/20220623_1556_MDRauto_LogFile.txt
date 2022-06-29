@@ -1,0 +1,12 @@
+2022-06-23 15:56:02:MDR Auto Button started!
+2022-06-23 15:56:02: Importing has started!
+2022-06-23 16:19:00: Importing was completed --- 1377 seconds ---
+2022-06-23 16:19:00: Renaming has started!
+2022-06-23 16:20:41: Renaming was completed --- 101 seconds ---
+2022-06-23 16:20:43: T1 Motion correction has started
+2022-06-23 16:20:43: T1 Motion correction was NOT completed; error: 'NoneType' object is not callable
+2022-06-23 16:20:44: T2 Motion correction has started
+2022-06-23 16:20:44: T2 Motion correction was NOT completed; error: 'NoneType' object is not callable
+2022-06-23 16:20:44: T2* Motion correction has started
+2022-06-23 16:20:44: T2* Motion correction was NOT completed; error: 'NoneType' object is not callable
+2022-06-23 16:20:44: DTI Motion correction has started
