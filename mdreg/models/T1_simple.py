@@ -14,12 +14,12 @@ def pars():
     return ['S0', 'alpha', 'T1']
 
 def bounds():
-    lower = [0, 1, 1.0] 
-    upper = [np.inf, 2.0, 3000.0]
+    lower = [0, 0, 1.0] 
+    upper = [np.inf, 3000, 3000.0]
     return lower, upper
 
 
-def func(TI, S0, alpha, T1):
+def func(TI, a,b, T1):
     """ exponential function for T1-fitting.
 
     Args
@@ -30,8 +30,8 @@ def func(TI, S0, alpha, T1):
     -------
     a, b, T1 (numpy.ndarray): signal model fitted parameters.  
     """
-    mz = 1 - alpha * np.exp(-TI*(alpha-1)/T1)
-    return np.abs(S0 * mz) 
+
+    return np.abs(a - b * np.exp(-TI/T1)) 
 
 
 def main(images, TI):
@@ -56,13 +56,13 @@ def main(images, TI):
     for x in range(shape[0]):
 
         signal = images[x,:]
-        p0 = [np.max(signal), 1.9, 1500.0]
+        p0 = [687.0, 1329.0, 1500.0]
         try:
             par[x,:], _ = curve_fit(func, 
                 xdata = TI, 
                 ydata = signal, 
                 p0 = p0, 
-                bounds = ([0, 1, 1.0], [np.inf, 2.0, 3000.0]), 
+                bounds = ([0, 0, 1.0], [np.inf, 2000, 3000.0]), 
                 method = 'trf', 
                 maxfev = 500, 
             )
@@ -70,5 +70,7 @@ def main(images, TI):
             par[x,:] = p0
 
         fit[x,:] = func(TI, par[x,0], par[x,1], par[x,2])
+        par[x,2] = par[x,2] * (np.divide(par[x,1], par[x,0], out=np.zeros_like(par[x,1]), where=par[x,0]!=0) - 1) #calculate real T1 from apparent T1
+
   
     return fit, par
