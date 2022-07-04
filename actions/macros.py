@@ -49,7 +49,7 @@ class MDRegMacro(weasel.Action):
             file.close()
         
         list_series = app.folder.series()
-        current_study = list_series[0].study
+        current_study = list_series[0].parent
         study = list_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
         start_time_loop = time.time()
@@ -154,12 +154,12 @@ class MDRegMacro(weasel.Action):
             elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
                 start_time = time.time()
                 file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction has started")
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction has started")
                 file.close()
 
                 try:
                     print("Performing motion correction in DCE scan")
-                    mdr.MDRegDTI.run(self,app, series, study=study)
+                    mdr.MDRegDCE.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
