@@ -196,7 +196,7 @@ class MDRegMacro(weasel.Action):
         for j,series in enumerate(list_series):
             print(series['SeriesDescription'])
 
-            if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
+            if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                 try:
 
                     start_time = time.time()
@@ -215,6 +215,75 @@ class MDRegMacro(weasel.Action):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Mapping was NOT completed; error: "+str(e)) 
                     file.close()
 
+            
+            elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                try:
+                    T1_registered = series
+                    for j_2,series in enumerate (list_series):
+                        print(str(j_2) + ' : ' + series['SeriesDescription'])
+                        if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                            T2_registered = series
+                            seriesT1T2 = [T1_registered, T2_registered]
+                            break
+
+                    start_time = time.time()
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": Joint T1 & T2 Mapping has started")
+                    file.close()
+
+                    start_time = time.time()
+
+                    modelling.SiemensT1T2MapButton.run(self,app, seriesT1T2)
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": Joint T1 & T2 Mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+                
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": Joint T1 & T2 Mapping was NOT completed; error: "+str(e)) 
+                    file.close()
+
+            elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
+                try:
+
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Mapping has started")
+                    file.close()
+
+                    modelling.SiemensIVIMButton.run(self,app,series)
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Mapping was NOT completed; error: "+str(e)) 
+                    file.close()
+
+            elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
+                try:
+
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Mapping has started")
+                    file.close()
+
+                    modelling.SiemensDTIButton.run(self,app,series)
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Mapping was NOT completed; error: "+str(e)) 
+                    file.close()
+
+            
 
 class MDRegMacroNoImport(weasel.Action):
 
