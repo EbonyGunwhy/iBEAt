@@ -278,7 +278,7 @@ class SiemensT2sMapButton(weasel.Action):
         #Check if the data corresponds to the Siemens protocol (12 TEs)        
         if len(TE_list) == 12 and np.max(TE_list) < 50:
 
-            app.dialog.information("T2* Mapping has started")
+            #app.dialog.information("T2* Mapping has started")
 
             magnitude_array_T2s = array
 

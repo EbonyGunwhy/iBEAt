@@ -123,6 +123,7 @@ class MDRegT1(weasel.Action):
 
         signal_pars = 0
         signal_model = mdreg.models.T1_simple
+        #signal_model = mdreg.models.constant
         elastix_file = 'BSplines_T1.txt'
         number_slices = array.shape[2]
 
@@ -334,7 +335,7 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, 
    # model_fit = [x,y,z,TE]
    # coreg = [x,y,z,TE]
     if study is None:
-        study = series.parent()
+        study = series.parent
     #EXPORT RESULTS TO WEASEL GUI USING DICOM
     for p in range(len(parameters)):
         par = series.SeriesDescription + '_mdr_par_' + parameters[p]
