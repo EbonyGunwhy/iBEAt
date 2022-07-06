@@ -78,7 +78,7 @@ class MDRegConst(weasel.Action):
 class MDRegT2star(weasel.Action):
     """Perform MDR on all slices using a T2star mono-exp model"""
     
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -89,14 +89,14 @@ class MDRegT2star(weasel.Action):
         elastix_file = 'BSplines_T2star.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='EchoTime')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='EchoTime',study=study)
 
 
 
 class MDRegT2(weasel.Action):
     """Perform MDR on all slices using a T2 mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -108,7 +108,7 @@ class MDRegT2(weasel.Action):
         elastix_file = 'BSplines_T2.txt'
         number_slices = array.shape[2]
         
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None', study=study)
 
 
 class MDRegT1(weasel.Action):
@@ -133,7 +133,7 @@ class MDRegT1(weasel.Action):
 class MDRegDWI(weasel.Action):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -145,12 +145,12 @@ class MDRegDWI(weasel.Action):
         elastix_file = 'BSplines_IVIM.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
 class MDRegDTI(weasel.Action):
     """Perform MDR on all slices using a DTI model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -162,13 +162,13 @@ class MDRegDTI(weasel.Action):
         elastix_file = 'BSplines_DTI.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
 
 class MDRegMT(weasel.Action):
     """Perform MDR on all slices using a MT model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             all_series = app.get_selected(3)
@@ -199,13 +199,13 @@ class MDRegMT(weasel.Action):
         elastix_file = 'BSplines_MT.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
 
 class MDRegDCE(weasel.Action):
     """Perform MDR on all slices using a DCE linear model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -216,7 +216,7 @@ class MDRegDCE(weasel.Action):
         elastix_file = 'BSplines_DCE.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE', study=study)
 
 
 def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars,sort_by, study=None):

@@ -15,7 +15,7 @@ def pars():
 
 def bounds():
     lower = [0, 0, 1.0] 
-    upper = [np.inf, 3000, 3000.0]
+    upper = [5000, 3000, 3000.0]
     return lower, upper
 
 
@@ -62,7 +62,7 @@ def main(images, TI):
                 xdata = TI, 
                 ydata = signal, 
                 p0 = p0, 
-                bounds = ([0, 0, 1.0], [np.inf, 2000, 3000.0]), 
+                bounds = ([0, 0, 1.0], [5000, 2000, 3000.0]), 
                 method = 'trf', 
                 maxfev = 500, 
             )
@@ -71,6 +71,9 @@ def main(images, TI):
 
         fit[x,:] = func(TI, par[x,0], par[x,1], par[x,2])
         par[x,2] = par[x,2] * (np.divide(par[x,1], par[x,0], out=np.zeros_like(par[x,1]), where=par[x,0]!=0) - 1) #calculate real T1 from apparent T1
-
-  
+        if par[x,2] > 3000:
+            par[x,2] = 3000
+        if par[x,2] <0:
+            par[x,2] = 0
+        
     return fit, par

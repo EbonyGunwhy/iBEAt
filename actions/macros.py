@@ -142,7 +142,7 @@ class MDRegMacro(weasel.Action):
             elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
                 start_time = time.time()
                 file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction has started")
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction has started")
                 file.close()
 
                 try:
