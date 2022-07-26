@@ -35,7 +35,7 @@ def pilot(parent):
     menu.action(tools.TimeMIP, text='DCE create AIF (Siemens)')
     menu.action(modelling.DCE_Button_modelling_only, text='DCE modelling - pilot (Siemens)')
     menu.separator()
-    menu.action(macros.ModellingMacro, text='All modelling - pilot (Siemens)')
+    #menu.action(macros.ModellingMacro, text='All modelling - pilot (Siemens)')
 
     menu = parent.menu('iBEAt-MDR')
     menu.action(xnat.Download, text='XNAT Download') 
