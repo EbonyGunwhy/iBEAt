@@ -85,7 +85,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
     """
     FA = FA*FA_Eff
     FA_Cat = np.array(FA_Cat)*FA_Eff
-    M_result = [] 
+    M_result = np.zeros(28) 
     ####### 1st SET: 16 TI's ########
 
 
@@ -119,7 +119,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
     #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2ms to make 25ms
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   
     #Acquisition (66 lines: 13 + 53) 
-    M_result.append(M_current)                                          # save result (13 lines)
+    M_result[0] =M_current                                          # save result (13 lines)
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)       # rest of the readout (53 lines)
 
     for t in range(1, np.size(TI)-12):
@@ -131,7 +131,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5) 
        # M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2ms to make 25ms
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   # k-space center
-        M_result.append(M_current)                                      # save result
+        M_result[t] =M_current                                      # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)   # rest of the readout
     
     ####### Recovery ########
@@ -159,7 +159,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
     M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)           
     #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       
-    M_result.append(M_current)                                          
+    M_result[16] = M_current                                          
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
 
     for t in range(1, np.size(TI)-20):
@@ -171,7 +171,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
         #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)   # 2m spoiler gradient in z
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)   # k-space center
-        M_result.append(M_current)                                      # save result
+        M_result[16+t] = M_current                                      # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
      
     ####### Recovery 2 ########
@@ -197,7 +197,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
     M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
     #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       # k-space center
-    M_result.append(M_current)                                          # save result
+    M_result[24] = M_current                                          # save result
     M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
 
     for t in range(1, np.size(TI)-24):
@@ -209,7 +209,7 @@ def signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N, FA_Cat):
         M_current = FLASHreadout_CatModule(M_current, M_eq, T1, FA_Cat, TR, 5)             # 5 flash readouts
         #M_current = freeRecoveryMagnetization(M_current, 2, M_eq, T1)       # 2m spoiler gradient in z
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2-20)       # k-space center
-        M_result.append(M_current)                                          # save result
+        M_result[24+t] = M_current                                          # save result
         M_current = FLASHreadout(M_current, M_eq, T1, FA, TR, N/2+20)
 
     M_result = np.abs(M_result)
@@ -243,9 +243,7 @@ def T1_fitting(images_to_be_fitted, TI, sequenceParam):
 
     popt, pcov = curve_fit(lambda TI, M_eq, T1,FA_Eff: signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N,FA_Cat), xdata = TI, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=5000)
 
-    fit = []
-
-    fit.append(signalSequenceT1_FLASH(popt[0],popt[1],TI,sequenceParam[0],popt[2],sequenceParam[1],sequenceParam[2],sequenceParam[3]))
+    fit=signalSequenceT1_FLASH(popt[0],popt[1],TI,sequenceParam[0],popt[2],sequenceParam[1],sequenceParam[2],sequenceParam[3])
 
     S0 = popt[0]
     T1 = popt[1]

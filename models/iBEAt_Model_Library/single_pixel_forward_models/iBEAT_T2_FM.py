@@ -90,10 +90,10 @@ def signalSequenceT2prep(Tprep, M_eq, T2, T1 , Tspoil, FA,FA_Eff, TR, N, Trec):
     k-space center: 48 (72/2 + 12 due to partial Fourier) 
     """
     FA = FA * FA_Eff
-    M_result = [] 
+    M_result = np.zeros(11) 
     M_current = M_eq
     M_current = signalSequenceT2prepOneShot(M_current, M_eq, T1, T2, Tprep[0], Tspoil, FA, TR, N) # signal at first Tprep
-    M_result.append(M_current)
+    M_result[0]=M_current
 
     for t in range(1, np.size(Tprep)):
         
@@ -101,7 +101,7 @@ def signalSequenceT2prep(Tprep, M_eq, T2, T1 , Tspoil, FA,FA_Eff, TR, N, Trec):
         M_current = freeRecoveryMagnetization(M_current, 120-Tprep[t-1], M_eq, T1) # recovery after readout
         M_current = freeRecoveryMagnetization(M_current, Trec, M_eq, T1) # recovery after readout
         M_current = signalSequenceT2prepOneShot(M_current, M_eq, T1, T2, Tprep[t], Tspoil, FA, TR, N) # signal at first Tprep
-        M_result.append(M_current)
+        M_result[t] =M_current
     return M_result
 
 def T2_fitting(images_to_be_fitted, T2_prep_times, sequenceParam):
@@ -134,9 +134,8 @@ def T2_fitting(images_to_be_fitted, T2_prep_times, sequenceParam):
     popt, pcov = curve_fit(lambda Tprep, M_eq, T2, FA_Eff: signalSequenceT2prep(Tprep, M_eq, T2, T1, Tspoil, FA,FA_Eff, TR, N, Trec), xdata = T2_prep_times, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf')
     
     T2_prep_times
-    fit = []
 
-    fit.append(signalSequenceT2prep(T2_prep_times, popt[0],popt[1],sequenceParam[0],sequenceParam[1],sequenceParam[2],popt[2],sequenceParam[3],sequenceParam[4],sequenceParam[5]))
+    fit=signalSequenceT2prep(T2_prep_times, popt[0],popt[1],sequenceParam[0],sequenceParam[1],sequenceParam[2],popt[2],sequenceParam[3],sequenceParam[4],sequenceParam[5])
 
     S0 = popt[0]
     T2 = popt[1]
