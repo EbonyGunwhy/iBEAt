@@ -24,7 +24,7 @@ def main(IVIM_images_to_be_fitted, sequenceParam,GUI_object=None):
     fitted_parameters: Map with signal model fitted parameters: 'S0', 'T1','T2','Flip Efficency','180 Efficency'.  
     """
     
-    bvals_list = np.array(sequenceParam[0])
+    bvals_list = np.array(sequenceParam)
     #print(bvals_list)
 
     bvals_unique = bvals_list[0:10]
