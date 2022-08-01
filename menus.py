@@ -32,16 +32,12 @@ def pilot(parent):
     menu = parent.menu('iBEAt-Auto')
     menu.action(macros.MDRegMacro, text='MDR-Auto')
     menu.action(macros.MDRegMacroNoImport, text='MDR-Auto (No XNAT importing)')
-    menu.action(macros.MapToExcel, text='Generate Excel File')
+    #menu.action(macros.MapToExcel, text='Generate Excel File')
     menu.separator()
     menu.action(tools.TimeMIP, text='DCE create AIF (Siemens)')
     menu.action(modelling.DCE_Button_modelling_only, text='DCE modelling - pilot (Siemens)')
     menu.separator()
-<<<<<<< HEAD
-    #menu.action(macros.ModellingMacro, text='All modelling - pilot (Siemens)')
-=======
     menu.action(kidney_segmentation.kidoutline, text='Outline Kidneys')
->>>>>>> f9c4d1e4182e356c48a5f6ff4a382b6d49fe927b
 
     menu = parent.menu('iBEAt-MDR')
     menu.action(xnat.Download, text='XNAT Download') 

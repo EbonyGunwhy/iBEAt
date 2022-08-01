@@ -591,14 +591,17 @@ class MaskViewRegionGrowing(MaskViewPenFreehand):
     >>> Right click to change the pen properties
     """
 
-    def __init__(self, mode="draw"):
-        super().__init__(mode=mode)
+    def __init__(self, radius='default'):
 
+        self.radius = radius
         self.icon = QIcon(widgets.icons.paint)
         pixMap = QPixmap(widgets.icons.paint)
         self.cursor = QCursor(pixMap, hotX=0, hotY=16)
         self.toolTip = 'Select a Region to Paint'
         self.center = None
+    
+    def setRadius(self, radius):
+        self.radius = radius
 
     def itemMousePressEvent(self, event):
 
@@ -609,62 +612,64 @@ class MaskViewRegionGrowing(MaskViewPenFreehand):
             im = self.item.image
             array = im.array()
             img_array_Blurred = cv2.GaussianBlur(array, (3,3),cv2.BORDER_DEFAULT)
-            radius = 3
-            seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0])-int(radius):int(self.center[0])+int(radius),int(self.center[1])-int(radius):int(self.center[1])+int(radius)]))
-            if seedThreshold >np.sqrt(np.var(img_array_Blurred))*0.1:
-                seedThreshold=np.sqrt(np.var(img_array_Blurred))*0.1
-            #print(seedThreshold)
+            if self.radius == 'default':
+                radius = 3
+                seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0])-int(radius):int(self.center[0])+int(radius),int(self.center[1])-int(radius):int(self.center[1])+int(radius)]))
+                if seedThreshold >np.sqrt(np.var(img_array_Blurred))*0.1:
+                    seedThreshold=np.sqrt(np.var(img_array_Blurred))*0.1
+                #print(seedThreshold)
+            elif self.radius != 'default':
+                radius = self.radius
+                seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0])-int(radius):int(self.center[0])+int(radius),int(self.center[1])-int(radius):int(self.center[1])+int(radius)]))
+
             seeds = [reg.Point(self.x,self.y)]
             pixels = reg.regionGrow(img_array_Blurred,seeds,seedThreshold)
             yx_corr = np.column_stack(np.where(pixels==1))                
             for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
             self.path = None
             self.maskItem.update()
+
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
             
     def itemMouseMoveEvent(self, event):
 
         self.x = int(event.pos().x())
         self.y = int(event.pos().y())
         #buttons = event.buttons()
-        """ if buttons == Qt.LeftButton:
-            p = [event.pos().x(), event.pos().y()]
-            self.setCirclePath(p)
-            self.maskItem.update()
-            if self.path is not None:
 
-                im = self.item.image
-                array = im.array()
-                img_array_Blurred = cv2.GaussianBlur(array, (3,3),cv2.BORDER_DEFAULT)
-                #seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0]):int(self.center[0])+int(self.radius),int(self.center[1]):int(self.center[1])+int(self.radius)]))
-                #if seedThreshold >15: seedThreshold=15
-                seedThreshold = 11
-                #print(seedThreshold)
-                seeds = [reg.Point(self.x,self.y)]
-                pixels = reg.regionGrow(img_array_Blurred,seeds,seedThreshold)
-                yx_corr = np.column_stack(np.where(pixels==1))                
-                for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
-                self.path = None
-                self.maskItem.update() """
+    def launchContextMenu(self, event):
 
-"""     def setCirclePath(self, p):
-        c = self.center
-        pc = [p[0]-c[0], p[1]-c[1]]
-        self.radius = math.sqrt(pc[0]**2 + pc[1]**2)
-        if self.radius == 0: return
-        step = 0.5 # pixel - precision of the circle
-        if step > self.radius: step = self.radius
-        angle = math.acos(1-0.5*(step/self.radius)**2)
-        nsteps = round(2*math.pi/angle)
-        angle = 2*math.pi/nsteps
-        x0 = pc[0]
-        y0 = pc[1]
-        self.path = [p]
-        for _ in range(nsteps):
-            x = math.cos(angle)*x0 - math.sin(angle)*y0
-            y = math.sin(angle)*x0 + math.cos(angle)*y0
-            self.path.append([c[0] + x, c[1] + y])
-            x0 = x
-            y0 = y """
+ 
+        onePixel = QAction('Default', None)
+        onePixel.setCheckable(True)
+        onePixel.setChecked(self.radius == 'default')
+        onePixel.triggered.connect(lambda: self.setRadius('default'))
+
+        threePixels = QAction('3 pixels', None)
+        threePixels.setCheckable(True)
+        threePixels.setChecked(self.radius == 3)
+        threePixels.triggered.connect(lambda: self.setRadius(3))
+
+        fivePixels = QAction('5 pixels', None)
+        fivePixels.setCheckable(True)
+        fivePixels.setChecked(self.radius == 5)
+        fivePixels.triggered.connect(lambda: self.setRadius(5))
+
+        sevenPixels = QAction('7 pixels', None)
+        sevenPixels.setCheckable(True)
+        sevenPixels.setChecked(self.radius == 7)
+        sevenPixels.triggered.connect(lambda: self.setRadius(7))
+
+        contextMenu = QMenu()
+        subMenu = contextMenu.addMenu('Radius')
+        subMenu.setEnabled(True)
+        # subMenu.clear()
+        subMenu.addAction(onePixel)
+        subMenu.addAction(threePixels)
+        subMenu.addAction(fivePixels)
+        subMenu.addAction(sevenPixels)
+        contextMenu.exec_(event.screenPos())
 
 class MaskViewEdgeDetection(MaskViewPenFreehand):
     """Rectangle region drawing tool.
