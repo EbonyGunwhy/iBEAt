@@ -6,7 +6,6 @@ import models.IVIM_pixelwise_fit
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T2_FM
 
-import matplotlib.pyplot as plt
 from dipy.core.gradients import gradient_table
 import dipy.reconst.dti as dti
 from dipy.reconst.dti import fractional_anisotropy, color_fa
@@ -41,44 +40,18 @@ class SiemensT1T2MapButton(weasel.Action):
         header_T1 = np.squeeze(header_T1)
         header_T2 = np.squeeze(header_T2)
 
-        #array_T1 = array_T1[227:304,125:242,2:3,:]
-        #array_T2 = array_T2[227:304,125:242,2:3,:]
-
-        #array_T1 = np.squeeze(array_T1[5:50,10:30,0,:])
-        #array_T2 = np.squueze(array_T2[5:50,20:30,0,:])
-
-        #array_T1_avg = np.empty([1,28])
-        #array_T2_avg = np.empty([1,11])
-
-        #for slice in range(28):
-            #array_T1_avg[0,slice] = np.mean(np.squeeze(array_T1[:,:,slice]))
-
-        #for slice in range(11):
-            #array_T2_avg[0,slice] = np.mean(np.squeeze(array_T2[:,:,slice]))
-
-
         TR = 4.6                            #in ms
         FA = header_T1[0,0]['FlipAngle']    #in degrees
         FA_rad = FA/360*(2*np.pi)           #convert to rads
         N_T1 = 66                           #number of k-space lines
         FA_Cat  = [(-FA/5)/360*(2*np.pi), (2*FA/5)/360*(2*np.pi), (-3*FA/5)/360*(2*np.pi), (4*FA/5)/360*(2*np.pi), (-5*FA/5)/360*(2*np.pi)] #cat module
-
         
-        #T1 FIT
-        #TI = np.array([100, 608, 1113, 1620, 2128, 2633, 3140, 3648, 4153, 4660, 5168, 5673, 6180, 6688, 7193, 7700, 180, 685, 1193, 1700, 2205, 2713, 3220, 3725, 260, 768, 1275, 1780])
-        #TR = 4.6
-        #N_T1 = 66
-        #FA = 12/360*(2*np.pi)
-        #FA_Cat  = [(-12/5)/360*(2*np.pi), (2*12/5)/360*(2*np.pi), (-3*12/5)/360*(2*np.pi), (4*12/5)/360*(2*np.pi), (-5*12/5)/360*(2*np.pi)] #Catalization module confirmed by Siemens (Peter Schmitt): Magn Reson Med 2003 Jan;49(1):151-7. doi: 10.1002/mrm.10337
-
-                
         TE = [0,30,40,50,60,70,80,90,100,110,120]
         Tspoil = 1
         N_T2 = 72
         Trec = 463*2
 
         number_slices = np.shape(array_T1)[2]
-        number_slices = 1
 
         T1_S0_map = np.empty(np.shape(array_T1)[0:3])
         T1_map = np.empty(np.shape(array_T1)[0:3])
@@ -88,9 +61,6 @@ class SiemensT1T2MapButton(weasel.Action):
         T2_map = np.empty(np.shape(array_T1)[0:3])
         T1_rsquare_map = np.empty(np.shape(array_T1)[0:3])
         T2_rsquare_map = np.empty(np.shape(array_T1)[0:3])
-
-        array_T1= np.squeeze(array_T1[270:310,160:180,2:4,:,0])
-        array_T2= np.squeeze(array_T2[270:310,160:180,2:4,:,0])
 
         for slice in tqdm(range(number_slices),desc="Slice Completed..."):
             app.status.message("Slice Completed..." + str(slice))
@@ -120,7 +90,6 @@ class SiemensT1T2MapButton(weasel.Action):
                         T1_S0_map[xi,yi,slice] = S0_T1
                         T1_map[xi,yi,slice]     = T1
                         FA_Eff_map[xi,yi,slice] = FA_eff
-                        #Ref_Eff_map[xi,yi,slice] = Eff
                         T2_S0_map[xi,yi,slice] = S0_T2
                         T2_map[xi,yi,slice] = T2
 
@@ -145,10 +114,10 @@ class SiemensT1T2MapButton(weasel.Action):
                         T2_rsquare_map[xi,yi,slice] = r_squared_T2
 
                     except:
+
                         T1_S0_map[xi,yi,slice] = 0
                         T1_map[xi,yi,slice]     = 0
                         FA_Eff_map[xi,yi,slice] = 0
-                        #Ref_Eff_map[xi,yi,slice] = Eff
                         T2_S0_map[xi,yi,slice] = 0
                         T2_map[xi,yi,slice] = 0
 
@@ -167,10 +136,6 @@ class SiemensT1T2MapButton(weasel.Action):
         FA_Eff_map_series = series_T1.SeriesDescription + "_T1_" + "FA_Eff_Map"
         FA_Eff_map_series = series_T1.new_sibling(SeriesDescription=FA_Eff_map_series)
         FA_Eff_map_series.set_array(np.squeeze(FA_Eff_map),np.squeeze(header_T1[:,0]),pixels_first=True)
-
-        #Ref_Eff_map_series = series_T1.SeriesDescription + "_T1_" + "Ref_Eff_Map"
-        #Ref_Eff_map_series = series_T1.new_sibling(SeriesDescription=Ref_Eff_map_series)
-        #Ref_Eff_map_series.set_array(np.squeeze(Ref_Eff_map),np.squeeze(header_T1[:,0]),pixels_first=True)
 
         T2_S0_map_series = series_T2.SeriesDescription + "_T2_" + "S0_Map"
         T2_S0_map_series = series_T2.new_sibling(SeriesDescription=T2_S0_map_series)
