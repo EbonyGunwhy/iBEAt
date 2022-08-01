@@ -129,7 +129,7 @@ class Image(Instance):
 
         # Apply coordinate transformation
         coords = apply_affine(sourceToTarget, coords)
-        coords = np.round(coords, 3).astype(int)
+        coords = np.floor(coords).astype(int)
         x = tuple([coord[0] for coord in coords if coord[2] == 0])
         y = tuple([coord[1] for coord in coords if coord[2] == 0])
 
@@ -156,7 +156,10 @@ class Image(Instance):
         image_orientation = self.ds.ImageOrientationPatient
         image_position = self.ds.ImagePositionPatient
         pixel_spacing = self.ds.PixelSpacing
-        slice_spacing = self.ds.SliceThickness            
+        if hasattr(self.ds, 'SpacingBetweenSlices'):
+            slice_spacing = self.ds.SpacingBetweenSlices
+        else:
+            slice_spacing = self.ds.SliceThickness         
 
         row_spacing = pixel_spacing[0]
         column_spacing = pixel_spacing[1]
