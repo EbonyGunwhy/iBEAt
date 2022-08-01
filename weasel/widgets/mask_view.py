@@ -4,12 +4,24 @@ __all__ = [
     'MaskViewPenFreehand',
     'MaskViewPenRectangle', 
     'MaskViewPenPolygon', 
-    'MaskViewPenCircle'
+    'MaskViewPenCircle',
+    'MaskViewRegionGrowing',
+    'MaskViewDeleteROI',
+    'MaskViewEdgeDetection',
+    'MaskViewErode',
+    'MaskViewDilate'
+    
 ]
 
 import math
 import numpy as np
 from matplotlib.path import Path as MplPath
+import actions.reggrow as reg
+import actions.edgeDetection as seg
+import cv2 as cv2
+import time
+from skimage import feature
+
 
 from PyQt5.QtCore import Qt, QPointF, QRectF, pyqtSignal
 from PyQt5.QtGui import QPixmap, QImage, qRgb, QIcon, QCursor, QColor, QPen
@@ -514,8 +526,63 @@ class MaskViewPenRectangle(MaskViewPenFreehand):
                 [corner1[0], corner1[1]]]
             self.maskItem.update()
 
-
 class MaskViewPenCircle(MaskViewPenFreehand):
+   """Rectangle region drawing tool.
+   
+   Features
+   --------
+   >>> Left click and drag to draw, release to close
+   >>> Right click to change the pen properties
+   """
+
+   def __init__(self, mode="draw"):
+       super().__init__(mode=mode)
+
+       self.icon = QIcon(widgets.icons.layer_shape_ellipse)
+       self.center = None
+
+   def itemMousePressEvent(self, event):
+
+       self.x = int(event.pos().x())
+       self.y = int(event.pos().y())
+       if event.button() == Qt.LeftButton:
+           self.center = [event.pos().x(), event.pos().y()]
+       elif event.button() == Qt.RightButton:
+           self.launchContextMenu(event)
+           
+   def itemMouseMoveEvent(self, event):
+
+       self.x = int(event.pos().x())
+       self.y = int(event.pos().y())
+       buttons = event.buttons()
+       if buttons == Qt.LeftButton:
+           p = [event.pos().x(), event.pos().y()]
+           self.setCirclePath(p)
+           self.maskItem.update()
+
+   def setCirclePath(self, p):
+       """Return a circle with center in c and going through point p"""
+
+       c = self.center
+       pc = [p[0]-c[0], p[1]-c[1]]
+       radius = math.sqrt(pc[0]**2 + pc[1]**2)
+       if radius == 0: return
+       step = 0.5 # pixel - precision of the circle
+       if step > radius: step = radius
+       angle = math.acos(1-0.5*(step/radius)**2)
+       nsteps = round(2*math.pi/angle)
+       angle = 2*math.pi/nsteps
+       x0 = pc[0]
+       y0 = pc[1]
+       self.path = [p]
+       for _ in range(nsteps):
+           x = math.cos(angle)*x0 - math.sin(angle)*y0
+           y = math.sin(angle)*x0 + math.cos(angle)*y0
+           self.path.append([c[0] + x, c[1] + y])
+           x0 = x
+           y0 = y
+
+class MaskViewRegionGrowing(MaskViewPenFreehand):
     """Rectangle region drawing tool.
     
     Features
@@ -527,7 +594,10 @@ class MaskViewPenCircle(MaskViewPenFreehand):
     def __init__(self, mode="draw"):
         super().__init__(mode=mode)
 
-        self.icon = QIcon(widgets.icons.layer_shape_ellipse)
+        self.icon = QIcon(widgets.icons.paint)
+        pixMap = QPixmap(widgets.icons.paint)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = 'Select a Region to Paint'
         self.center = None
 
     def itemMousePressEvent(self, event):
@@ -536,29 +606,54 @@ class MaskViewPenCircle(MaskViewPenFreehand):
         self.y = int(event.pos().y())
         if event.button() == Qt.LeftButton:
             self.center = [event.pos().x(), event.pos().y()]
-        elif event.button() == Qt.RightButton:
-            self.launchContextMenu(event)
+            im = self.item.image
+            array = im.array()
+            img_array_Blurred = cv2.GaussianBlur(array, (3,3),cv2.BORDER_DEFAULT)
+            radius = 3
+            seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0])-int(radius):int(self.center[0])+int(radius),int(self.center[1])-int(radius):int(self.center[1])+int(radius)]))
+            if seedThreshold >np.sqrt(np.var(img_array_Blurred))*0.1:
+                seedThreshold=np.sqrt(np.var(img_array_Blurred))*0.1
+            #print(seedThreshold)
+            seeds = [reg.Point(self.x,self.y)]
+            pixels = reg.regionGrow(img_array_Blurred,seeds,seedThreshold)
+            yx_corr = np.column_stack(np.where(pixels==1))                
+            for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
+            self.path = None
+            self.maskItem.update()
             
     def itemMouseMoveEvent(self, event):
 
         self.x = int(event.pos().x())
         self.y = int(event.pos().y())
-        buttons = event.buttons()
-        if buttons == Qt.LeftButton:
+        #buttons = event.buttons()
+        """ if buttons == Qt.LeftButton:
             p = [event.pos().x(), event.pos().y()]
             self.setCirclePath(p)
             self.maskItem.update()
+            if self.path is not None:
 
-    def setCirclePath(self, p):
-        """Return a circle with center in c and going through point p"""
+                im = self.item.image
+                array = im.array()
+                img_array_Blurred = cv2.GaussianBlur(array, (3,3),cv2.BORDER_DEFAULT)
+                #seedThreshold = 1.5*np.sqrt(np.var(img_array_Blurred[int(self.center[0]):int(self.center[0])+int(self.radius),int(self.center[1]):int(self.center[1])+int(self.radius)]))
+                #if seedThreshold >15: seedThreshold=15
+                seedThreshold = 11
+                #print(seedThreshold)
+                seeds = [reg.Point(self.x,self.y)]
+                pixels = reg.regionGrow(img_array_Blurred,seeds,seedThreshold)
+                yx_corr = np.column_stack(np.where(pixels==1))                
+                for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
+                self.path = None
+                self.maskItem.update() """
 
+"""     def setCirclePath(self, p):
         c = self.center
         pc = [p[0]-c[0], p[1]-c[1]]
-        radius = math.sqrt(pc[0]**2 + pc[1]**2)
-        if radius == 0: return
+        self.radius = math.sqrt(pc[0]**2 + pc[1]**2)
+        if self.radius == 0: return
         step = 0.5 # pixel - precision of the circle
-        if step > radius: step = radius
-        angle = math.acos(1-0.5*(step/radius)**2)
+        if step > self.radius: step = self.radius
+        angle = math.acos(1-0.5*(step/self.radius)**2)
         nsteps = round(2*math.pi/angle)
         angle = 2*math.pi/nsteps
         x0 = pc[0]
@@ -569,4 +664,345 @@ class MaskViewPenCircle(MaskViewPenFreehand):
             y = math.sin(angle)*x0 + math.cos(angle)*y0
             self.path.append([c[0] + x, c[1] + y])
             x0 = x
-            y0 = y
+            y0 = y """
+
+class MaskViewEdgeDetection(MaskViewPenFreehand):
+    """Rectangle region drawing tool.
+    
+    Features
+    --------
+    >>> Left click and drag to draw, release to close
+    >>> Right click to change the pen properties
+    """
+
+    def __init__(self, mode="draw"):
+        super().__init__(mode=mode)
+
+        self.icon = QIcon(widgets.icons.wand_hat)
+        pixMap = QPixmap(widgets.icons.wand)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = 'Select a Region to Detect'
+        self.center = None
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            p = [int(event.pos().x()), int(event.pos().y())]
+            self.edgeCalculation(p)
+            self.maskItem.update()
+
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+            
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+    def edgeCalculation(self,p):
+
+        im = self.item.image
+        array = im.array()
+        pixelSize = im.PixelSpacing
+        pixels = seg.kidneySegmentation(array,p[1],p[0],pixelSize,side=None)
+        yx_corr = np.column_stack(np.where(pixels==1))                
+        for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
+        self.path = None
+        self.maskItem.update
+
+class MaskViewErode(MaskViewPenFreehand):
+    """Erode Button.
+    
+    Features
+    --------
+    >>> Left click to erode the corresponding mask
+    """
+
+    def __init__(self, kernelSize=3, mode="SingleROI"):
+        super().__init__(mode=mode)
+
+        self.setkernelSize(kernelSize)
+
+        self.icon = QIcon(widgets.icons.arrow_in)
+        pixMap = QPixmap(widgets.icons.paint_brush_minus)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = 'Erode'
+        self.center = None
+
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == "SingleROI":
+            self.toolTip = 'Single ROI'
+        elif mode == "AllROI":
+            self.toolTip = 'All ROIs'
+    
+    def setkernelSize(self, kernelSize):
+        self.kernelSize = kernelSize
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            p = [self.x, self.y]
+            im = self.maskItem.bin.astype(np.uint8)
+            if self.mode == "SingleROI":
+                if im[p[0],p[1]] ==1:
+                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.kernelSize, self.kernelSize))
+                    seeds = [reg.Point(p[0],p[1])]
+                    pixels = reg.regionGrow(im,seeds,1)                
+                    im = im*pixels
+                else:
+                    pass #display a message that no ROI was selected
+            if self.mode == "AllROI":
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.kernelSize, self.kernelSize))
+                
+            im_eroded = cv2.erode(im, kernel)
+            pixels = im-im_eroded
+            yx_corr = np.column_stack(np.where(pixels==1))                
+            for p in yx_corr: self.maskItem.setPixel(p[0],p[1],False)
+            self.maskItem.update()
+
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+    
+    def launchContextMenu(self, event):
+
+
+        pickSingleROI = QAction('Single ROI', None)
+        pickSingleROI.setCheckable(True)
+        pickSingleROI.setChecked(self.mode == "SingleROI")
+        pickSingleROI.triggered.connect(lambda: self.setMode("SingleROI"))
+        
+        pickAllROI = QAction('All ROIs', None)
+        pickAllROI.setCheckable(True)
+        pickAllROI.setChecked(self.mode == "AllROI")
+        pickAllROI.triggered.connect(lambda: self.setMode("AllROI"))
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickSingleROI)
+        contextMenu.addAction(pickAllROI)
+ 
+        onePixel = QAction('1 pixel', None)
+        onePixel.setCheckable(True)
+        onePixel.setChecked(self.kernelSize == 1)
+        onePixel.triggered.connect(lambda: self.setkernelSize(1))
+
+        threePixels = QAction('3 pixels', None)
+        threePixels.setCheckable(True)
+        threePixels.setChecked(self.kernelSize == 3)
+        threePixels.triggered.connect(lambda: self.setkernelSize(3))
+
+        fivePixels = QAction('5 pixels', None)
+        fivePixels.setCheckable(True)
+        fivePixels.setChecked(self.kernelSize == 5)
+        fivePixels.triggered.connect(lambda: self.setkernelSize(5))
+
+        sevenPixels = QAction('7 pixels', None)
+        sevenPixels.setCheckable(True)
+        sevenPixels.setChecked(self.kernelSize == 7)
+        sevenPixels.triggered.connect(lambda: self.setkernelSize(7))
+
+        ninePixels = QAction('9 pixels', None)
+        ninePixels.setCheckable(True)
+        ninePixels.setChecked(self.kernelSize == 9)
+        ninePixels.triggered.connect(lambda: self.setkernelSize(9))
+
+        elevenPixels = QAction('11 pixels', None)
+        elevenPixels.setCheckable(True)
+        elevenPixels.setChecked(self.kernelSize == 11)
+        elevenPixels.triggered.connect(lambda: self.setkernelSize(11))
+
+        twentyOnePixels = QAction('21 pixels', None)
+        twentyOnePixels.setCheckable(True)
+        twentyOnePixels.setChecked(self.kernelSize == 21)
+        twentyOnePixels.triggered.connect(lambda: self.setkernelSize(21))
+
+        contextMenu = QMenu()
+        contextMenu.addAction(pickSingleROI)
+        contextMenu.addAction(pickAllROI)
+        subMenu = contextMenu.addMenu('Kernel size')
+        subMenu.setEnabled(True)
+        # subMenu.clear()
+        subMenu.addAction(onePixel)
+        subMenu.addAction(threePixels)
+        subMenu.addAction(fivePixels)
+        subMenu.addAction(sevenPixels)
+        subMenu.addAction(ninePixels)
+        subMenu.addAction(elevenPixels)
+        subMenu.addAction(twentyOnePixels)
+        contextMenu.exec_(event.screenPos())
+
+class MaskViewDilate(MaskViewPenFreehand):
+    """Erode Button.
+    
+    Features
+    --------
+    >>> Left click to erode the corresponding mask
+    """
+
+    def __init__(self, kernelSize=3, mode="SingleROI"):
+        super().__init__(mode=mode)
+
+        self.setkernelSize(kernelSize)
+
+        self.icon = QIcon(widgets.icons.arrow_out)
+        pixMap = QPixmap(widgets.icons.paint_brush_plus)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = 'Dilate'
+        self.center = None
+
+    def setMode(self, mode):
+
+        self.mode = mode
+        if mode == "SingleROI":
+            self.toolTip = 'Single ROI'
+        elif mode == "AllROI":
+            self.toolTip = 'All ROIs'
+    
+    def setkernelSize(self, kernelSize):
+        self.kernelSize = kernelSize
+
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+        if event.button() == Qt.LeftButton:
+            p = [self.x, self.y]
+            im = self.maskItem.bin.astype(np.uint8)
+            if self.mode == "SingleROI":
+
+                if im[p[0],p[1]] ==1:
+                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.kernelSize, self.kernelSize))
+                    seeds = [reg.Point(p[0],p[1])]
+                    pixels = reg.regionGrow(im,seeds,1)
+                    im = im*pixels
+                else:
+                    pass #display a message that no ROI was selected
+            elif self.mode == "AllROI":
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (self.kernelSize, self.kernelSize))
+
+            im_dilated = cv2.dilate(im, kernel)#
+            pixels = im_dilated-im
+            yx_corr = np.column_stack(np.where(pixels==1))                
+            for p in yx_corr: self.maskItem.setPixel(p[0],p[1],True)
+            self.maskItem.update()
+        
+        elif event.button() == Qt.RightButton:
+            self.launchContextMenu(event)
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+
+    def launchContextMenu(self, event):
+
+        pickSingleROI = QAction('Single ROI', None)
+        pickSingleROI.setCheckable(True)
+        pickSingleROI.setChecked(self.mode == "SingleROI")
+        pickSingleROI.triggered.connect(lambda: self.setMode("SingleROI"))
+        
+        pickAllROI = QAction('All ROIs', None)
+        pickAllROI.setCheckable(True)
+        pickAllROI.setChecked(self.mode == "AllROI")
+        pickAllROI.triggered.connect(lambda: self.setMode("AllROI"))
+
+        onePixel = QAction('1 pixel', None)
+        onePixel.setCheckable(True)
+        onePixel.setChecked(self.kernelSize == 1)
+        onePixel.triggered.connect(lambda: self.setkernelSize(1))
+
+        threePixels = QAction('3 pixels', None)
+        threePixels.setCheckable(True)
+        threePixels.setChecked(self.kernelSize == 3)
+        threePixels.triggered.connect(lambda: self.setkernelSize(3))
+
+        fivePixels = QAction('5 pixels', None)
+        fivePixels.setCheckable(True)
+        fivePixels.setChecked(self.kernelSize == 5)
+        fivePixels.triggered.connect(lambda: self.setkernelSize(5))
+
+        sevenPixels = QAction('7 pixels', None)
+        sevenPixels.setCheckable(True)
+        sevenPixels.setChecked(self.kernelSize == 7)
+        sevenPixels.triggered.connect(lambda: self.setkernelSize(7))
+
+        ninePixels = QAction('9 pixels', None)
+        ninePixels.setCheckable(True)
+        ninePixels.setChecked(self.kernelSize == 9)
+        ninePixels.triggered.connect(lambda: self.setkernelSize(9))
+
+        elevenPixels = QAction('11 pixels', None)
+        elevenPixels.setCheckable(True)
+        elevenPixels.setChecked(self.kernelSize == 11)
+        elevenPixels.triggered.connect(lambda: self.setkernelSize(11))
+
+        twentyOnePixels = QAction('21 pixels', None)
+        twentyOnePixels.setCheckable(True)
+        twentyOnePixels.setChecked(self.kernelSize == 21)
+        twentyOnePixels.triggered.connect(lambda: self.setkernelSize(21))
+
+        contextMenu = QMenu()
+        contextMenu = QMenu()
+        contextMenu.addAction(pickSingleROI)
+        contextMenu.addAction(pickAllROI)
+        subMenu = contextMenu.addMenu('Kernel size')
+        subMenu.setEnabled(True)
+        # subMenu.clear()
+        subMenu.addAction(onePixel)
+        subMenu.addAction(threePixels)
+        subMenu.addAction(fivePixels)
+        subMenu.addAction(sevenPixels)
+        subMenu.addAction(ninePixels)
+        subMenu.addAction(elevenPixels)
+        subMenu.addAction(twentyOnePixels)
+        contextMenu.exec_(event.screenPos())
+
+class MaskViewDeleteROI(MaskViewPenFreehand):
+    """Delete ROI Button.
+    
+    Features
+    --------
+    >>> Left click to delete the corresponding mask
+    """
+
+    def __init__(self):
+
+        self.icon = QIcon(widgets.icons.paint_can_minus)
+        pixMap = QPixmap(widgets.icons.paint_can_minus)
+        self.cursor = QCursor(pixMap, hotX=0, hotY=16)
+        self.toolTip = 'Delete ROI'
+        self.center = None
+        self.path = None
+    
+    def itemMousePressEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())
+        if event.button() == Qt.LeftButton:
+            p = [self.x, self.y]
+            im = self.maskItem.bin.astype(np.uint8)
+            if im[p[0],p[1]] ==1:
+                seeds = [reg.Point(p[0],p[1])]
+                pixels = reg.regionGrow(im,seeds,1)
+                yx_corr = np.column_stack(np.where(pixels==1))                
+                for p in yx_corr: self.maskItem.setPixel(p[0],p[1],False)
+                self.maskItem.update()
+            else:
+                pass #display a message that no ROI was selected
+
+    def itemMouseMoveEvent(self, event):
+
+        self.x = int(event.pos().x())
+        self.y = int(event.pos().y())

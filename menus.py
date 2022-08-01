@@ -32,6 +32,7 @@ def pilot(parent):
     menu = parent.menu('iBEAt-Auto')
     menu.action(macros.MDRegMacro, text='MDR-Auto')
     menu.action(macros.MDRegMacroNoImport, text='MDR-Auto (No XNAT importing)')
+    menu.action(macros.MapToExcel, text='Generate Excel File')
     menu.separator()
     menu.action(tools.TimeMIP, text='DCE create AIF (Siemens)')
     menu.action(modelling.DCE_Button_modelling_only, text='DCE modelling - pilot (Siemens)')
