@@ -24,11 +24,11 @@ class SiemensT1T2MapButton(weasel.Action):
         if series is None:
             all_series = app.get_selected(3)
             for sery in all_series:
-                if sery.SeriesDescription == 'T1map_kidneys_cor-oblique_mbh_magnitude':
+                if sery.SeriesDescription == 'T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco':
                     series_T1 = sery
                     break
             for sery in all_series:
-                if sery.SeriesDescription == 'T2map_kidneys_cor-oblique_mbh_magnitude':
+                if sery.SeriesDescription == 'T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco':
                     series_T2 = sery
                     break
         else:
@@ -78,6 +78,7 @@ class SiemensT1T2MapButton(weasel.Action):
         Trec = 463*2
 
         number_slices = np.shape(array_T1)[2]
+        number_slices = 1
 
         T1_S0_map = np.empty(np.shape(array_T1)[0:3])
         T1_map = np.empty(np.shape(array_T1)[0:3])
@@ -87,6 +88,9 @@ class SiemensT1T2MapButton(weasel.Action):
         T2_map = np.empty(np.shape(array_T1)[0:3])
         T1_rsquare_map = np.empty(np.shape(array_T1)[0:3])
         T2_rsquare_map = np.empty(np.shape(array_T1)[0:3])
+
+        array_T1= np.squeeze(array_T1[270:310,160:180,2:4,:,0])
+        array_T2= np.squeeze(array_T2[270:310,160:180,2:4,:,0])
 
         for slice in tqdm(range(number_slices),desc="Slice Completed..."):
             app.status.message("Slice Completed..." + str(slice))
@@ -172,7 +176,7 @@ class SiemensT1T2MapButton(weasel.Action):
         T2_S0_map_series = series_T2.new_sibling(SeriesDescription=T2_S0_map_series)
         T2_S0_map_series.set_array(np.squeeze(T2_S0_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
-        T2_map_series = series_T2.SeriesDescription + "_T2_" + "T1_Map"
+        T2_map_series = series_T2.SeriesDescription + "_T2_" + "T2_Map"
         T2_map_series = series_T2.new_sibling(SeriesDescription=T2_map_series)
         T2_map_series.set_array(np.squeeze(T2_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
@@ -206,7 +210,7 @@ class SiemensIVIMButton(weasel.Action):
                     for i_w in range (np.shape(pixel_array_IVIM)[3]):
                         pixel_array_IVIM[:,:,i_slice,i_w]=pixel_array_IVIM[:,:,i_slice,i_w]*mask
 
-        S0map, Dmap,rsquaremap = models.IVIM_pixelwise_fit.main(pixel_array_IVIM,b_vals, GUI_object=weasel)
+        S0map, Dmap,rsquaremap = models.IVIM_pixelwise_fit.main(pixel_array_IVIM,b_vals)
 
         S0_map_series = series_IVIM.SeriesDescription + "_IVIM_" + "S0_Map"
         S0_map_series = series_IVIM.new_sibling(SeriesDescription=S0_map_series)

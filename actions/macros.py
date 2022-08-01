@@ -54,7 +54,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T1 scan")
                     print("Performing motion correction in T1 scan")
-                    #mdr.MDRegT1.run(self,app, series, study=study)
+                    mdr.MDRegT1.run(self,app, series, study=study)
                 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -72,7 +72,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T2* scan")
                     print("Performing motion correction in T2* scan")
-                    #mdr.MDRegT2star.run(self,app, series,study=study)
+                    mdr.MDRegT2star.run(self,app, series,study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -91,7 +91,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in T2 scan")
                     print("Performing motion correction in T2 scan")
-                    #mdr.MDRegT2.run(self,app, series, study=study)
+                    mdr.MDRegT2.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -110,7 +110,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in IVIM scan")
                     print("Performing motion correction in IVIM scan")
-                    #mdr.MDRegDWI.run(self,app, series, study=study)
+                    mdr.MDRegDWI.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -128,7 +128,7 @@ class MDRegMacro(weasel.Action):
 
                 try:
                     print("Performing motion correction in DTI scan")
-                    #mdr.MDRegDTI.run(self,app, series, study=study)
+                    mdr.MDRegDTI.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -147,7 +147,7 @@ class MDRegMacro(weasel.Action):
 
                 try:
                     print("Performing motion correction in DCE scan")
-                    #mdr.MDRegDTI.run(self,app, series, study=study)
+                    mdr.MDRegDCE.run(self,app, series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -174,7 +174,7 @@ class MDRegMacro(weasel.Action):
                 try:
                     #app.status.message(msg="Performing motion correction in MT scan")
                     print("Performing motion correction in MT scan")
-                    #mdr.MDRegMT.run(self,app, [MT_OFF, MT_ON], study=study)
+                    mdr.MDRegMT.run(self,app, [MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT Motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -191,12 +191,15 @@ class MDRegMacro(weasel.Action):
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling started") 
         file.close()
+        app.refresh()
 
+        list_series = app.folder.series()
         start_time_loop = time.time()
         for j,series in enumerate(list_series):
             print(series['SeriesDescription'])
 
             if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+            #if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
                 try:
 
                     start_time = time.time()
@@ -217,10 +220,12 @@ class MDRegMacro(weasel.Action):
 
             
             elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+            #elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
                 try:
                     T1_registered = series
                     for j_2,series in enumerate (list_series):
                         print(str(j_2) + ' : ' + series['SeriesDescription'])
+                        #if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                         if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                             T2_registered = series
                             seriesT1T2 = [T1_registered, T2_registered]
@@ -246,6 +251,7 @@ class MDRegMacro(weasel.Action):
                     file.close()
 
             elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
+            #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb":
                 try:
 
                     start_time = time.time()
@@ -265,6 +271,7 @@ class MDRegMacro(weasel.Action):
                     file.close()
 
             elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
+            #elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
                 try:
 
                     start_time = time.time()
@@ -282,6 +289,10 @@ class MDRegMacro(weasel.Action):
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI Mapping was NOT completed; error: "+str(e)) 
                     file.close()
+        
+        file = open(filename_log, 'a')
+        file.write("\n"+str(datetime.datetime.now())[0:19] + ": All modelling was completed --- %s seconds ---" % (int(time.time() - start_time_loop))) 
+        file.close()
 
             
 
