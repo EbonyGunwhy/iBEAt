@@ -27,6 +27,13 @@ class MaskViewToolBox(QWidget):
         self.defineButton(widgets.MaskViewPenPolygon())
         self.defineButton(widgets.MaskViewPenRectangle())
         self.defineButton(widgets.MaskViewPenCircle())
+        self.defineButton(widgets.MaskViewRegionGrowing())
+        self.defineButton(widgets.MaskViewDeleteROI())
+        self.defineButton(widgets.MaskViewEdgeDetection())
+        self.defineButton(widgets.MaskViewErode())
+        self.defineButton(widgets.MaskViewDilate())
+    
+        
 
     def defineButton(self, tool):
 
