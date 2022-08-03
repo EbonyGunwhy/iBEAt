@@ -3,14 +3,14 @@ import datetime
 import os, sys
 import csv
 
-import weasel
+import wezel
 
 import actions.xnat as xnat
 import actions.rename as rename
 import actions.mdr as mdr
 import actions.modelling as modelling
 
-class MDRegMacro(weasel.Action):
+class MDRegMacro(wezel.Action):
 
     def run(self, app):
         
@@ -296,7 +296,7 @@ class MDRegMacro(weasel.Action):
 
             
 
-class MDRegMacroNoImport(weasel.Action):
+class MDRegMacroNoImport(wezel.Action):
 
     def run(self, app):
       

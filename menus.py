@@ -1,4 +1,4 @@
-import weasel
+import wezel
 
 import actions.modelling as modelling
 import actions.macros as macros
@@ -13,21 +13,21 @@ def pilot(parent):
     menu = parent.menu('File')
     menu.action(tools.Open, shortcut='Ctrl+O')
     menu.action(tools.OpenSubFolders, text='Read subfolders')
-    menu.action(weasel.actions.folder.Read)
-    menu.action(weasel.actions.folder.Save, shortcut='Ctrl+S')
-    menu.action(weasel.actions.folder.Restore, shortcut='Ctrl+R')
-    menu.action(weasel.actions.folder.Close, shortcut='Ctrl+C')
+    menu.action(wezel.actions.folder.Read)
+    menu.action(wezel.actions.folder.Save, shortcut='Ctrl+S')
+    menu.action(wezel.actions.folder.Restore, shortcut='Ctrl+R')
+    menu.action(wezel.actions.folder.Close, shortcut='Ctrl+C')
 
     menu = parent.menu('View')
-    menu.action(weasel.actions.view.Series)
+    menu.action(wezel.actions.view.Series)
     menu.action(tools.RegionDraw, text='Draw ROI')
     menu.action(tools.FourDimArrayDisplay, text='4D Array')
     menu.separator()
-    menu.action(weasel.actions.view.CloseWindows, text='Close windows')
-    menu.action(weasel.actions.view.TileWindows, text='Tile windows')
+    menu.action(wezel.actions.view.CloseWindows, text='Close windows')
+    menu.action(wezel.actions.view.TileWindows, text='Tile windows')
 
     menu = parent.menu('Edit')
-    weasel.actions.edit.menu(menu)
+    #wezel.actions.edit.menu(menu)
 
     menu = parent.menu('iBEAt-Auto')
     menu.action(macros.MDRegMacro, text='MDR-Auto')

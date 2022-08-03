@@ -1,13 +1,13 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import weasel
+import wezel
 import cv2 as cv2
 from skimage import feature
 import actions.rightClicks as rightclick
 import actions.reggrow as reg
 
-class kidoutline(weasel.Action):
+class kidoutline(wezel.Action):
 
     def run(self, app):
         ############################################################################

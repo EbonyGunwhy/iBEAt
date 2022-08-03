@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import weasel
+import wezel
 import models.T2s_pixelwise_fit
 import models.IVIM_pixelwise_fit
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM
@@ -11,13 +11,13 @@ import dipy.reconst.dti as dti
 from dipy.reconst.dti import fractional_anisotropy, color_fa
 from tqdm import tqdm
 
-class allSeries(weasel.Action):
+class allSeries(wezel.Action):
     pass
 
-class DCE_Button_modelling_only(weasel.Action):
+class DCE_Button_modelling_only(wezel.Action):
     pass
 
-class SiemensT1T2MapButton(weasel.Action):
+class SiemensT1T2MapButton(wezel.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
         
         if series is None:
@@ -156,7 +156,7 @@ class SiemensT1T2MapButton(weasel.Action):
         app.refresh()
 
 
-class SiemensIVIMButton(weasel.Action):
+class SiemensIVIMButton(wezel.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
 
         if series is None:
@@ -192,7 +192,7 @@ class SiemensIVIMButton(weasel.Action):
         app.refresh()
 
 
-class SiemensDTIButton(weasel.Action):
+class SiemensDTIButton(wezel.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
 
         if series is None:
@@ -231,7 +231,7 @@ class SiemensDTIButton(weasel.Action):
             app.warning("The selected series doesn't have sufficient requirements to calculate the DTI Parameters.", "DTI Sequence not selected")
 
 
-class SiemensT2sMapButton(weasel.Action):
+class SiemensT2sMapButton(wezel.Action):
     
     def run(self, app, series=None, mask=None,export_ROI=False,slice=None,Fat_export=False):
 
@@ -261,10 +261,10 @@ class SiemensT2sMapButton(weasel.Action):
                     for i_w in range (np.shape(magnitude_array_T2s)[3]):
                         magnitude_array_T2s[:,:,i_slice,i_w]=magnitude_array_T2s[:,:,i_slice,i_w]*mask
 
-            #T2* mapping input: T2*-weighted images (x,y,z,TE), echo times, weasel as optional argument to create progress bars in to weasel interface
-            M0map, fwmap, T2smap, rsquaremap = models.T2s_pixelwise_fit.main(magnitude_array_T2s, TE_list, GUI_object=weasel)
+            #T2* mapping input: T2*-weighted images (x,y,z,TE), echo times, wezel as optional argument to create progress bars in to wezel interface
+            M0map, fwmap, T2smap, rsquaremap = models.T2s_pixelwise_fit.main(magnitude_array_T2s, TE_list, GUI_object=wezel)
 
-            #Weasel vizualitation of T2* mapping parameters: M0 map, Water Fraction map, T2* map,T2* r square (goodness of fit)
+            #wezel vizualitation of T2* mapping parameters: M0 map, Water Fraction map, T2* map,T2* r square (goodness of fit)
             M0_map_series = series_T2s.SeriesDescription + "_T2s_" + "M0_Map"
             M0_map_series = series_T2s.new_sibling(SeriesDescription=M0_map_series)
             M0_map_series.set_array(M0map,np.squeeze(header[:,0]),pixels_first=True)

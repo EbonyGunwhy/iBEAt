@@ -1,12 +1,12 @@
 import os
 import numpy as np
 
-import weasel
+import wezel
 import actions.reggrow as reg
 import cv2
 import matplotlib.pyplot as plt
 
-class DCEautoAIF(weasel.Action):
+class DCEautoAIF(wezel.Action):
     
     def run(app, array, header, series,targetslice, cutRatio, filter_kernel, regGrow_threshold ):
 
@@ -33,10 +33,10 @@ class DCEautoAIF(weasel.Action):
         aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,regGrow_threshold)
         aif_mask = aif_mask[..., np.newaxis]
 
-        aif_maskToWeasel = series.SeriesDescription + '_DCE_ART'
-        aif_maskToWeasel = series.new_sibling(SeriesDescription=aif_maskToWeasel)
+        aif_maskTowezel = series.SeriesDescription + '_DCE_ART'
+        aif_maskTowezel = series.new_sibling(SeriesDescription=aif_maskTowezel)
 
-        aif_maskToWeasel.set_array(np.squeeze(aif_mask), (header[targetslice-1,0]), pixels_first=True)
+        aif_maskTowezel.set_array(np.squeeze(aif_mask), (header[targetslice-1,0]), pixels_first=True)
 
         aif =[]
         for z in range(aortaImgs_cut.shape[2]):

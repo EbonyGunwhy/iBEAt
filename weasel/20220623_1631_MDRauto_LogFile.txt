@@ -1,6 +1,0 @@
-2022-06-23 16:31:48:MDR Auto Button started!
-2022-06-23 16:31:48: Importing has started!
-2022-06-23 16:53:45: Importing was completed --- 1316 seconds ---
-2022-06-23 16:53:45: Renaming has started!
-2022-06-23 16:55:05: Renaming was completed --- 79 seconds ---
-2022-06-23 16:55:07: T1 Motion correction has started
