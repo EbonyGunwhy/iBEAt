@@ -6,7 +6,6 @@ import actions.tools as tools
 import actions.xnat as xnat
 import actions.rename as rename
 import actions.mdr as mdr
-import actions.kidneyOutline as kidney_segmentation
 
 def pilot(parent): 
 
