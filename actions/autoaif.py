@@ -30,7 +30,15 @@ class DCEautoAIF(wezel.Action):
         (minVal3, maxVal3, minLoc3, maxLoc3) = cv2.minMaxLoc(aortaImgs_cutMaxMinBlurred)
 
         seeds = [reg.Point(maxLoc1[1],maxLoc1[0]),reg.Point(maxLoc2[1],maxLoc2[0]),reg.Point(maxLoc3[1],maxLoc3[0])]
-        aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,regGrow_threshold)
+        max_iteration = 20
+        for i in range(max_iteration):
+            aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,regGrow_threshold)
+            if len(aif_mask[aif_mask==1]) < 100:
+                regGrow_threshold = regGrow_threshold + i
+                continue
+            else:
+                break
+
         aif_mask = aif_mask[..., np.newaxis]
 
         aif_maskTowezel = series.SeriesDescription + '_DCE_ART'
