@@ -2,3 +2,5 @@ xnat
 requests
 mdreg
 dipy
+dbdicom
+opencv-python
