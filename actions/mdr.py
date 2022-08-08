@@ -274,11 +274,15 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, 
 
                         aif = actions.autoaif.DCEautoAIF.run(app, array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
 
-                        time = [float(hdr.AcquisitionTime) for hdr in header[slice,:,0]]
-                        time = np.array(time)
-                        time -= time[0] 
-                        #
-                        # time = time[1:]
+                        time = np.zeros(header.shape[1])
+                        for i in range(header.shape[1]):
+                            tempTime = header[slice,:,0]['AcquisitionTime']
+                            tempH = int(tempTime[0:2])
+                            tempM = int(tempTime[2:4])
+                            tempS = int(tempTime[4:6])
+                            tempRest = float("0." + tempTime[7:])
+                            time[i] = tempH*3600+tempM*60+tempS+tempRest
+                        time -=time[0]
                
                         baseline = 15
                         hematocrit = 0.45
