@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import weasel
+import wezel
 
 # These attributes are used frequently in iBEAt.
 # They are loaded up front to avoid rereading 
@@ -12,7 +12,7 @@ attributes = [
 ]
 
 
-class Open(weasel.Action):
+class Open(wezel.Action):
 
     def enable(self, app):
 
@@ -32,12 +32,12 @@ class Open(weasel.Action):
             return
         app.status.cursorToHourglass()
         app.close()
-        app.folder.set_attributes(attributes, scan=False)
+        #app.folder.set_attributes(attributes, scan=False)
         app.open(path)
         app.status.cursorToNormal()
 
 
-class OpenSubFolders(weasel.Action):
+class OpenSubFolders(wezel.Action):
 
     def enable(self, app):
 
@@ -67,7 +67,7 @@ class OpenSubFolders(weasel.Action):
         app.display(app.folder)
 
 
-class RegionDraw(weasel.Action):
+class RegionDraw(wezel.Action):
 
     def enable(self, app):
         
@@ -79,12 +79,12 @@ class RegionDraw(weasel.Action):
 
         for series in app.get_selected(3):
 
-            viewer = weasel.widgets.SeriesViewerROI(series, dimensions=attributes + ['StudyDate'])
+            viewer = wezel.widgets.SeriesViewerROI(series, dimensions=attributes + ['StudyDate'])
             viewer.dataWritten.connect(app.treeView.setFolder)
             app.addAsSubWindow(viewer, title=series.label())
 
 
-class FourDimArrayDisplay(weasel.Action):
+class FourDimArrayDisplay(wezel.Action):
 
     def enable(self, app):
         return app.nr_selected(3) != 0
@@ -99,7 +99,7 @@ class FourDimArrayDisplay(weasel.Action):
         if array.ndim != 4:
             app.dialog.information("Please select a 4D array for this viewer")
             return
-        viewer = weasel.widgets.FourDimViewer(app.status, array)
+        viewer = wezel.widgets.FourDimViewer(app.status, array)
         app.addAsSubWindow(viewer, title=series.label())
         app.status.message('Saving array for rapid access..')
         if no_array:
@@ -107,7 +107,7 @@ class FourDimArrayDisplay(weasel.Action):
         app.status.message('')
 
 
-class TimeMIP(weasel.Action):
+class TimeMIP(wezel.Action):
     """Previously known as DCE_create_AIF_button"""
 
     def run(self, app, series=None):

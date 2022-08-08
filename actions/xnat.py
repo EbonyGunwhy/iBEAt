@@ -10,9 +10,9 @@ import warnings
 import requests
 import xnat
 
-import weasel
+import wezel
 
-class Download(weasel.Action):
+class Download(wezel.Action):
 
     def run(self, app):
         try:
@@ -99,7 +99,7 @@ class Download(weasel.Action):
                 app.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
 
 
-class Upload(weasel.Action):
+class Upload(wezel.Action):
 
     def run(self, app):
         try:

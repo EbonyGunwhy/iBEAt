@@ -1,8 +1,8 @@
-import weasel
+import wezel
 import dbdicom as db
 
 
-class Leeds(weasel.Action):
+class Leeds(wezel.Action):
 
     def run(self, app):
 
@@ -78,7 +78,7 @@ class Leeds(weasel.Action):
                         image["DiffusionBValue"] = IVIM_bvalues[i]
                         image["DiffusionGradientOrientation"] = gradient # Have a look at how this gradient array should be
     
-        weasel.refresh()
+        wezel.refresh()
         """
         
 def leeds_rename(series): 

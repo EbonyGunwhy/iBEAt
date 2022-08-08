@@ -6,16 +6,16 @@ the results:
     - Calculated parameters (e.g. S0 and T2 - for T2 mapping)
     - Fit model
     - Co-registered images
-into Weasel GUI and strores them into DICOM files (with the 
+into wezel GUI and strores them into DICOM files (with the 
 appropriated headers)
 
 Main Steps (for each mapping sequence):
 
-1. DICOMs with weighted MRI data and headers are imported from Weasel GUI
+1. DICOMs with weighted MRI data and headers are imported from wezel GUI
 2. Images and headers are sorted using DICOM headers: "slice location" and "acquisition time"
 3. Important signal parameters are either hardcoded (e.g. T2, DWI) or imported via DICOM headers
 4. "_mdr" function is called to apply MDR to all slices
-5. _mdr results (parameters, fitmodel and coreg images) are stored into DICOM files (with headers) and displayed into weasel
+5. _mdr results (parameters, fitmodel and coreg images) are stored into DICOM files (with headers) and displayed into wezel
 
 This script is called everytime the user select a mapable dataset and presses one of the MDR buttons (Siemens) of the iBEAt-MDR menu
 """
@@ -23,7 +23,7 @@ This script is called everytime the user select a mapable dataset and presses on
 import os
 import numpy as np
 
-import weasel
+import wezel
 import mdreg
 import mdreg.models.T2star_simple
 import mdreg.models.T2_simple
@@ -43,7 +43,7 @@ import actions.autoaif
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
 
-class MDRegConst(weasel.Action):
+class MDRegConst(wezel.Action):
     """Perform MDR on all slices using a constant model"""
 
     def enable(self, app):
@@ -76,7 +76,7 @@ class MDRegConst(weasel.Action):
         app.refresh() 
 
 
-class MDRegT2star(weasel.Action):
+class MDRegT2star(wezel.Action):
     """Perform MDR on all slices using a T2star mono-exp model"""
     
     def run(self, app, series=None,study=None):
@@ -94,7 +94,7 @@ class MDRegT2star(weasel.Action):
 
 
 
-class MDRegT2(weasel.Action):
+class MDRegT2(wezel.Action):
     """Perform MDR on all slices using a T2 mono-exp model"""
 
     def run(self, app, series=None, study=None):
@@ -112,7 +112,7 @@ class MDRegT2(weasel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None', study=study)
 
 
-class MDRegT1(weasel.Action):
+class MDRegT1(wezel.Action):
     """Perform MDR on all slices using a T1 mono-exp model"""
 
     def run(self, app, series=None, study=None):
@@ -131,7 +131,7 @@ class MDRegT1(weasel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime', study=study)
 
 
-class MDRegDWI(weasel.Action):
+class MDRegDWI(wezel.Action):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
     def run(self, app, series=None,study=None):
@@ -148,7 +148,7 @@ class MDRegDWI(weasel.Action):
         number_slices = array.shape[2]
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
-class MDRegDTI(weasel.Action):
+class MDRegDTI(wezel.Action):
     """Perform MDR on all slices using a DTI model"""
 
     def run(self, app, series=None,study=None):
@@ -166,7 +166,7 @@ class MDRegDTI(weasel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
 
-class MDRegMT(weasel.Action):
+class MDRegMT(wezel.Action):
     """Perform MDR on all slices using a MT model"""
 
     def run(self, app, series=None,study=None):
@@ -205,7 +205,7 @@ class MDRegMT(weasel.Action):
         #add MTR = ( MT_off - MT_on ) / MT_off * 100 then save 
 
 
-class MDRegDCE(weasel.Action):
+class MDRegDCE(wezel.Action):
     """Perform MDR on all slices using a DCE linear model"""
 
     def run(self, app, series=None, study=None):
@@ -227,8 +227,8 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, 
 
     Args:
     ----
-    app             (Weasel)
-    series          (Weasel series): contains the user selected series in Weasel GUI
+    app             (wezel)
+    series          (wezel series): contains the user selected series in wezel GUI
     number_slices   (numpy.1darray): number of total slices (third dimention of the parameter "array")
     array           (numpy.ndarray): DICOM data with shape [x-dim, y-dim, z-dim (slice), t-dim (time series)]
     header          list containing all DICOM headers  
@@ -310,7 +310,7 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, 
    # coreg = [x,y,z,TE]
     if study is None:
         study = series.parent
-    #EXPORT RESULTS TO WEASEL GUI USING DICOM
+    #EXPORT RESULTS TO wezel GUI USING DICOM
     for p in range(len(parameters)):
         par = series.SeriesDescription + '_mdr_par_' + parameters[p]
         par = study.new_series(SeriesDescription=par)

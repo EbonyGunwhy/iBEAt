@@ -1,6 +1,0 @@
-2022-06-23 12:59:40:MDR Auto Button started!
-2022-06-23 12:59:40: Importing has started!
-2022-06-23 13:08:20: Importing was completed --- 519 seconds ---
-2022-06-23 13:08:20: Renaming has started!
-2022-06-23 13:11:17: Renaming was NOT completed; error: '<' not supported between instances of 'list' and 'int'
-2022-06-23 13:11:21: All scans motion correction was completed --- 3 seconds ---

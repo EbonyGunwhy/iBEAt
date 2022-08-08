@@ -1,6 +1,0 @@
-2022-06-23 13:13:22:MDR Auto Button started!
-2022-06-23 13:13:22: Importing has started!
-2022-06-23 13:19:49: Importing was completed --- 386 seconds ---
-2022-06-23 13:19:49: Renaming has started!
-2022-06-23 13:24:46: Renaming was NOT completed; error: 'NoneType' object has no attribute 'setFolder'
-2022-06-23 13:24:46: All scans motion correction was completed --- 0 seconds ---
