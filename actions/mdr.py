@@ -21,6 +21,7 @@ This script is called everytime the user select a mapable dataset and presses on
 """
 
 import os
+from threading import main_thread
 import numpy as np
 
 import wezel
@@ -182,10 +183,6 @@ class MDRegMT(wezel.Action):
                 if sery.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh':
                     mt_on = sery
                     break
-        else:
-            source = series[0]
-            mt_off = series[0]
-            mt_on = series[1]
 
         array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
         array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
@@ -201,9 +198,23 @@ class MDRegMT(wezel.Action):
 
         number_slices = array.shape[2]
         _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
-
-        #add MTR = ( MT_off - MT_on ) / MT_off * 100 then save 
-
+        
+        for i, series in enumerate(app.folder.series()):
+            print(series.SeriesDescription)
+            if series.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh_mdr_moco':
+                array_mt_moco, header_mt_moco = series.array(['SliceLocation', 'AcquisitionTime'],pixels_first=True)
+                array_mtr = np.zeros((np.shape(array_mt_moco)[0:3]))
+                for s in range (np.shape(array_off)[2]):
+                    temp_off_moco = np.squeeze(array_mt_moco[:,:,s,0])
+                    temp_on_moco  = np.squeeze(array_mt_moco[:,:,s,1])
+                    array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
+                
+                study = series.parent
+                mtr = series.SeriesDescription + '_MTR'
+                mtr = study.new_series(SeriesDescription = mtr)
+                mtr.set_array(array_mtr, np.squeeze(header_on[:,:]), pixels_first=True)
+                app.refresh()
+                break
 
 class MDRegDCE(wezel.Action):
     """Perform MDR on all slices using a DCE linear model"""
