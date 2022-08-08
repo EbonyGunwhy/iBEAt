@@ -202,6 +202,8 @@ class MDRegMT(weasel.Action):
         number_slices = array.shape[2]
         _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
+        #add MTR = ( MT_off - MT_on ) / MT_off * 100 then save 
+
 
 class MDRegDCE(weasel.Action):
     """Perform MDR on all slices using a DCE linear model"""
