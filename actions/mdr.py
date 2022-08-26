@@ -21,7 +21,6 @@ This script is called everytime the user select a mapable dataset and presses on
 """
 
 import os
-from threading import main_thread
 import numpy as np
 
 import wezel

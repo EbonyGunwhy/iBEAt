@@ -5,10 +5,81 @@ import csv
 
 import wezel
 
+from wezel.actions.folder import Open
 import actions.xnat as xnat
 import actions.rename as rename
 import actions.mdr as mdr
 import actions.modelling as modelling
+from utilities import RENAME_cluster as rename
+from utilities import MDR_cluster as mdr_ut
+from utilities import MODELLING_cluster as modelling_ut
+from dbdicom import Folder
+
+class OPenplusMDRegMacro(wezel.Action):
+
+    def run(self, app):
+        
+        xnat.Download.run(self, app)
+        
+        pathScan = app.folder.path
+        print(pathScan)
+
+        filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
+        file = open(filename_log, 'a')
+        file.write(str(datetime.datetime.now())[0:19] + ": MDR of " + pathScan.split('//')[-1] +  " has started!")
+        file.close()
+
+        start_time = time.time()
+        file = open(filename_log, 'a')
+        file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming has started!")
+        file.close()
+        try:
+
+            rename.main(pathScan) #EXECUTE RENAMING
+            Folder(pathScan).scan()
+
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
+            file.close()
+        except Exception as e:
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was NOT completed; error: "+str(e))
+            file.close()
+
+        start_time = time.time()
+        file = open(filename_log, 'a')
+        file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR has started!")
+        file.close()
+        try:
+
+            mdr_ut.main(pathScan,filename_log) #EXECUTE MDR
+            Folder(pathScan).scan()
+
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR was completed --- %s seconds ---" % (int(time.time() - start_time)))
+            file.close()
+        except Exception as e:
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR was NOT completed; error: "+str(e))
+            file.close()
+
+        start_time = time.time()
+        file = open(filename_log, 'a')
+        file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling has started!")
+        file.close()
+        try:
+
+            modelling_ut.main(pathScan,filename_log) #EXECUTE MODELLING
+
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was completed --- %s seconds ---" % (int(time.time() - start_time)))
+            file.close()
+        except Exception as e:
+            file = open(filename_log, 'a')
+            file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
+            file.close()
+
+        app.refresh
 
 class MDRegMacro(wezel.Action):
 
