@@ -172,17 +172,8 @@ class MDRegMT(wezel.Action):
 
     def run(self, app, series=None,study=None):
 
-        if series is None:
-            all_series = app.get_selected(3)
-            for sery in all_series:
-                if sery.SeriesDescription == 'MT_OFF_kidneys_cor-oblique_bh':
-                    source = sery
-                    mt_off = sery
-                    break
-            for sery in all_series:
-                if sery.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh':
-                    mt_on = sery
-                    break
+        mt_off =series[0]
+        mt_on =series[1]
 
         array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
         array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
@@ -285,7 +276,7 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, 
                         regGrow_threshold = 2     #threshold for the region growing algorithm
                         aortaslice = 9
 
-                        aif = actions.autoaif.DCEautoAIF.run(app, array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
+                        aif = actions.autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
 
                         time = np.zeros(header.shape[1])
                         for i in range(header.shape[1]):
