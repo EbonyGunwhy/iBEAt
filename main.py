@@ -5,10 +5,11 @@
 
 import wezel
 from wezel.apps.dicom import Windows
-
 from menus import pilot
-
 wsl = wezel.app()
+
+
 wsl.set_app(Windows)
 wsl.set_menu(pilot)
 wsl.show() 
+

@@ -29,6 +29,7 @@ def pilot(parent):
     #wezel.actions.edit.menu(menu)
 
     menu = parent.menu('iBEAt-Auto')
+    menu.action(macros.OPenplusMDRegMacro, text='MDR-Auto_v2')
     menu.action(macros.MDRegMacro, text='MDR-Auto')
     menu.action(macros.MDRegMacroNoImport, text='MDR-Auto (No XNAT importing)')
     menu.action(macros.GenerateExcel,text='Generate EXCEL file')
