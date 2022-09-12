@@ -129,14 +129,14 @@ class Upload(wezel.Action):
                         if subjectName == "Upload at Project Level":
                             uploadPaths = [image.file for image in app.folder.instances()]
                             uploadZipFile = zipFiles(uploadPaths)
-                            app.dialog.information("The selected images will be uploaded to the selected project. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
+                            #app.dialog.information("The selected images will be uploaded to the selected project. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
                             try:
                                 app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                 session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, content_type='application/zip')
                             except:
                                 app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
                                 warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                            app.status.message("Upload completed!", "XNAT Upload")
+                            #app.status.message("Upload completed!", "XNAT Upload")
                         else:
                             xnatExperiments = [experiment.label for experiment in session.projects[projectName].subjects[subjectName].experiments.values()]
                             xnatExperiments.insert(0, "Upload at Subject Level")
@@ -153,20 +153,21 @@ class Upload(wezel.Action):
                                         #app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                         session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, subject=session.projects[projectName].subjects[subjectName].id, content_type='application/zip')
                                     except:
-                                        app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                        #app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
                                         warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                                    app.status.message("Upload completed!", "XNAT Upload")
+                                    #app.status.message("Upload completed!", "XNAT Upload")
                                 else:
                                     uploadPaths = [image.file for image in app.folder.instances()]
                                     uploadZipFile = zipFiles(uploadPaths)
-                                    app.dialog.information("The selected images will be uploaded to the selected experiment. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
+                                    #app.dialog.information("The selected images will be uploaded to the selected experiment. The upload progress can be checked in the terminal and you may continue using app.", "XNAT Upload")
                                     try:
-                                        app.status.message("Uploading files to XNAT...", "XNAT Upload")
+                                        #app.status.message("Uploading files to XNAT...", "XNAT Upload")
                                         session.services.import_(uploadZipFile, overwrite='none', project=session.projects[projectName].id, subject=session.projects[projectName].subjects[subjectName].id, experiment=session.projects[projectName].subjects[subjectName].experiments[experimentName].id, content_type='application/zip')
                                     except:
-                                        app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                                        warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
-                                    app.status.message("Upload completed!", "XNAT Upload")
+                                        print('a')
+                                        #app.dialog.information('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                        #warnings.warn('The zip file being uploaded contains files already present in the selected image session and the upload assistant cannot overwrite or give the option to not overwrite. \n The selected file or folder was pre-archived in the selected XNAT project. \n Please login to the portal and review and/or archive the images.')
+                                    #app.status.message("Upload completed!", "XNAT Upload")
             # Curl Command
             headers = {"Content-Type": "application/json", "Accept": "*/*"}
             # Update the project's indices

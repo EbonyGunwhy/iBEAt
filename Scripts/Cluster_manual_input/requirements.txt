@@ -1,0 +1,8 @@
+mdreg
+dbdicom
+xnat
+requests
+opencv-python
+itk==5.3rc4
+itk-elastix==0.12.0
+dipy

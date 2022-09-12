@@ -7,17 +7,18 @@ import time
 import datetime
 from dbdicom import Folder
 
-from utilities import XNAT_cluster as xnat
-from utilities import RENAME_cluster as rename
-from utilities import MDR_cluster as mdr
-from utilities import MODELLING_cluster as modelling
+import XNAT_cluster as xnat
+import RENAME_cluster as rename
+import MDR_cluster as mdr
+import MODELLING_cluster as modelling
 
 username = "md1jdsp"
-#password = 
-path = "C://Users//md1jdsp//Documents//iBEAt_Data"
+password = ""
+#path = "//data//md1jdsp"
+path = "C://Users//md1jdsp//Desktop//BlackHole"
 
-#ExperimentName = xnat.main(username, password, path)
-ExperimentName = "Leeds_Patient_4128011"
+ExperimentName = xnat.main(username, password, path)
+#ExperimentName = "Leeds_REP_VOL_005_03"
 pathScan = path + "//" + ExperimentName
 
 filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
@@ -31,8 +32,8 @@ file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming has started!")
 file.close()
 try:
     
-    #rename.main(pathScan)
-    #Folder(pathScan).scan()
+    rename.main(pathScan)
+    Folder(pathScan).scan()
     
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
