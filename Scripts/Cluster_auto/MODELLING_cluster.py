@@ -239,9 +239,9 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False):
         FA_map_series = series_DTI.new_sibling(SeriesDescription=FA_map_series)
         FA_map_series.set_array(np.squeeze(FAmap),np.squeeze(header[:,0]),pixels_first=True)
 
-def main(pathScan):
+def main(pathScan,filename_log):
 
-    filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
+    #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
     list_of_series = Folder(pathScan).open().series()
 
     current_study = list_of_series[0].parent
@@ -251,7 +251,7 @@ def main(pathScan):
 
         print(series['SeriesDescription'])
 
-        if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_moco":
+        if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
             try:
                 start_time = time.time()
                 file = open(filename_log, 'a')
@@ -269,7 +269,7 @@ def main(pathScan):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was NOT completed; error: "+str(e)) 
                 file.close()
 
-        elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_moco":
+        elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
             try:
                 start_time = time.time()
                 file = open(filename_log, 'a')
@@ -278,7 +278,7 @@ def main(pathScan):
 
                 T1 = series
                 for i_2,series in enumerate (list_of_series):
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_moco":
+                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                         T2 = series
                         break
 
@@ -293,7 +293,7 @@ def main(pathScan):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was NOT completed; error: "+str(e)) 
                 file.close()
 
-        elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_moco":
+        elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
             try:
                 start_time = time.time()
                 file = open(filename_log, 'a')
@@ -311,7 +311,7 @@ def main(pathScan):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was NOT completed; error: "+str(e)) 
                 file.close()
 
-        elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_moco":
+        elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
             try:
                 start_time = time.time()
                 file = open(filename_log, 'a')
@@ -328,8 +328,5 @@ def main(pathScan):
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping was NOT completed; error: "+str(e)) 
                 file.close()
-
-        elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh_moco":
-            pass
 
     Folder(pathScan).save()

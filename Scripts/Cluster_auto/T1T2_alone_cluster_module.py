@@ -19,10 +19,10 @@ if __name__ == '__main__':
     study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
     for i,series in enumerate(list_of_series):
-        if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
+        if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
             series_T1 = series
             for i_2,series in enumerate (list_of_series):
-                if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
+                if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                     series_T2 = series
                     break
         
