@@ -3,38 +3,41 @@ import zipfile
 import datetime
 import os
 
-def XNAT_download(username,password,path):
+def XNAT_download(username,password,path,DatasetSelected):
     url = "https://qib.shef.ac.uk"
 
     with xnat.connect(url, user=username, password=password) as session:
         xnatProjects = [project.secondary_id for project in session.projects.values()]
-        for x in range(len(xnatProjects)):
-            print (str(x) +": " + xnatProjects[x])
-        print("Select the project:")
+        #for x in range(len(xnatProjects)):
+            #print (str(x) +": " + xnatProjects[x])
+        #print("Select the project:")
         #projectSelected = int(input())
-        projectSelected = 6
+        #projectSelected = 6
+        projectSelected = DatasetSelected[0]
         projectID = xnatProjects[projectSelected]
-        print(projectID)
+        #print(projectID)
         
         projectName = [project.name for project in session.projects.values() if project.secondary_id == projectID][0]
         if projectName:
             xnatSubjects = [subject.label for subject in session.projects[projectName].subjects.values()]
-            for x_2 in range(len(xnatSubjects)):
-                print (str(x_2) +": " + xnatSubjects[x_2])
-            print("Select the project:")
+            #for x_2 in range(len(xnatSubjects)):
+                #print (str(x_2) +": " + xnatSubjects[x_2])
+            #print("Select the project:")
             #xnatSubjectsSelected = int(input())
-            xnatSubjectsSelected = 0
-            print(xnatSubjects[xnatSubjectsSelected])
+            #xnatSubjectsSelected = 0
+            xnatSubjectsSelected = DatasetSelected[1]
+            #print(xnatSubjects[xnatSubjectsSelected])
             subjectName = xnatSubjects[xnatSubjectsSelected]
             dataset = session.projects[projectName]
 
             xnatExperiments = [experiment.label for experiment in session.projects[projectName].subjects[subjectName].experiments.values()]
-            for x_3 in range(len(xnatExperiments)):
-                print (str(x_3) +": " + xnatExperiments[x_3])
-            print("Select the project:")
+            #for x_3 in range(len(xnatExperiments)):
+                #print (str(x_3) +": " + xnatExperiments[x_3])
+            #print("Selected the project:")
             #xnatExperimentsSelected = int(input())
-            xnatExperimentsSelected = 14
-            print(xnatExperiments[xnatExperimentsSelected])	
+            #xnatExperimentsSelected = 14
+            xnatExperimentsSelected = DatasetSelected[2]
+            print("Selected the project: " + str(xnatExperiments[xnatExperimentsSelected]))	
             experimentName = xnatExperiments[xnatExperimentsSelected]
             dataset = session.projects[projectName].subjects[subjectName].experiments[experimentName]
             dataset.download_dir(path)
@@ -66,9 +69,9 @@ def XNAT_upload(username,password,path):
     return
 
 
-def main(username, password, path):
+def main(username, password, path,DatasetSelected):
 
-    experimentName = XNAT_download(username,password,path)
+    experimentName = XNAT_download(username,password,path,DatasetSelected)
 
     return experimentName
 

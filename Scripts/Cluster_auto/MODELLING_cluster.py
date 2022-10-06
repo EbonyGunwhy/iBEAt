@@ -8,6 +8,7 @@ import tqdm
 from dipy.core.gradients import gradient_table
 import dipy.reconst.dti as dti
 from dipy.reconst.dti import fractional_anisotropy, color_fa
+import runpy
 
 
 def T2s_Modelling(series=None, mask=None,export_ROI=False,slice=None,Fat_export=False):
@@ -177,6 +178,12 @@ def T1T2_Modelling(series=None, mask=None,export_ROI=False):
         T2_rsquare_map_series = series_T2.new_sibling(SeriesDescription=T2_rsquare_map_series)
         T2_rsquare_map_series.set_array(np.squeeze(T2_rsquare_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
+
+
+def T1T2_Modelling_with_Par(series=None, mask=None,export_ROI=False):
+
+        runpy.run_path("C://Users//md1jdsp//Documents//GitHub//iBEAt//Scripts//T1T2_ForwardModelling_wPara_standaloneScript//T1T2_alone_cluster.py", {}, "__main__")
+
 def IVIM_Modelling(series=None, mask=None,export_ROI=False):
 
         series_IVIM = series
@@ -238,7 +245,7 @@ def main(pathScan):
     list_of_series = Folder(pathScan).open().series()
 
     current_study = list_of_series[0].parent
-    study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_Modellingresults')
+    study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
     for i,series in enumerate(list_of_series):
 
@@ -274,10 +281,11 @@ def main(pathScan):
                     if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_moco":
                         T2 = series
                         break
-                T1T2_Modelling([T1,T2], study=study)
+
+                #T1T2_Modelling([T1,T2], study=study)
 
                 file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was not done here --- %s seconds ---" % (int(time.time() - start_time))) 
                 file.close()   
 
             except Exception as e: 
