@@ -74,7 +74,7 @@ def MDRegDTI(series=None,study=None):
 
     _mdr(series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
-def MDRegMT(series=None,study=None):
+def MDRegMT(pathScan,series=None,study=None):
     """Perform MDR on all slices using a MT model"""
 
     mt_off =series[0]
@@ -93,7 +93,24 @@ def MDRegMT(series=None,study=None):
     number_slices = array.shape[2]
     _mdr(mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
     
-    #TODO add MT map
+    list_of_series = Folder(pathScan).open().series()
+    
+    for i, series in enumerate(list_of_series):
+        
+        print(series.SeriesDescription)
+        if series.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh_mdr_moco':
+            array_mt_moco, header_mt_moco = series.array(['SliceLocation', 'AcquisitionTime'],pixels_first=True)
+            array_mtr = np.zeros((np.shape(array_mt_moco)[0:3]))
+            for s in range (np.shape(array_off)[2]):
+                temp_off_moco = np.squeeze(array_mt_moco[:,:,s,0])
+                temp_on_moco  = np.squeeze(array_mt_moco[:,:,s,1])
+                array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
+            
+            study = series.parent
+            mtr = series.SeriesDescription + '_MTR'
+            mtr = study.new_series(SeriesDescription = mtr)
+            mtr.set_array(array_mtr, np.squeeze(header_on[:,:]), pixels_first=True)
+            break
 
 def MDRegDCE(series=None, study=None):
     """Perform MDR on all slices using a DCE linear model"""
@@ -164,7 +181,7 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
 
                         time = np.zeros(header.shape[1])
                         for i in range(header.shape[1]):
-                            tempTime = header[slice,:,0]['AcquisitionTime']
+                            tempTime = header[slice,i,0]['AcquisitionTime']
                             tempH = int(tempTime[0:2])
                             tempM = int(tempTime[2:4])
                             tempS = int(tempTime[4:6])
@@ -212,9 +229,9 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
     moco = study.new_series(SeriesDescription = moco)
     moco.set_array(coreg, np.squeeze(header[:,:]), pixels_first=True)
 
-def main(pathScan):
+def main(pathScan,filename_log):
 
-    filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
+    #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
     list_of_series = Folder(pathScan).open().series()
 
     current_study = list_of_series[0].parent
@@ -327,7 +344,7 @@ def main(pathScan):
                         if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                             MT_ON = series
                             break
-                MDRegMT([MT_OFF, MT_ON], study=study)
+                MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
