@@ -8,6 +8,13 @@ import matplotlib.pyplot as plt
     
 def DCEautoAIF(array, header, series,targetslice, cutRatio, filter_kernel, regGrow_threshold ):
 
+    if np.shape(array)[-1] == 2:
+        array = array[...,0]
+
+    if np.shape(header)[-1] == 2:
+        header = header[...,0:1]
+
+
     aortaImgs = array[:,:,targetslice-1,...]
     verticalCenter = int(np.shape(aortaImgs)[0]/2)
     horizontalCenter = int(np.shape(aortaImgs)[1]/2)
@@ -42,7 +49,7 @@ def DCEautoAIF(array, header, series,targetslice, cutRatio, filter_kernel, regGr
     aif_maskTowezel = series.SeriesDescription + '_DCE_ART'
     aif_maskTowezel = series.new_sibling(SeriesDescription=aif_maskTowezel)
 
-    aif_maskTowezel.set_array(np.squeeze(aif_mask), (header[targetslice-1,0]), pixels_first=True)
+    aif_maskTowezel.set_array(aif_mask, (header[targetslice-1,0]), pixels_first=True)
 
     aif =[]
     for z in range(aortaImgs_cut.shape[2]):
