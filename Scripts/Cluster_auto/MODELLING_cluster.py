@@ -243,26 +243,41 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
     series_DCE = series
 
     array, header = series_DCE.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    pixel_array_DCE = array
+    
     header = np.squeeze(header)
 
+    if np.shape(array)[-1] == 2:
+        array = array[...,0]
+
+    if np.shape(header)[-1] == 2:
+        header = header[...,0:1]
+
+    pixel_array_DCE = array
     number_slices = np.shape(pixel_array_DCE)[2]
 
     DCE_Max_map = np.empty(np.shape(pixel_array_DCE)[0:3])
+    DCE_Area_map = np.empty(np.shape(pixel_array_DCE)[0:3])
 
-    for slice in tqdm(range(number_slices),desc="Slice Completed..."):
+    for slice in range(number_slices):
+        print(slice)
         
         array_DCE_temp = np.squeeze(pixel_array_DCE[:,:,slice,:])
 
-        for xi in tqdm (range((np.size(array_DCE_temp,0))),desc="Rows Completed..."):
+        for xi in range((np.size(array_DCE_temp,0))):
             for yi in range((np.size(array_DCE_temp,1))):
+
                 
                 Kidney_pixel_DCE = np.squeeze(np.array(array_DCE_temp[xi,yi,:]))
                 DCE_Max_map[xi,yi,slice] = np.max(Kidney_pixel_DCE)-np.mean(Kidney_pixel_DCE[0:11])
+                #DCE_Area_map[xi,yi,slice] = np.trapz(Kidney_pixel_DCE--np.mean(Kidney_pixel_DCE[0:11]), dx=1)
 
     DCEMax_map_series = series_DCE.SeriesDescription + "_DCE_" + "Max_Map"
     DCEMax_map_series = study.new_series(SeriesDescription=DCEMax_map_series)
     DCEMax_map_series.set_array(np.squeeze(DCE_Max_map),np.squeeze(header[:,0]),pixels_first=True)
+
+    DCEArea_map_series = series_DCE.SeriesDescription + "_DCE_" + "AUC_Map"
+    DCEArea_map_series = study.new_series(SeriesDescription=DCEArea_map_series)
+    DCEArea_map_series.set_array(np.squeeze(DCE_Area_map),np.squeeze(header[:,0]),pixels_first=True)
 
 def main(pathScan,filename_log):
 
