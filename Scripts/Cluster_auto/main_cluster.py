@@ -33,15 +33,15 @@ dataset = [6,0,14]
 #  7: BEAt-DKD-WP4-Sheffield      4: Leeds_setup_scans                      ->14: Leeds_Patient_4128015
 #########################################################################################################################################
 
-ExperimentName = xnat.main(username, password, path, dataset)
-#ExperimentName = "Leeds_Patient_4128020"
+#ExperimentName = xnat.main(username, password, path, dataset)
+ExperimentName = "Leeds_Patient_4128002"
 global pathScan
 pathScan = path + "//" + ExperimentName
 
 
 filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
 file = open(filename_log, 'a')
-file.write(str(datetime.datetime.now())[0:19] + ": MDR of " + pathScan.split('//')[-1] +  " has started!")
+file.write(str(datetime.datetime.now())[0:19] + ": Analysis of " + pathScan.split('//')[-1] +  " has started!")
 file.close()
 
 start_time = time.time()
@@ -67,7 +67,7 @@ file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR has started!")
 file.close()
 try:
 
-    mdr.main(pathScan)
+    mdr.main(pathScan,filename_log)
     Folder(pathScan).scan()
     
     file = open(filename_log, 'a')
@@ -85,7 +85,7 @@ file.close()
 
 try:
 
-    modelling.main(pathScan)
+    modelling.main(pathScan,filename_log)
     Folder(pathScan).scan()
 
     file = open(filename_log, 'a')
