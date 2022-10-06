@@ -11,7 +11,7 @@ from dipy.reconst.dti import fractional_anisotropy, color_fa
 import runpy
 
 
-def T2s_Modelling(series=None, mask=None,export_ROI=False,slice=None,Fat_export=False):
+def T2s_Modelling(series=None, mask=None,export_ROI=False,slice=None,Fat_export=False,study = None):
 
     series_T2s = series
 
@@ -41,22 +41,22 @@ def T2s_Modelling(series=None, mask=None,export_ROI=False,slice=None,Fat_export=
 
         #wezel vizualitation of T2* mapping parameters: M0 map, Water Fraction map, T2* map,T2* r square (goodness of fit)
         M0_map_series = series_T2s.SeriesDescription + "_T2s_" + "M0_Map"
-        M0_map_series = series_T2s.new_sibling(SeriesDescription=M0_map_series)
+        M0_map_series = study.new_series(SeriesDescription=M0_map_series)
         M0_map_series.set_array(M0map,np.squeeze(header[:,0]),pixels_first=True)
 
         fw_map_series = series_T2s.SeriesDescription + "_T2s_" + "fw_Map"
-        fw_map_series = series_T2s.new_sibling(SeriesDescription=fw_map_series)
+        fw_map_series = study.new_series(SeriesDescription=fw_map_series)
         fw_map_series.set_array(fwmap,np.squeeze(header[:,0]),pixels_first=True)
 
         T2s_map_series = series_T2s.SeriesDescription + "_T2s_" + "T2s_Map"
-        T2s_map_series = series_T2s.new_sibling(SeriesDescription=T2s_map_series)
+        T2s_map_series = study.new_series(SeriesDescription=T2s_map_series)
         T2s_map_series.set_array(T2smap,np.squeeze(header[:,0]),pixels_first=True)
 
         rsquare_map_series = series_T2s.SeriesDescription + "_T2s_" + "rsquare_Map"
-        rsquare_map_series = series_T2s.new_sibling(SeriesDescription=rsquare_map_series)
+        rsquare_map_series = study.new_series(SeriesDescription=rsquare_map_series)
         rsquare_map_series.set_array(rsquaremap,np.squeeze(header[:,0]),pixels_first=True)
 
-def T1T2_Modelling(series=None, mask=None,export_ROI=False):
+def T1T2_Modelling(series=None, mask=None,export_ROI=False, study=None):
         
         series_T1 = series[0]
         series_T2 = series[1]
@@ -151,40 +151,39 @@ def T1T2_Modelling(series=None, mask=None,export_ROI=False):
 
 
         T1_S0_map_series = series_T1.SeriesDescription + "_T1_" + "S0_Map"
-        T1_S0_map_series = series_T1.new_sibling(SeriesDescription=T1_S0_map_series)
+        T1_S0_map_series = study.new_series(SeriesDescription=T1_S0_map_series)
         T1_S0_map_series.set_array(np.squeeze(T1_S0_map),np.squeeze(header_T1[:,0]),pixels_first=True)
             
         T1_map_series = series_T1.SeriesDescription + "_T1_" + "T1_Map"
-        T1_map_series = series_T1.new_sibling(SeriesDescription=T1_map_series)
+        T1_map_series = study.new_series(SeriesDescription=T1_map_series)
         T1_map_series.set_array(np.squeeze(T1_map),np.squeeze(header_T1[:,0]),pixels_first=True)
 
         FA_Eff_map_series = series_T1.SeriesDescription + "_T1_" + "FA_Eff_Map"
-        FA_Eff_map_series = series_T1.new_sibling(SeriesDescription=FA_Eff_map_series)
+        FA_Eff_map_series = study.new_series(SeriesDescription=FA_Eff_map_series)
         FA_Eff_map_series.set_array(np.squeeze(FA_Eff_map),np.squeeze(header_T1[:,0]),pixels_first=True)
 
         T2_S0_map_series = series_T2.SeriesDescription + "_T2_" + "S0_Map"
-        T2_S0_map_series = series_T2.new_sibling(SeriesDescription=T2_S0_map_series)
+        T2_S0_map_series = study.new_series(SeriesDescription=T2_S0_map_series)
         T2_S0_map_series.set_array(np.squeeze(T2_S0_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
         T2_map_series = series_T2.SeriesDescription + "_T2_" + "T2_Map"
-        T2_map_series = series_T2.new_sibling(SeriesDescription=T2_map_series)
+        T2_map_series = study.new_series(SeriesDescription=T2_map_series)
         T2_map_series.set_array(np.squeeze(T2_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
         T1_rsquare_map_series = series_T1.SeriesDescription + "_T1_" + "rsquare_Map"
-        T1_rsquare_map_series = series_T1.new_sibling(SeriesDescription=T1_rsquare_map_series)
+        T1_rsquare_map_series = study.new_series(SeriesDescription=T1_rsquare_map_series)
         T1_rsquare_map_series.set_array(np.squeeze(T1_rsquare_map),np.squeeze(header_T1[:,0]),pixels_first=True)
 
         T2_rsquare_map_series = series_T2.SeriesDescription + "_T2_" + "rsquare_Map"
-        T2_rsquare_map_series = series_T2.new_sibling(SeriesDescription=T2_rsquare_map_series)
+        T2_rsquare_map_series = study.new_series(SeriesDescription=T2_rsquare_map_series)
         T2_rsquare_map_series.set_array(np.squeeze(T2_rsquare_map),np.squeeze(header_T2[:,0]),pixels_first=True)
 
 
+# def T1T2_Modelling_with_Par(series=None, mask=None,export_ROI=False, study = None):
 
-def T1T2_Modelling_with_Par(series=None, mask=None,export_ROI=False):
+        #runpy.run_path("C://Users//md1jdsp//Documents//GitHub//iBEAt//Scripts//T1T2_ForwardModelling_wPara_standaloneScript//T1T2_alone_cluster.py", {}, "__main__")
 
-        runpy.run_path("C://Users//md1jdsp//Documents//GitHub//iBEAt//Scripts//T1T2_ForwardModelling_wPara_standaloneScript//T1T2_alone_cluster.py", {}, "__main__")
-
-def IVIM_Modelling(series=None, mask=None,export_ROI=False):
+def IVIM_Modelling(series=None, mask=None,export_ROI=False, study = None):
 
         series_IVIM = series
 
@@ -202,18 +201,18 @@ def IVIM_Modelling(series=None, mask=None,export_ROI=False):
         S0map, Dmap,rsquaremap = models.IVIM_pixelwise_fit.main(pixel_array_IVIM,b_vals)
 
         S0_map_series = series_IVIM.SeriesDescription + "_IVIM_" + "S0_Map"
-        S0_map_series = series_IVIM.new_sibling(SeriesDescription=S0_map_series)
+        S0_map_series = study.new_series(SeriesDescription=S0_map_series)
         S0_map_series.set_array(np.squeeze(S0map),np.squeeze(header[:,0]),pixels_first=True)
         
         D_map_series = series_IVIM.SeriesDescription + "_IVIM_" + "D_Map"
-        D_map_series = series_IVIM.new_sibling(SeriesDescription=D_map_series)
+        D_map_series = study.new_series(SeriesDescription=D_map_series)
         D_map_series.set_array(np.squeeze(Dmap),np.squeeze(header[:,0]),pixels_first=True)
 
         rsquare_map_series = series_IVIM.SeriesDescription + "_IVIM_" + "rsquare_Map"
-        rsquare_map_series = series_IVIM.new_sibling(SeriesDescription=rsquare_map_series)
+        rsquare_map_series = study.new_series(SeriesDescription=rsquare_map_series)
         rsquare_map_series.set_array(np.squeeze(rsquaremap),np.squeeze(header[:,0]),pixels_first=True)
 
-def DTI_Modelling(series=None, mask=None,export_ROI=False):
+def DTI_Modelling(series=None, mask=None,export_ROI=False, study = None):
 
     series_DTI = series
 
@@ -236,8 +235,34 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False):
 ######FROM DIPY          
 
         FA_map_series = series_DTI.SeriesDescription + "_DTI_" + "FA_Map"
-        FA_map_series = series_DTI.new_sibling(SeriesDescription=FA_map_series)
+        FA_map_series = study.new_series(SeriesDescription=FA_map_series)
         FA_map_series.set_array(np.squeeze(FAmap),np.squeeze(header[:,0]),pixels_first=True)
+
+def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
+
+    series_DCE = series
+
+    array, header = series_DCE.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    pixel_array_DCE = array
+    header = np.squeeze(header)
+
+    number_slices = np.shape(pixel_array_DCE)[2]
+
+    DCE_Max_map = np.empty(np.shape(pixel_array_DCE)[0:3])
+
+    for slice in tqdm(range(number_slices),desc="Slice Completed..."):
+        
+        array_DCE_temp = np.squeeze(pixel_array_DCE[:,:,slice,:])
+
+        for xi in tqdm (range((np.size(array_DCE_temp,0))),desc="Rows Completed..."):
+            for yi in range((np.size(array_DCE_temp,1))):
+                
+                Kidney_pixel_DCE = np.squeeze(np.array(array_DCE_temp[xi,yi,:]))
+                DCE_Max_map[xi,yi,slice] = np.max(Kidney_pixel_DCE)-np.mean(Kidney_pixel_DCE[0:11])
+
+    DCEMax_map_series = series_DCE.SeriesDescription + "_DCE_" + "Max_Map"
+    DCEMax_map_series = study.new_series(SeriesDescription=DCEMax_map_series)
+    DCEMax_map_series.set_array(np.squeeze(DCE_Max_map),np.squeeze(header[:,0]),pixels_first=True)
 
 def main(pathScan,filename_log):
 
@@ -327,6 +352,24 @@ def main(pathScan,filename_log):
             except Exception as e: 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping was NOT completed; error: "+str(e)) 
+                file.close()
+
+        elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+            try:
+                start_time = time.time()
+                file = open(filename_log, 'a')
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping has started")
+                file.close()
+                
+                DCE_MAX_Modelling(series, study=study)
+
+                file = open(filename_log, 'a')
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                file.close()   
+
+            except Exception as e: 
+                file = open(filename_log, 'a')
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was NOT completed; error: "+str(e)) 
                 file.close()
 
     Folder(pathScan).save()
