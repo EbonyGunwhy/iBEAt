@@ -1,0 +1,12 @@
+2022-10-07 12:27:44: Analysis of Leeds_Patient_4128015 has started!
+2022-10-07 12:27:44: Renaming has started!
+2022-10-07 12:31:23: Renaming was completed --- 218 seconds ---
+2022-10-07 12:31:23: MDR has started!
+2022-10-07 12:31:23: MDR was completed --- 0 seconds ---
+2022-10-07 12:31:23: Modelling has started!
+2022-10-07 12:31:23: Modelling was completed --- 0 seconds ---
+2022-10-07 12:31:23: T1T2 Modelling has started!
+2022-10-07 12:42:59: T1 & T2 Modelling was NOT completed; error: Error in set_array(): array and dataset do not match
+ Array has 2 elements
+ dataset has 5 elements
+ Check if the keyword pixels_first is set correctly.

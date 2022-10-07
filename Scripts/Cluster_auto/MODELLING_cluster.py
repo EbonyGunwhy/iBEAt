@@ -268,7 +268,7 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
                 
                 Kidney_pixel_DCE = np.squeeze(np.array(array_DCE_temp[xi,yi,:]))
-                DCE_Max_map[xi,yi,slice] = np.max(Kidney_pixel_DCE)-np.mean(Kidney_pixel_DCE[0:11])
+                DCE_Max_map[xi,yi,slice] = np.max(Kidney_pixel_DCE-np.mean(Kidney_pixel_DCE[0:11]))
                 #DCE_Area_map[xi,yi,slice] = np.trapz(Kidney_pixel_DCE--np.mean(Kidney_pixel_DCE[0:11]), dx=1)
 
     DCEMax_map_series = series_DCE.SeriesDescription + "_DCE_" + "Max_Map"

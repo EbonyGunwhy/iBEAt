@@ -1,0 +1,9 @@
+2022-10-07 14:26:28: Analysis of Leeds_Patient_4128015 has started!
+2022-10-07 14:26:28: Renaming has started!
+2022-10-07 14:26:28: Renaming was completed --- 0 seconds ---
+2022-10-07 14:26:28: MDR has started!
+2022-10-07 14:26:28: MDR was completed --- 0 seconds ---
+2022-10-07 14:26:28: Modelling has started!
+2022-10-07 14:26:28: Modelling was completed --- 0 seconds ---
+2022-10-07 14:26:28: T1 & T2 Modelling has started!
+2022-10-07 14:27:17: T1 & T2 Modelling was NOT completed; error: name 'series_T1' is not defined
