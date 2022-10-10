@@ -24,8 +24,8 @@ import MODELLING_cluster as modelling
 #################### INPUT ######################
 username = "md1jdsp"
 password = "K_9X_Vuh3h"
-path = "//mnt//fastdata//md1jdsp"
-#path = "C://Users//md1jdsp//Desktop//BlackHole"
+#path = "//mnt//fastdata//md1jdsp"
+path = "C://Users//md1jdsp//Desktop//BlackHole"
 dataset = [6,0,14] 
 #################################################
 
@@ -40,8 +40,8 @@ dataset = [6,0,14]
 #  7: BEAt-DKD-WP4-Sheffield      4: Leeds_setup_scans                      ->14: Leeds_Patient_4128015
 #########################################################################################################################################
 
-ExperimentName = xnat.main(username, password, path, dataset)
-#ExperimentName = "Leeds_Patient_4128002"
+#ExperimentName = xnat.main(username, password, path, dataset)
+ExperimentName = "Leeds_Patient_4128002"
 #global pathScan
 pathScan = path + "//" + ExperimentName
 
@@ -130,6 +130,9 @@ try:
 
         #array_T1 = np.squeeze(array_T1[116:178,150:263,1:3,:,0])
         #array_T2 = np.squeeze(array_T2[116:178,150:263,1:3,:,0])
+
+        array_T1 = np.squeeze(array_T1[:,:,:,:,0])
+        array_T2 = np.squeeze(array_T2[:,:,:,:,0])
 
         header_T1 = np.squeeze(header_T1)
         header_T2 = np.squeeze(header_T2)

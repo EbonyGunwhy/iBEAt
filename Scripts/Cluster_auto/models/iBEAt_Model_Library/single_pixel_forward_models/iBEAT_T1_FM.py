@@ -241,7 +241,7 @@ def T1_fitting(images_to_be_fitted, TI, sequenceParam):
     ub = [10000,5000,1]
     initial_guess = [np.max(images_to_be_fitted),1200,1] 
 
-    popt, pcov = curve_fit(lambda TI, M_eq, T1,FA_Eff: signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N,FA_Cat), xdata = TI, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=100)
+    popt, pcov = curve_fit(lambda TI, M_eq, T1,FA_Eff: signalSequenceT1_FLASH(M_eq, T1, TI, FA,FA_Eff, TR, N,FA_Cat), xdata = TI, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=500)
 
     fit=signalSequenceT1_FLASH(popt[0],popt[1],TI,sequenceParam[0],popt[2],sequenceParam[1],sequenceParam[2],sequenceParam[3])
 
