@@ -175,7 +175,13 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
                         cutRatio=0.25             #create a window around the center of the image where the aorta is
                         filter_kernel=(15,15)     #gaussian kernel for smoothing the image to destroy any noisy single high intensity filter
                         regGrow_threshold = 2     #threshold for the region growing algorithm
-                        aortaslice = 9
+                        
+                        for i in range(header.shape[0]):
+                            if (header[i,0,0]["ImageOrientationPatient"]== [1, 0, 0, 0, 1, 0]):
+                                aortaslice = int(i)+1
+                                break
+                            else:
+                                aortaslice = 9
 
                         aif = actions.autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
 
@@ -248,7 +254,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction has started")
                 file.close()
 
-                MDRegT2star(series, study=study)
+                #MDRegT2star(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -266,7 +272,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction has started")
                 file.close()
 
-                MDRegT1(series, study=study)
+                #MDRegT1(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -284,7 +290,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction has started")
                 file.close()
 
-                MDRegT2(series, study=study)
+                #MDRegT2(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -302,7 +308,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction has started")
                 file.close()
 
-                MDRegIVIM(series, study=study)
+                #MDRegIVIM(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -320,7 +326,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
                 file.close()
 
-                MDRegDTI(series, study=study)
+                #MDRegDTI(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -339,12 +345,12 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
                 file.close()
 
-                MT_OFF = series
-                for i_2,series in enumerate (list_of_series):
-                        if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
-                            MT_ON = series
-                            break
-                MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
+                #MT_OFF = series
+                #for i_2,series in enumerate (list_of_series):
+                        #if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
+                            #MT_ON = series
+                            #break
+                #MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 

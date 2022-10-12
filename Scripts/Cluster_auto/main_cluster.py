@@ -20,13 +20,13 @@ import XNAT_cluster as xnat
 import RENAME_cluster as rename
 import MDR_cluster as mdr
 import MODELLING_cluster as modelling
-
 #################### INPUT ######################
 username = "md1jdsp"
 password = "K_9X_Vuh3h"
 #path = "//mnt//fastdata//md1jdsp"
-path = "C://Users//md1jdsp//Desktop//BlackHole"
-dataset = [6,0,14] 
+#path = "C://Users//md1jdsp//Desktop//BlackHole"
+path = "C://Users//md1jdsp//Desktop//iBEAT_DATA"
+dataset = [6,0,0] 
 #################################################
 
 ################################################# EXAMPLE DATASET SELECTION #############################################################
@@ -41,7 +41,7 @@ dataset = [6,0,14]
 #########################################################################################################################################
 
 #ExperimentName = xnat.main(username, password, path, dataset)
-ExperimentName = "Leeds_Patient_4128002"
+ExperimentName = "Leeds_Patient_4128001"
 #global pathScan
 pathScan = path + "//" + ExperimentName
 
@@ -74,7 +74,7 @@ file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR has started!")
 file.close()
 try:
 
-    #mdr.main(pathScan,filename_log)
+    mdr.main(pathScan,filename_log)
     #Folder(pathScan).scan()
     
     file = open(filename_log, 'a')
@@ -118,10 +118,12 @@ try:
         study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
         for i,series in enumerate(list_of_series):
-            if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+            #if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+            if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
                 series_T1 = series
                 for i_2,series in enumerate (list_of_series):
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                    #if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
                         series_T2 = series
                         break
             
