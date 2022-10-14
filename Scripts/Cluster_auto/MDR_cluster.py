@@ -221,7 +221,13 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
                         cutRatio=0.25             #create a window around the center of the image where the aorta is
                         filter_kernel=(15,15)     #gaussian kernel for smoothing the image to destroy any noisy single high intensity filter
                         regGrow_threshold = 2     #threshold for the region growing algorithm
-                        aortaslice = 9
+                        
+                        for i in range(header.shape[0]):
+                            if (header[i,0,0]["ImageOrientationPatient"]== [1, 0, 0, 0, 1, 0]):
+                                aortaslice = int(i)+1
+                                break
+                            else:
+                                aortaslice = 9
 
                         aif = actions.autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
 
