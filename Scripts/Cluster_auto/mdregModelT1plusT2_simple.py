@@ -11,15 +11,15 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 def pars():
-    return ['S0', 'alpha', 'T1', 'T2']
+    return ['S0', 'alpha', 'T1', 'T2','S0T2']
 
 def bounds():
-    lower = [0, 0, 1.0, 0] 
-    upper = [5000, 3000, 3000.0, 200]
+    lower = [0, 0, 1.0, 0,0] 
+    upper = [5000, 3000, 3000.0, 200,5000]
     return lower, upper
 
 
-def func(x, a,b, T1, T2):
+def func(x, a,b, T1, T2,c):
     """ exponential function for T1-fitting.
     Args
     ----
@@ -34,7 +34,7 @@ def func(x, a,b, T1, T2):
     TE = x[28:]     
     y = np.zeros(39)
     y[0:28] = np.abs(a - b * np.exp(-TI/T1))
-    y[28:39] = a*np.exp(-TE/T2)
+    y[28:39] = c*np.exp(-TE/T2)
 
     return y 
 
@@ -53,26 +53,26 @@ def main(images, xData):
 
     TI = np.array(xData)
     shape = np.shape(images)
-    par = np.empty((shape[0], 4)) # pixels should be first for consistency
+    par = np.empty((shape[0], 5)) # pixels should be first for consistency
     fit = np.empty(shape)
 
     for x in range(shape[0]):
 
         signal = images[x,:]
-        p0 = [687.0, 1329.0, 1500.0, 80]
+        p0 = [687.0, 1329.0, 1500.0, 80,1300]
         try:
             par[x,:], _ = curve_fit(func, 
                 xdata = TI, 
                 ydata = signal, 
                 p0 = p0, 
-                bounds = ([0, 0, 1.0, 0], [5000, 2000, 3000.0, 200]), 
+                bounds = ([0, 0, 1.0, 0,0], [5000, 2000, 3000.0, 200,5000]), 
                 method = 'trf', 
                 maxfev = 500, 
             )
         except RuntimeError: #optimum not found.
             par[x,:] = p0
         
-        fit[x,:] = func(TI, par[x,0], par[x,1], par[x,2], par[x,3])
+        fit[x,:] = func(TI, par[x,0], par[x,1], par[x,2], par[x,3], par[x,4])
         par[x,2] = par[x,2] * (np.divide(par[x,1], par[x,0], out=np.zeros_like(par[x,1]), where=par[x,0]!=0) - 1) #calculate real T1 from apparent T1
         if par[x,2] > 3000:
             par[x,2] = 3000
