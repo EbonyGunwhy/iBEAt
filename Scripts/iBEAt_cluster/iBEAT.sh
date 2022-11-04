@@ -1,8 +1,8 @@
 #!/bin/bash
 # Request 8 gigabytes of real memory (mem)
-#####$ -l rmem=8GB
-# Request 2  cores in an OpenMP environment
-#$ -pe openmp 2
+#####$ -l rmem=2GB
+# Request 8  cores in an OpenMP environment
+#$ -pe openmp 8
 # Email notifications to j.s.periquito@sheffield.ac.uk
 #$ -M j.s.periquito@sheffield.ac.uk
 # Email notifications if the job aborts

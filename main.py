@@ -12,4 +12,3 @@ wsl = wezel.app()
 wsl.set_app(Windows)
 wsl.set_menu(pilot)
 wsl.show() 
-

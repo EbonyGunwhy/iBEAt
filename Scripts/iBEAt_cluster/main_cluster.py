@@ -20,12 +20,12 @@ import XNAT_cluster as xnat
 import RENAME_cluster as rename
 import MDR_cluster as mdr
 import MODELLING_cluster as modelling
+
 #################### INPUT ######################
 username = "md1jdsp"
 password = "K_9X_Vuh3h"
-#path = "//mnt//fastdata//md1jdsp"
+path = "//mnt//fastdata//md1jdsp"
 #path = "C://Users//md1jdsp//Desktop//BlackHole"
-path = "C://Users//md1jdsp//Desktop//iBEAT_DATA"
 dataset = [6,0,0] 
 #################################################
 
@@ -40,8 +40,8 @@ dataset = [6,0,0]
 #  7: BEAt-DKD-WP4-Sheffield      4: Leeds_setup_scans                      ->14: Leeds_Patient_4128015
 #########################################################################################################################################
 
-#ExperimentName = xnat.main(username, password, path, dataset)
-ExperimentName = "Leeds_Patient_4128001"
+ExperimentName = xnat.main(username, password, path, dataset)
+#ExperimentName = "Leeds_Patient_4128002"
 #global pathScan
 pathScan = path + "//" + ExperimentName
 
@@ -57,8 +57,8 @@ file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming has started!")
 file.close()
 try:
     
-    #rename.main(pathScan)
-    #Folder(pathScan).scan()
+    rename.main(pathScan)
+    Folder(pathScan).scan()
     
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -75,7 +75,7 @@ file.close()
 try:
 
     mdr.main(pathScan,filename_log)
-    #Folder(pathScan).scan()
+    Folder(pathScan).scan()
     
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -92,8 +92,8 @@ file.close()
 
 try:
 
-    #modelling.main(pathScan,filename_log)
-    #Folder(pathScan).scan()
+    modelling.main(pathScan,filename_log)
+    Folder(pathScan).scan()
 
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -102,7 +102,7 @@ except Exception as e:
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
     file.close()
-
+"""
 start_time = time.time()
 file = open(filename_log, 'a')
 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 Modelling has started!")
@@ -118,20 +118,15 @@ try:
         study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
         for i,series in enumerate(list_of_series):
-            #if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-            if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
+            if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                 series_T1 = series
                 for i_2,series in enumerate (list_of_series):
-                    #if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
+                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
                         series_T2 = series
                         break
             
         array_T1, header_T1 = series_T1.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
         array_T2, header_T2 = series_T2.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-
-        #array_T1 = np.squeeze(array_T1[116:178,150:263,1:3,:,0])
-        #array_T2 = np.squeeze(array_T2[116:178,150:263,1:3,:,0])
 
         array_T1 = np.squeeze(array_T1[:,:,:,:,0])
         array_T2 = np.squeeze(array_T2[:,:,:,:,0])
@@ -242,7 +237,7 @@ except Exception as e:
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 Modelling was NOT completed; error: "+str(e))
     file.close()
-    
+"""    
 
 
 

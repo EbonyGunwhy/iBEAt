@@ -4,6 +4,7 @@ import time
 from dbdicom import Folder
 import numpy as np
 import models.T2s_pixelwise_fit
+import models.IVIM_pixelwise_fit
 import tqdm
 from dipy.core.gradients import gradient_table
 import dipy.reconst.dti as dti
@@ -232,16 +233,11 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False, study = None):
         tenfit = tenmodel.fit(np.squeeze(pixel_array_DTI))
 
         FAmap = fractional_anisotropy(tenfit.evals)
-        MDmap = dti.mean_diffusivity(tenfit.evals)
 ######FROM DIPY          
 
         FA_map_series = series_DTI.SeriesDescription + "_DTI_" + "FA_Map"
         FA_map_series = study.new_series(SeriesDescription=FA_map_series)
         FA_map_series.set_array(np.squeeze(FAmap),np.squeeze(header[:,0]),pixels_first=True)
-
-        MD_map_series = series_DTI.SeriesDescription + "_DTI_" + "MD_Map"
-        MD_map_series = study.new_series(SeriesDescription=MD_map_series)
-        MD_map_series.set_array(np.squeeze(MDmap),np.squeeze(header[:,0]),pixels_first=True)
 
 def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
@@ -321,11 +317,11 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping has started")
                 file.close()
 
-                T1 = series
-                for i_2,series in enumerate (list_of_series):
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-                        T2 = series
-                        break
+                #T1 = series
+                #for i_2,series in enumerate (list_of_series):
+                    #if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                        #T2 = series
+                        #break
 
                 #T1T2_Modelling([T1,T2], study=study)
 

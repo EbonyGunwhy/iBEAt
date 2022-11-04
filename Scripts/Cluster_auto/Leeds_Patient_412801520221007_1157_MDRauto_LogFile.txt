@@ -1,8 +1,0 @@
-2022-10-07 11:57:12: Analysis of Leeds_Patient_4128015 has started!
-2022-10-07 11:57:13: Renaming has started!
-2022-10-07 11:57:13: Renaming was completed --- 0 seconds ---
-2022-10-07 11:57:13: MDR has started!
-2022-10-07 11:57:13: MDR was completed --- 0 seconds ---
-2022-10-07 11:57:13: Modelling has started!
-2022-10-07 11:57:13: Modelling was completed --- 0 seconds ---
-2022-10-07 11:57:14: T1T2 Modelling has started!

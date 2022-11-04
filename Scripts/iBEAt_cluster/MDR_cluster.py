@@ -10,7 +10,6 @@ import mdreg.models.DWI_simple
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
 import actions.autoaif
-import mdregModelT1plusT2_simple
 from dbdicom import Folder
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
@@ -24,51 +23,6 @@ def MDRegT2star(series=None,study=None):
     number_slices = array.shape[2]
 
     _mdr(series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='EchoTime',study=study)
-
-
-def MDRegT1T2(seriesT1, seriesT2, study=None):
-
-    arrayT1, headerT1 = seriesT1.array(['SliceLocation', 'InversionTime'], pixels_first=True)
-    arrayT2, headerT2 = seriesT2.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-
-    if np.shape(arrayT1)[-1] == 2:
-        arrayT1 = arrayT1[...,0]
-
-    if np.shape(headerT1)[-1] == 2:
-        headerT1 = headerT1[...,0:1]
-
-    if np.shape(arrayT2)[-1] == 2:
-        arrayT2 = arrayT2[...,0]
-
-    if np.shape(headerT2)[-1] == 2:
-        headerT2 = headerT2[...,0:1]
-
-    shape_1 = np.shape(arrayT1)[0:3]
-    shape_2 = np.shape(arrayT1)[3]+np.shape(arrayT2)[3]
-    final_shape = shape_1 + (shape_2,) + (1,)
-    array = np.zeros(final_shape)
-    array[:,:,:,0:28,0] = arrayT1
-    array[:,:,:,28:39,0] = arrayT2
-
-    h_shape_1 = (np.shape(headerT1)[0])
-    h_shape_2 = np.shape(headerT1)[1]+np.shape(headerT2)[1]
-    h_final_shape = (h_shape_1,) + (h_shape_2,) + (1,)
-    header = np.empty(h_final_shape,dtype=object)
-    header[:,0:28,0] = headerT1[:,:,0]
-    header[:,28:39,0] = headerT2[:,:,0]
-
-    #plt.plot(np.squeeze(array[294,135,2,:]))
-    TI = [hdr['InversionTime'] for hdr in (headerT1[0,:,0])]
-    TE = [0,30,40,50,60,70,80,90,100,110,120]     
-
-    signal_pars = np.concatenate([TI,TE])
-    signal_model = mdregModelT1plusT2_simple
-    
-    elastix_file = 'BSplines_T1.txt'
-    number_slices = array.shape[2]
-
-    _mdr(seriesT1, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime', study=study)
-
 
 def MDRegT1(series=None, study=None):
 
@@ -113,7 +67,7 @@ def MDRegDTI(series=None,study=None):
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
-    signal_pars = []
+    signal_pars = 0
     signal_model = mdreg.models.DTI
     elastix_file = 'BSplines_DTI.txt'
     number_slices = array.shape[2]
@@ -163,7 +117,7 @@ def MDRegDCE(series=None, study=None):
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
-    signal_pars = []
+    signal_pars = 0
     signal_model = mdreg.models.DCE_2CFM
     elastix_file = 'BSplines_DCE.txt'
 
@@ -207,7 +161,7 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
 
         mdr = mdreg.MDReg()
 
-        if signal_pars!=[]:                                                                          #if condition for hardcoded parameters e.g.: T2 "EchoTime"
+        if signal_pars!=0:                                                                          #if condition for hardcoded parameters e.g.: T2 "EchoTime"
             mdr.signal_parameters = signal_pars
         else:
             if sort_by == "DTI":                                                                    #extracting DTI relevant parameters from DICOM headers                                              
@@ -221,10 +175,11 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
                         cutRatio=0.25             #create a window around the center of the image where the aorta is
                         filter_kernel=(15,15)     #gaussian kernel for smoothing the image to destroy any noisy single high intensity filter
                         regGrow_threshold = 2     #threshold for the region growing algorithm
-                        
+
+
                         for i in range(header.shape[0]):
                             if (header[i,0,0]["ImageOrientationPatient"]== [1, 0, 0, 0, 1, 0]):
-                                aortaslice = int(i)+1
+                                aortaslice = int(i + 1)
                                 break
                             else:
                                 aortaslice = 9
@@ -300,7 +255,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction has started")
                 file.close()
 
-                #MDRegT2star(series, study=study)
+                MDRegT2star(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -318,15 +273,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction has started")
                 file.close()
 
-                T1 = series
-                for i_2,series in enumerate (list_of_series):
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
-                        T2 = series
-                        break
-
-                MDRegT1T2(T1, T2, study=study)
-
-                #MDRegT1(series, study=study)
+                MDRegT1(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -344,7 +291,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction has started")
                 file.close()
 
-                #MDRegT2(series, study=study)
+                MDRegT2(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -362,7 +309,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction has started")
                 file.close()
 
-                #MDRegIVIM(series, study=study)
+                MDRegIVIM(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -380,7 +327,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
                 file.close()
 
-                #MDRegDTI(series, study=study)
+                MDRegDTI(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -404,7 +351,7 @@ def main(pathScan,filename_log):
                         if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                             MT_ON = series
                             break
-                #MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
+                MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -422,7 +369,7 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
                 file.close()
 
-                #MDRegDCE(series, study=study)
+                MDRegDCE(series, study=study)
 
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
