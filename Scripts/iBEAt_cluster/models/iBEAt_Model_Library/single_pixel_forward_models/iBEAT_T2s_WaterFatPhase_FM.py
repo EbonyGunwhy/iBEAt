@@ -166,7 +166,7 @@ def T2s_fitting(magnitude_array, phase_array, TE_list):
 
     try:
 
-        fittedParameters, pcov = curve_fit(comboFunc, comboX, comboY, initial_guess,bounds=(lb,ub),method='trf',maxfev=5000)    
+        fittedParameters, pcov = curve_fit(comboFunc, comboX, comboY, initial_guess,bounds=(lb,ub),method='trf',maxfev=1000)    
     
         S0 = fittedParameters[0]
         fw = fittedParameters[1]

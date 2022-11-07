@@ -233,11 +233,16 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False, study = None):
         tenfit = tenmodel.fit(np.squeeze(pixel_array_DTI))
 
         FAmap = fractional_anisotropy(tenfit.evals)
+        MDmap = dti.mean_diffusivity(tenfit.evals)
 ######FROM DIPY          
 
         FA_map_series = series_DTI.SeriesDescription + "_DTI_" + "FA_Map"
         FA_map_series = study.new_series(SeriesDescription=FA_map_series)
         FA_map_series.set_array(np.squeeze(FAmap),np.squeeze(header[:,0]),pixels_first=True)
+
+        MD_map_series = series_DTI.SeriesDescription + "_DTI_" + "MD_Map"
+        MD_map_series = study.new_series(SeriesDescription=MD_map_series)
+        MD_map_series.set_array(np.squeeze(MDmap),np.squeeze(header[:,0]),pixels_first=True)
 
 def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
@@ -310,12 +315,12 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was NOT completed; error: "+str(e)) 
                 file.close()
 
-        elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping has started")
-                file.close()
+        #elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+            #try:
+                #start_time = time.time()
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping has started")
+                #file.close()
 
                 #T1 = series
                 #for i_2,series in enumerate (list_of_series):
@@ -325,44 +330,44 @@ def main(pathScan,filename_log):
 
                 #T1T2_Modelling([T1,T2], study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was not done here --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was not done here --- %s seconds ---" % (int(time.time() - start_time))) 
+                #file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was NOT completed; error: "+str(e)) 
-                file.close()
+            #except Exception as e: 
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was NOT completed; error: "+str(e)) 
+                #file.close()
 
-        elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping has started")
-                file.close()
+        #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
+            #try:
+                #start_time = time.time()
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping has started")
+                #file.close()
                 
-                IVIM_Modelling(series, study=study)
+                #IVIM_Modelling(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                #file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was NOT completed; error: "+str(e)) 
-                file.close()
+            #except Exception as e: 
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was NOT completed; error: "+str(e)) 
+                #file.close()
 
         elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
             try:
                 start_time = time.time()
                 file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping has started")
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping has started")
                 file.close()
                 
                 DTI_Modelling(series, study=study)
 
                 file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
                 file.close()   
 
             except Exception as e: 

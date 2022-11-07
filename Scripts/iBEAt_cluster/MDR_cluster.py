@@ -302,23 +302,23 @@ def main(pathScan,filename_log):
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was NOT completed; error: "+str(e)) 
                 file.close()   
 
-        elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction has started")
-                file.close()
+        #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb":
+            #try:
+                #start_time = time.time()
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction has started")
+                #file.close()
 
-                MDRegIVIM(series, study=study)
+                #MDRegIVIM(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                #file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+            #except Exception as e: 
+                #file = open(filename_log, 'a')
+                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was NOT completed; error: "+str(e)) 
+                #file.close()
 
         elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
             try:

@@ -53,7 +53,7 @@ def T2s_fitting(images_to_be_fitted, TE_list, ModelParam):
     try:
 
 
-        fittedParameters, pcov = curve_fit(Mono_Exp_T2s_with_Water_Fat, TE_list, images_to_be_fitted, initial_guess,bounds=(lb,ub),method='trf',maxfev=100)    
+        fittedParameters, pcov = curve_fit(Mono_Exp_T2s_with_Water_Fat, TE_list, images_to_be_fitted, initial_guess,bounds=(lb,ub),method='trf',maxfev=1000)    
     
         fit = []
 
