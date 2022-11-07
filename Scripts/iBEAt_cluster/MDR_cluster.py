@@ -1,3 +1,10 @@
+""" 
+@author: Joao Periquito 
+iBEAt MDR Scrpit
+2022
+Find iBEAt standard pulse sequence name  and execute MDR for: DCE, DTI, T1, T2, T2*, MT
+"""
+
 import mdreg
 import os
 import datetime

@@ -1,3 +1,10 @@
+""" 
+@author: Joao Periquito 
+iBEAt MODELLING Scrpit
+2022
+Find iBEAt motion corrected pulse sequence name (MDR output: *_mdr_moco) and execute custom modelling for: DCE, DTI, T2*
+(T1 & T2 modelling are done in the main due to parallelization requirements)
+"""
 
 import datetime
 import time
@@ -287,7 +294,6 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
 def main(pathScan,filename_log):
 
-    #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
     list_of_series = Folder(pathScan).open().series()
 
     current_study = list_of_series[0].parent
@@ -314,48 +320,6 @@ def main(pathScan,filename_log):
                 file = open(filename_log, 'a')
                 file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was NOT completed; error: "+str(e)) 
                 file.close()
-
-        #elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-            #try:
-                #start_time = time.time()
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping has started")
-                #file.close()
-
-                #T1 = series
-                #for i_2,series in enumerate (list_of_series):
-                    #if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-                        #T2 = series
-                        #break
-
-                #T1T2_Modelling([T1,T2], study=study)
-
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was not done here --- %s seconds ---" % (int(time.time() - start_time))) 
-                #file.close()   
-
-            #except Exception as e: 
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 and T2 mapping was NOT completed; error: "+str(e)) 
-                #file.close()
-
-        #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb_mdr_moco":
-            #try:
-                #start_time = time.time()
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping has started")
-                #file.close()
-                
-                #IVIM_Modelling(series, study=study)
-
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                #file.close()   
-
-            #except Exception as e: 
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM-ADC mapping was NOT completed; error: "+str(e)) 
-                #file.close()
 
         elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
             try:

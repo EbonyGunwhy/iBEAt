@@ -1,3 +1,10 @@
+""" 
+@author: Joao Periquito 
+iBEAt Rename Scrpit
+2022
+Pulse sequence name standardization for iBEAt MR Protcol
+"""
+
 import dbdicom as db
 from dbdicom import Folder
 

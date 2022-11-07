@@ -1,3 +1,10 @@
+""" 
+@author: Joao Periquito 
+iBEAt T1 & T2 Custom modelling
+2022
+Apply forward modelling to T1 and T2 data
+"""
+
 import os
 import numpy as np
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM

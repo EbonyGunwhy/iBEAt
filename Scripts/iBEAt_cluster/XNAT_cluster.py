@@ -1,3 +1,10 @@
+""" 
+@author: Joao Periquito 
+iBEAt XNAT import
+2022  
+XNAT Dataset auto-import script 
+"""
+
 import xnat
 import zipfile
 import datetime
@@ -52,6 +59,10 @@ def zipFiles(listPaths):
     zip_path = os.path.realpath(zip_file.filename)
     return zip_path
 
+
+
+#####################################################
+################ UPLOAD DOES NOT WORK ###############
 def XNAT_upload(username,password,path):
     url = "https://qib.shef.ac.uk"
 
@@ -67,6 +78,8 @@ def XNAT_upload(username,password,path):
         uploadZipFile = zipFiles(uploadPaths)
 
     return
+################ UPLOAD DOES NOT WORK ###############
+#####################################################
 
 
 def main(username, password, path,DatasetSelected):

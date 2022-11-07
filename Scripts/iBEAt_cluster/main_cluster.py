@@ -1,3 +1,12 @@
+""" 
+@author: Joao Periquito 
+iBEAt CLUSTER MAIN Scrpit
+2022
+Download XNAT dataset -> Name Standardization -> Execute MDR    -> Custom Moddeling (DCE, T2*, DCE)  -> T1 & T2 modelling with parallelization (done in the main)
+    XNAT_cluster.py   ->  RENAME_Cluster.py   -> MDR_Cluster.py -> MODELLING_cluster.py
+(T1 & T2 modelling are done in the main due to parallelization requirements)
+"""
+
 # To develop the application
 # --------------------------
 # py -3 -m venv .venv           # create virtual environment
