@@ -253,61 +253,62 @@ def main(pathScan,filename_log):
 
     for i,series in enumerate(list_of_series):
 
-        print(series['SeriesDescription'])
+        if series["SequenceName"] is not None:
+            #print(series['SeriesDescription'])
 
-        if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction has started")
-                file.close()
+            if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction has started")
+                    file.close()
 
-                MDRegT2star(series, study=study)
+                    MDRegT2star(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
 
-        elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction has started")
+                    file.close()
 
-                MDRegT1(series, study=study)
+                    MDRegT1(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
 
-        elif series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction has started")
+                    file.close()
 
-                MDRegT2(series, study=study)
+                    MDRegT2(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was NOT completed; error: "+str(e)) 
-                file.close()   
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was NOT completed; error: "+str(e)) 
+                    file.close()   
 
         #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb":
             #try:

@@ -45,7 +45,7 @@ parser.add_argument('--num',
 
 args = parser.parse_args()
 
-dataset = [6,0,args.num]
+dataset = [3,0,args.num]
 
 ################################################# EXAMPLE DATASET SELECTION #############################################################
 #DATASET CODE FOR LEEDS
@@ -59,6 +59,7 @@ dataset = [6,0,args.num]
 #########################################################################################################################################
 
 ExperimentName = xnat.main(username, password, path, dataset)
+#ExperimentName = "iBE-2128-002_followup"
 pathScan = path + "//" + ExperimentName
 
 filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
@@ -133,13 +134,16 @@ try:
         study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
         for i,series in enumerate(list_of_series):
-            print(series['SeriesDescription'])
-            if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-                series_T1 = series
-                for i_2,series in enumerate (list_of_series):
-                    if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-                        series_T2 = series
-                        break
+            
+            if series["SequenceName"] is not None:
+                #print(series['SeriesDescription'])
+                
+                if series['SeriesDescription'] == "T1map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                    series_T1 = series
+                    for i_2,series in enumerate (list_of_series):
+                        if series['SeriesDescription'] == "T2map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                            series_T2 = series
+                            break
 
         array_T1, header_T1 = series_T1.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
         array_T2, header_T2 = series_T2.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)

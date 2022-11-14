@@ -301,60 +301,62 @@ def main(pathScan,filename_log):
 
     for i,series in enumerate(list_of_series):
 
-        print(series['SeriesDescription'])
+        if series["SequenceName"] is not None:
 
-        if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping has started")
-                file.close()
+            #print(series['SeriesDescription'])
 
-                T2s_Modelling(series, study=study)
+            if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude_mdr_moco":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping has started")
+                    file.close()
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
-            except Exception as e: 
+                    T2s_Modelling(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was NOT completed; error: "+str(e)) 
-                file.close()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+                except Exception as e: 
 
-        elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping has started")
-                file.close()
-                
-                DTI_Modelling(series, study=study)
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* mapping was NOT completed; error: "+str(e)) 
+                    file.close()
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+            elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb_mdr_moco":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping has started")
+                    file.close()
+                    
+                    DTI_Modelling(series, study=study)
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping was NOT completed; error: "+str(e)) 
-                file.close()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA & ADC mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-        elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping has started")
-                file.close()
-                
-                DCE_MAX_Modelling(series, study=study)
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI-FA mapping was NOT completed; error: "+str(e)) 
+                    file.close()
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+            elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping has started")
+                    file.close()
+                    
+                    DCE_MAX_Modelling(series, study=study)
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was NOT completed; error: "+str(e)) 
-                file.close()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was NOT completed; error: "+str(e)) 
+                    file.close()
 
     Folder(pathScan).save()
