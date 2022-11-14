@@ -15,8 +15,9 @@ def leeds_rename(series):
     """
     
     im = series
-
+    #print(im["SequenceName"])
     if im["SequenceName"] is not None:
+        
 
         if im["SequenceName"] == '*tfi2d1_115':
             return 'Sequence not recognized'
@@ -111,8 +112,9 @@ def leeds_name_extend(series_names):
     if series_names.count('DCE_kidneys_cor-oblique_fb') > 0:
         inject = series_names.index('DCE_kidneys_cor-oblique_fb')
         for i, name in enumerate(series_names[inject:]):
-            if name[0:17] == 'T1w_abdomen_dixon':
-                series_names[inject+i] += '_post_contrast'          
+            if name is not None:
+                if name[0:17] == 'T1w_abdomen_dixon':
+                    series_names[inject+i] += '_post_contrast'          
 
     asl = [i for i, x in enumerate(series_names) if x == 'ASL_kidneys_pCASL_cor-oblique_fb']
     nr_of_asl_series = int(len(asl)/5)
@@ -132,7 +134,7 @@ def main(experimentPath):
     series_names = []  
     
     for series in list_of_series:
-        print(leeds_rename(series))
+        #print(leeds_rename(series))
         series_names.append(leeds_rename(series))
 
     series_names = leeds_name_extend(series_names)
