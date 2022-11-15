@@ -328,64 +328,64 @@ def main(pathScan,filename_log):
                 #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was NOT completed; error: "+str(e)) 
                 #file.close()
 
-        elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
+                    file.close()
 
-                MDRegDTI(series, study=study)
+                    MDRegDTI(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was NOT completed; error: "+str(e)) 
-                file.close()
-        
-        elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh":
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
+            
+            elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh":
 
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
-                file.close()
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
+                    file.close()
 
-                MT_OFF = series
-                for i_2,series in enumerate (list_of_series):
-                        if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
-                            MT_ON = series
-                            break
-                MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
+                    MT_OFF = series
+                    for i_2,series in enumerate (list_of_series):
+                            if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
+                                MT_ON = series
+                                break
+                    MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
 
-        elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
+                    file.close()
 
-                MDRegDCE(series, study=study)
+                    MDRegDCE(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
 
     Folder(pathScan).save()
