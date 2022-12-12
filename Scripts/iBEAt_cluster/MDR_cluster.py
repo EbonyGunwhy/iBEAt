@@ -326,37 +326,17 @@ def main(pathScan,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was NOT completed; error: "+str(e)) 
                     file.close()   
 
-        #elif series['SeriesDescription'] == "IVIM_kidneys_cor-oblique_fb":
-            #try:
-                #start_time = time.time()
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction has started")
-                #file.close()
-
-                #MDRegIVIM(series, study=study)
-
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                #file.close()   
-
-            #except Exception as e: 
-                #file = open(filename_log, 'a')
-                #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was NOT completed; error: "+str(e)) 
-                #file.close()
-
             elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
                 try:
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
-                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
                     MDRegDTI(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()   
 
                 except Exception as e: 
@@ -370,7 +350,6 @@ def main(pathScan,filename_log):
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
-                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
                     MT_OFF = series
@@ -382,7 +361,6 @@ def main(pathScan,filename_log):
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()   
 
                 except Exception as e: 
@@ -395,9 +373,6 @@ def main(pathScan,filename_log):
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
-                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
-                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": CPU cores: " + str(len(os.sched_getaffinity(0))) + " vs. CPU: " +str(os.cpu_count()))
-                    
                     file.close()
 
                     MDRegDCE(series, study=study)
@@ -409,7 +384,6 @@ def main(pathScan,filename_log):
                 except Exception as e: 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
-                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
     Folder(pathScan).save()
