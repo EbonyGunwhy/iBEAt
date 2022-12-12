@@ -4,20 +4,22 @@ iBEAt MDR Scrpit
 2022
 Find iBEAt standard pulse sequence name  and execute MDR for: DCE, DTI, T1, T2, T2*, MT
 """
-
+import psutil
 import mdreg
 import os
 import datetime
 import time
 import numpy as np
-import mdreg.models.T2star_simple
-import mdreg.models.T2_simple
-import mdreg.models.T1_simple
-import mdreg.models.DWI_simple
+import mdreg.models.T2star
+import mdreg.models.T2
+import mdreg.models.T1
+import mdreg.models.DWI_monoexponential
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
 import actions.autoaif
 from dbdicom import Folder
+import os
+import gc
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
 
@@ -25,7 +27,7 @@ def MDRegT2star(series=None,study=None):
 
     array, header = series.array(['SliceLocation', 'EchoTime'], pixels_first=True)
     signal_pars = 0
-    signal_model = mdreg.models.T2star_simple
+    signal_model = mdreg.models.T2star
     elastix_file = 'BSplines_T2star.txt'
     number_slices = array.shape[2]
 
@@ -36,7 +38,7 @@ def MDRegT1(series=None, study=None):
     array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
 
     signal_pars = 0
-    signal_model = mdreg.models.T1_simple
+    signal_model = mdreg.models.T1
     #signal_model = mdreg.models.constant
     elastix_file = 'BSplines_T1.txt'
     number_slices = array.shape[2]
@@ -50,7 +52,7 @@ def MDRegT2(series=None, study=None):
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
     signal_pars = [0,30,40,50,60,70,80,90,100,110,120]
-    signal_model = mdreg.models.T2_simple
+    signal_model = mdreg.models.T2
     elastix_file = 'BSplines_T2.txt'
     number_slices = array.shape[2]
     
@@ -63,7 +65,7 @@ def MDRegIVIM(series=None,study=None):
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
     signal_pars = [0,10.000086, 19.99908294, 30.00085926, 50.00168544, 80.007135, 100.0008375, 199.9998135, 300.0027313, 600.0]
-    signal_model = mdreg.models.DWI_simple
+    signal_model = mdreg.models.DWI_monoexponential
     elastix_file = 'BSplines_IVIM.txt'
 
     number_slices = array.shape[2]
@@ -165,11 +167,13 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
 
     # LOOP THROUGH SLICES
     for slice in range(number_slices):
-
+        #print("Part -8  before mdreg: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr = mdreg.MDReg()
+        #print("Part -7  after mdreg: " + str(psutil.virtual_memory()[3]/1000000000))
 
         if signal_pars!=0:                                                                          #if condition for hardcoded parameters e.g.: T2 "EchoTime"
             mdr.signal_parameters = signal_pars
+            print("parameters = pars")
         else:
             if sort_by == "DTI":                                                                    #extracting DTI relevant parameters from DICOM headers                                              
                         b_values = [float(hdr[(0x19, 0x100c)]) for hdr in header[slice,:,0]]
@@ -207,22 +211,28 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
                         hematocrit = 0.45
                         signal_pars = [aif, time, baseline, hematocrit]
                         mdr.signal_parameters = signal_pars
+                        print("DCE parameters were calculated ")
 
             else:
                 mdr.signal_parameters = [hdr[sort_by] for hdr in (header[slice,:,0])]                #extracting relevant parameters from DICOM headers using the string sort_by
-        
+                print("sort by")
         #STORING RESULTS
+        
+        #print("Part -6  before set array: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr.set_array(np.squeeze(array[:,:,slice,:,0]))     
         mdr.pixel_spacing = header[slice,0,0].PixelSpacing
         mdr.signal_model = signal_model
         mdr.read_elastix(os.path.join(elastix_pars, elastix_file))
         #mdr.pinned_message = 'MDR for slice ' + str(slice+1)
+        
+        #print("Part -5  before mdr.fit: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr.fit()
         
         model_fit[:,:,slice,:,0] = mdr.model_fit
         coreg[:,:,slice,:,0] = mdr.coreg
         pars[:,:,slice,:] = mdr.pars
-
+        del mdr
+        gc.collect()
 
    # array = [x,y,z,TE]
    # pars = [x,y,z,2]
@@ -261,12 +271,14 @@ def main(pathScan,filename_log):
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction has started")
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
                     MDRegT2star(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()   
 
                 except Exception as e: 
@@ -279,12 +291,14 @@ def main(pathScan,filename_log):
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction has started")
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
                     MDRegT1(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()   
 
                 except Exception as e: 
@@ -297,12 +311,14 @@ def main(pathScan,filename_log):
                     start_time = time.time()
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction has started")
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
                     MDRegT2(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()   
 
                 except Exception as e: 
@@ -328,64 +344,74 @@ def main(pathScan,filename_log):
                 #file.write("\n"+str(datetime.datetime.now())[0:19] + ": IVIM motion correction was NOT completed; error: "+str(e)) 
                 #file.close()
 
-        elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "DTI_kidneys_cor-oblique_fb":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    file.close()
 
-                MDRegDTI(series, study=study)
+                    MDRegDTI(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was NOT completed; error: "+str(e)) 
-                file.close()
-        
-        elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh":
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
+            
+            elif series['SeriesDescription'] == "MT_OFF_kidneys_cor-oblique_bh":
 
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
-                file.close()
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction has started")
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    file.close()
 
-                MT_OFF = series
-                for i_2,series in enumerate (list_of_series):
-                        if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
-                            MT_ON = series
-                            break
-                MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
+                    MT_OFF = series
+                    for i_2,series in enumerate (list_of_series):
+                            if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
+                                MT_ON = series
+                                break
+                    MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was NOT completed; error: "+str(e)) 
+                    file.close()
 
-        elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
-            try:
-                start_time = time.time()
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
-                file.close()
+            elif series['SeriesDescription'] == "DCE_kidneys_cor-oblique_fb":
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": CPU cores: " + str(len(os.sched_getaffinity(0))) + " vs. CPU: " +str(os.cpu_count()))
+                    
+                    file.close()
 
-                MDRegDCE(series, study=study)
+                    MDRegDCE(series, study=study)
 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
-                file.close()   
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
 
-            except Exception as e: 
-                file = open(filename_log, 'a')
-                file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
-                file.close()
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
+                    #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
+                    file.close()
 
     Folder(pathScan).save()
+    Folder(pathScan).close()
+

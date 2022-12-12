@@ -26,9 +26,9 @@ import numpy as np
 import wezel
 import mdreg
 import mdreg.models.T2star_simple
-import mdreg.models.T2_simple
-import mdreg.models.T1_simple
-import mdreg.models.DWI_simple
+import mdreg.models.T2
+import mdreg.models.T1
+import mdreg.models.DWI_monoexponential
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
 import actions.reggrow as reg
@@ -86,7 +86,7 @@ class MDRegT2star(wezel.Action):
 
         array, header = series.array(['SliceLocation', 'EchoTime'], pixels_first=True)
         signal_pars = 0
-        signal_model = mdreg.models.T2star_simple
+        signal_model = mdreg.models.T2star
         elastix_file = 'BSplines_T2star.txt'
         number_slices = array.shape[2]
 
@@ -105,7 +105,7 @@ class MDRegT2(wezel.Action):
         array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
         signal_pars = [0,30,40,50,60,70,80,90,100,110,120]
-        signal_model = mdreg.models.T2_simple
+        signal_model = mdreg.models.T2
         elastix_file = 'BSplines_T2.txt'
         number_slices = array.shape[2]
         
@@ -123,7 +123,7 @@ class MDRegT1(wezel.Action):
         array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
 
         signal_pars = 0
-        signal_model = mdreg.models.T1_simple
+        signal_model = mdreg.models.T1
         #signal_model = mdreg.models.constant
         elastix_file = 'BSplines_T1.txt'
         number_slices = array.shape[2]
@@ -142,7 +142,7 @@ class MDRegDWI(wezel.Action):
         array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
         signal_pars = [0,10.000086, 19.99908294, 30.00085926, 50.00168544, 80.007135, 100.0008375, 199.9998135, 300.0027313, 600.0]
-        signal_model = mdreg.models.DWI_simple
+        signal_model = mdreg.models.DWI_monoexponential
         elastix_file = 'BSplines_IVIM.txt'
 
         number_slices = array.shape[2]
