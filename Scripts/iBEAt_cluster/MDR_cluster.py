@@ -20,12 +20,83 @@ import actions.autoaif
 from dbdicom import Folder
 import os
 import gc
+import matplotlib.pyplot as plt
+from skimage.transform import rescale
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
+
+def downsample_res_avg(im,newShape):
+    print(len(im.shape))
+    if len(im.shape)==4:
+        original_width = im.shape[1]
+        original_height = im.shape[0]
+        width = newShape
+        height = newShape
+        resized_image = np.zeros(shape=(height, width, im.shape[2],im.shape[3]), dtype=np.uint16)
+        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
+        scale = int(im.shape[0]/newShape)
+
+        for slice in range (0,im.shape[2]):
+            im_slice = np.squeeze(im[:,:,slice])
+            for dynamics in range (0,im.shape[3]):
+                im_slice_dyn = np.squeeze(im_slice[:,:,dynamics])
+                for i in range(0, original_height, scale):
+                    for j in range(0, original_width, scale):
+                        resized_image[int(i/scale), int(j/scale),slice,dynamics] = np.mean(im_slice_dyn[i:i + scale, j:j+scale], axis=(0,1))
+    elif len(im.shape)==3:
+        original_width = im.shape[1]
+        original_height = im.shape[0]
+        width = newShape
+        height = newShape
+        resized_image = np.zeros(shape=(height, width, im.shape[2]), dtype=np.uint16)
+        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
+        scale = int(im.shape[0]/newShape)
+
+        for slice in range (0,im.shape[2]):
+            im_slice = np.squeeze(im[:,:,slice])
+            for i in range(0, original_height, scale):
+                for j in range(0, original_width, scale):
+                    resized_image[int(i/scale), int(j/scale),slice] = np.mean(im_slice[i:i + scale, j:j+scale], axis=(0,1))
+
+
+                              
+            # temp_up_image = rescale(np.squeeze(resized_image[:,:,slice,dynamics]), scale,anti_aliasing=False)
+            #print(np.max(np.squeeze(resized_image[:,:,slice,dynamics])))
+            #print(np.min(np.squeeze(resized_image[:,:,slice,dynamics])))
+            #print(np.max(np.squeeze(temp_up_image)))
+            #print(np.min(np.squeeze(temp_up_image)))
+            # temp_up_image = temp_up_image * (np.max(np.squeeze(resized_image[:,:,slice,dynamics]))/np.max(np.squeeze(temp_up_image))) #* (np.max(resized_image) - np.min(resized_image)) + np.min(resized_image)            
+            #print(np.max(np.squeeze(temp_up_image)))
+            #print(np.min(np.squeeze(temp_up_image)))
+            # upsampled_image[:, :,slice,dynamics] = temp_up_image
+    
+    #### VIZUALIZATION ####
+    # Creating figure object
+    # plt.figure()
+    # plt.subplot(141)
+    # plt.imshow(np.squeeze(im[:,:,0,0]),vmin=0,vmax=250)
+    # plt.colorbar()
+    # plt.subplot(142)
+    # plt.imshow(np.squeeze(resized_image[:,:,0,0]),vmin=0,vmax=250)
+    # plt.colorbar()
+    # plt.subplot(143)
+    # plt.imshow(np.squeeze(upsampled_image[:,:,0,0]),vmin=0,vmax=250)
+    # plt.colorbar()
+    # plt.subplot(144)
+    # plt.imshow(np.divide(np.squeeze(im[:,:,0,0])-np.squeeze(upsampled_image[:,:,0,0]),np.squeeze(im[:,:,0,0]))*100,vmin=-10,vmax=10)
+    # plt.colorbar()
+
+    return resized_image
 
 def MDRegT2star(series=None,study=None):
 
     array, header = series.array(['SliceLocation', 'EchoTime'], pixels_first=True)
+    #print(array.shape)
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(np.squeeze(array),downsample_shape)
+    array = np.reshape(array, np.shape(array)+(1,))
+    #print(array.shape)
+
     signal_pars = 0
     signal_model = mdreg.models.T2star
     elastix_file = 'BSplines_T2star.txt'
@@ -36,6 +107,11 @@ def MDRegT2star(series=None,study=None):
 def MDRegT1(series=None, study=None):
 
     array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
+    #print(array.shape)
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(np.squeeze(array),downsample_shape)
+    array = np.reshape(array, np.shape(array)+(1,))
+    #print(array.shape)
 
     signal_pars = 0
     signal_model = mdreg.models.T1
@@ -50,6 +126,11 @@ def MDRegT2(series=None, study=None):
     """Perform MDR on all slices using a T2 mono-exp model"""
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    #print(array.shape)
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(np.squeeze(array),downsample_shape)
+    array = np.reshape(array, np.shape(array)+(1,))
+    #print(array.shape)
 
     signal_pars = [0,30,40,50,60,70,80,90,100,110,120]
     signal_model = mdreg.models.T2
@@ -63,6 +144,8 @@ def MDRegIVIM(series=None,study=None):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(array,downsample_shape)
 
     signal_pars = [0,10.000086, 19.99908294, 30.00085926, 50.00168544, 80.007135, 100.0008375, 199.9998135, 300.0027313, 600.0]
     signal_model = mdreg.models.DWI_monoexponential
@@ -75,6 +158,11 @@ def MDRegDTI(series=None,study=None):
     """Perform MDR on all slices using a DTI model"""
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    #print(array.shape)
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(np.squeeze(array),downsample_shape)
+    array = np.reshape(array, np.shape(array)+(1,))
+    #print(array.shape)
 
     signal_pars = 0
     signal_model = mdreg.models.DTI
@@ -83,7 +171,7 @@ def MDRegDTI(series=None,study=None):
 
     _mdr(series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
-def MDRegMT(pathScan,series=None,study=None):
+def MDRegMT(series=None,study=None):
     """Perform MDR on all slices using a MT model"""
 
     mt_off =series[0]
@@ -92,8 +180,16 @@ def MDRegMT(pathScan,series=None,study=None):
     array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
     array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
+    downsample_shape = header_off[0,0,0]['AcquisitionMatrix'][header_off[0,0,0]['AcquisitionMatrix']!=0]
+    array_off = downsample_res_avg(np.squeeze(array_off),downsample_shape)
+    array_on = downsample_res_avg(np.squeeze(array_on),downsample_shape)
+
+    array_off = np.reshape(array_off,np.shape(array_off)+(1,))
+    array_on = np.reshape(array_on,np.shape(array_on)+(1,))
     array = np.concatenate((array_off, array_on), axis=3)
     header = np.concatenate((header_off, header_on), axis=1)
+    
+    array = np.reshape(array,np.shape(array)+(1,))
 
     signal_pars = []
     signal_model = mdreg.models.constant
@@ -101,31 +197,15 @@ def MDRegMT(pathScan,series=None,study=None):
 
     number_slices = array.shape[2]
     _mdr(mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
-    
-    list_of_series = Folder(pathScan).open().series()
-    
-    for i, series in enumerate(list_of_series):
-        
-        print(series.SeriesDescription)
-        if series.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh_mdr_moco':
-            array_mt_moco, header_mt_moco = series.array(['SliceLocation', 'AcquisitionTime'],pixels_first=True)
-            array_mtr = np.zeros((np.shape(array_mt_moco)[0:3]))
-            for s in range (np.shape(array_off)[2]):
-                temp_off_moco = np.squeeze(array_mt_moco[:,:,s,0])
-                temp_on_moco  = np.squeeze(array_mt_moco[:,:,s,1])
-                array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
-            
-            study = series.parent
-            mtr = series.SeriesDescription + '_MTR'
-            mtr = study.new_series(SeriesDescription = mtr)
-            mtr.set_array(array_mtr, np.squeeze(header_on[:,:]), pixels_first=True)
-            break
 
 def MDRegDCE(series=None, study=None):
     """Perform MDR on all slices using a DCE linear model"""
 
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-
+    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
+    array = downsample_res_avg(np.squeeze(array),downsample_shape)
+    array = np.reshape(array, np.shape(array)+(1,))
+    #print(np.shape(array))
     signal_pars = 0
     signal_model = mdreg.models.DCE_2CFM
     elastix_file = 'BSplines_DCE.txt'
@@ -357,7 +437,7 @@ def main(pathScan,filename_log):
                             if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                                 MT_ON = series
                                 break
-                    MDRegMT(pathScan,[MT_OFF, MT_ON], study=study)
+                    MDRegMT([MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 

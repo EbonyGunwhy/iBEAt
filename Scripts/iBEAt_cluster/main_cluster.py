@@ -16,9 +16,6 @@ TO RUN THE SCRIPT YOU USE: python main_cluster.py --num n (WHERE n is an integer
 
 import os
 import numpy as np
-#import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM
-#import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T2_FM
-#import parallel_curve_fit_T1_T2_alone_cluster as parallel_curve_fit_T1_T2
 
 from tqdm import tqdm
 import multiprocessing
@@ -32,13 +29,15 @@ import XNAT_cluster as xnat
 import RENAME_cluster as rename
 import MDR_cluster as mdr
 import MODELLING_cluster as modelling
+import T1T2_fw_modelling_cluster as T1T2_modelling
 
 if __name__ == '__main__':
 
     #################### INPUT ######################
-    username = "ADD YOUR XNAT USERNAME"
-    password = "ADD YOUR XNAT PASSWORD"
-    path = "//mnt//fastdata//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
+    username = "md1jdsp"
+    password = "K_9X_Vuh3h"
+    path = "//mnt//fastdata//md1jdsp//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
+    #path = "C://Users//md1jdsp//Desktop//CLUSTER//CLUSTER_RESULTS"
     #################################################
 
     parser = argparse.ArgumentParser()
@@ -63,13 +62,18 @@ if __name__ == '__main__':
     #########################################################################################################################################
 
     ExperimentName = xnat.main(username, password, path, dataset)
-    #ExperimentName = "iBE-2128-002_followup"
+    # ExperimentName = "Leeds_Patient_4128003"
     pathScan = path + "//" + ExperimentName
+
+    try: 
+        UsedCores = int(len(os.sched_getaffinity(0)))
+    except: 
+        UsedCores = int(os.cpu_count())
 
     filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
     file = open(filename_log, 'a')
     file.write(str(datetime.datetime.now())[0:19] + ": Analysis of " + pathScan.split('//')[-1] +  " has started!")
-    file.write("\n"+str(datetime.datetime.now())[0:19] + ": CPU cores: " + str(len(os.sched_getaffinity(0))))
+    file.write("\n"+str(datetime.datetime.now())[0:19] + ": CPU cores: " + str(UsedCores))
     file.close()
 
     start_time = time.time()
@@ -124,3 +128,22 @@ if __name__ == '__main__':
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
         file.close()
+
+    # start_time = time.time()
+    # file = open(filename_log, 'a')
+    # file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 forward modelling has started!")
+    # file.close()
+
+    # try:
+
+    #     T1T2_modelling.main(pathScan,filename_log)
+    #     Folder(pathScan).scan()
+
+    #     file = open(filename_log, 'a')
+    #     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 forward modelling was completed --- %s seconds ---" % (int(time.time() - start_time)))
+    #     file.close()
+    # except Exception as e:
+    #     file = open(filename_log, 'a')
+    #     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 forward modelling was NOT completed; error: "+str(e))
+    #     file.close()
+

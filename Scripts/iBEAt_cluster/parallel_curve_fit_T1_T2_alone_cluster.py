@@ -5,15 +5,9 @@ iBEAt T1 & T2 Custom modelling
 Apply forward modelling to T1 and T2 data
 """
 
-import os
 import numpy as np
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T2_FM
-
-from tqdm import tqdm
-import multiprocessing
-
-from dbdicom import Folder
 
 def main(arguments):
 

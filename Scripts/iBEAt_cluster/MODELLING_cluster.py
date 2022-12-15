@@ -17,6 +17,7 @@ from dipy.core.gradients import gradient_table
 import dipy.reconst.dti as dti
 from dipy.reconst.dti import fractional_anisotropy, color_fa
 import runpy
+from scipy.integrate import trapz
 
 
 def T2s_Modelling(series=None, mask=None,export_ROI=False,slice=None,Fat_export=False,study = None):
@@ -251,6 +252,27 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False, study = None):
         MD_map_series = study.new_series(SeriesDescription=MD_map_series)
         MD_map_series.set_array(np.squeeze(MDmap),np.squeeze(header[:,0]),pixels_first=True)
 
+def MTR_Modelling(series=None, mask=None, export_ROI=False, study=None):
+        
+        array_mt_moco, header_mt_moco = series.array(['SliceLocation', 'AcquisitionTime'],pixels_first=True)
+        header_on = header_mt_moco[:,0,0]
+
+        array_mt_off = np.squeeze(array_mt_moco[:,:,:,0])
+        array_mt_on = np.squeeze(array_mt_moco[:,:,:,1])
+        array_mtr = np.zeros((np.shape(array_mt_off)[0:3]))
+        
+        for s in range (np.shape(array_mt_off)[2]):
+            temp_off_moco = np.squeeze(array_mt_off[:,:,s])
+            temp_on_moco = np.squeeze(array_mt_on[:,:,s])
+
+            array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
+        
+        study = series.parent
+        mtr = series.SeriesDescription + '_MTR'
+        mtr = study.new_series(SeriesDescription = mtr)
+        mtr.set_array(array_mtr, np.squeeze(header_on), pixels_first=True)
+
+
 def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
     series_DCE = series
@@ -270,10 +292,18 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
 
     DCE_Max_map = np.empty(np.shape(pixel_array_DCE)[0:3])
     DCE_Area_map = np.empty(np.shape(pixel_array_DCE)[0:3])
+    timeDCE = np.zeros(header.shape[1])
 
-    for slice in range(number_slices):
-        print(slice)
-        
+    for slice in range(number_slices):   
+        for i in range(header.shape[1]):
+            tempTime = header[slice,i]['AcquisitionTime']
+            tempH = int(tempTime[0:2])
+            tempM = int(tempTime[2:4])
+            tempS = int(tempTime[4:6])
+            tempRest = float("0." + tempTime[7:])
+            timeDCE[i] = tempH*3600+tempM*60+tempS+tempRest
+        timeDCE -=timeDCE[0]
+
         array_DCE_temp = np.squeeze(pixel_array_DCE[:,:,slice,:])
 
         for xi in range((np.size(array_DCE_temp,0))):
@@ -282,7 +312,7 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
                 
                 Kidney_pixel_DCE = np.squeeze(np.array(array_DCE_temp[xi,yi,:]))
                 DCE_Max_map[xi,yi,slice] = np.max(Kidney_pixel_DCE-np.mean(Kidney_pixel_DCE[0:11]))
-                DCE_Area_map[xi,yi,slice] = np.cumsum(Kidney_pixel_DCE)
+                DCE_Area_map[xi,yi,slice] = trapz(Kidney_pixel_DCE,timeDCE)
 
     DCEMax_map_series = series_DCE.SeriesDescription + "_DCE_" + "Max_Map"
     DCEMax_map_series = study.new_series(SeriesDescription=DCEMax_map_series)
@@ -357,6 +387,24 @@ def main(pathScan,filename_log):
                 except Exception as e: 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE-MAX mapping was NOT completed; error: "+str(e)) 
+                    file.close()
+
+            elif series.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh_mdr_moco':
+                try:
+                    start_time = time.time()
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MTR mapping has started")
+                    file.close()
+                    
+                    MTR_Modelling(series, study=study)
+
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MTR mapping was completed --- %s seconds ---" % (int(time.time() - start_time))) 
+                    file.close()   
+
+                except Exception as e: 
+                    file = open(filename_log, 'a')
+                    file.write("\n"+str(datetime.datetime.now())[0:19] + ": MTR mapping was NOT completed; error: "+str(e)) 
                     file.close()
 
     Folder(pathScan).save()
