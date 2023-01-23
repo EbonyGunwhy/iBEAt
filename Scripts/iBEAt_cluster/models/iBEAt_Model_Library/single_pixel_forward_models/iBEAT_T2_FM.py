@@ -131,7 +131,7 @@ def T2_fitting(images_to_be_fitted, T2_prep_times, sequenceParam):
     ub = [10000,200,1]
     initial_guess = [np.max(images_to_be_fitted),80,1] 
 
-    popt, pcov = curve_fit(lambda Tprep, M_eq, T2, FA_Eff: signalSequenceT2prep(Tprep, M_eq, T2, T1, Tspoil, FA,FA_Eff, TR, N, Trec), xdata = T2_prep_times, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=500)
+    popt, pcov = curve_fit(lambda Tprep, M_eq, T2, FA_Eff: signalSequenceT2prep(Tprep, M_eq, T2, T1, Tspoil, FA,FA_Eff, TR, N, Trec), xdata = T2_prep_times, ydata = images_to_be_fitted, p0=initial_guess, bounds=(lb,ub), method='trf',maxfev=1000)
     
     T2_prep_times
 

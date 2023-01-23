@@ -6,16 +6,16 @@ the results:
     - Calculated parameters (e.g. S0 and T2 - for T2 mapping)
     - Fit model
     - Co-registered images
-into Weasel GUI and strores them into DICOM files (with the 
+into wezel GUI and strores them into DICOM files (with the 
 appropriated headers)
 
 Main Steps (for each mapping sequence):
 
-1. DICOMs with weighted MRI data and headers are imported from Weasel GUI
+1. DICOMs with weighted MRI data and headers are imported from wezel GUI
 2. Images and headers are sorted using DICOM headers: "slice location" and "acquisition time"
 3. Important signal parameters are either hardcoded (e.g. T2, DWI) or imported via DICOM headers
 4. "_mdr" function is called to apply MDR to all slices
-5. _mdr results (parameters, fitmodel and coreg images) are stored into DICOM files (with headers) and displayed into weasel
+5. _mdr results (parameters, fitmodel and coreg images) are stored into DICOM files (with headers) and displayed into wezel
 
 This script is called everytime the user select a mapable dataset and presses one of the MDR buttons (Siemens) of the iBEAt-MDR menu
 """
@@ -23,14 +23,19 @@ This script is called everytime the user select a mapable dataset and presses on
 import os
 import numpy as np
 
-import weasel
+import wezel
 import mdreg
 import mdreg.models.T2star_simple
-import mdreg.models.T2_simple
-import mdreg.models.T1_simple
-import mdreg.models.DWI_simple
+import mdreg.models.T2
+import mdreg.models.T1
+import mdreg.models.DWI_monoexponential
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
+import actions.reggrow as reg
+import cv2
+import matplotlib.pyplot as plt
+import actions.autoaif
+
 
 
 
@@ -38,7 +43,7 @@ import mdreg.models.DCE_2CFM
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
 
-class MDRegConst(weasel.Action):
+class MDRegConst(wezel.Action):
     """Perform MDR on all slices using a constant model"""
 
     def enable(self, app):
@@ -71,28 +76,28 @@ class MDRegConst(weasel.Action):
         app.refresh() 
 
 
-class MDRegT2star(weasel.Action):
+class MDRegT2star(wezel.Action):
     """Perform MDR on all slices using a T2star mono-exp model"""
     
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
 
         array, header = series.array(['SliceLocation', 'EchoTime'], pixels_first=True)
         signal_pars = 0
-        signal_model = mdreg.models.T2star_simple
+        signal_model = mdreg.models.T2star
         elastix_file = 'BSplines_T2star.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='EchoTime')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='EchoTime',study=study)
 
 
 
-class MDRegT2(weasel.Action):
+class MDRegT2(wezel.Action):
     """Perform MDR on all slices using a T2 mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -100,17 +105,17 @@ class MDRegT2(weasel.Action):
         array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
         signal_pars = [0,30,40,50,60,70,80,90,100,110,120]
-        signal_model = mdreg.models.T2_simple
+        signal_model = mdreg.models.T2
         elastix_file = 'BSplines_T2.txt'
         number_slices = array.shape[2]
         
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None', study=study)
 
 
-class MDRegT1(weasel.Action):
+class MDRegT1(wezel.Action):
     """Perform MDR on all slices using a T1 mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -118,17 +123,18 @@ class MDRegT1(weasel.Action):
         array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
 
         signal_pars = 0
-        signal_model = mdreg.models.T1_simple
+        signal_model = mdreg.models.T1
+        #signal_model = mdreg.models.constant
         elastix_file = 'BSplines_T1.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime', study=study)
 
 
-class MDRegDWI(weasel.Action):
+class MDRegDWI(wezel.Action):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -136,16 +142,16 @@ class MDRegDWI(weasel.Action):
         array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
 
         signal_pars = [0,10.000086, 19.99908294, 30.00085926, 50.00168544, 80.007135, 100.0008375, 199.9998135, 300.0027313, 600.0]
-        signal_model = mdreg.models.DWI_simple
+        signal_model = mdreg.models.DWI_monoexponential
         elastix_file = 'BSplines_IVIM.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
-class MDRegDTI(weasel.Action):
+class MDRegDTI(wezel.Action):
     """Perform MDR on all slices using a DTI model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -157,29 +163,16 @@ class MDRegDTI(weasel.Action):
         elastix_file = 'BSplines_DTI.txt'
         number_slices = array.shape[2]
 
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
 
-class MDRegMT(weasel.Action):
+class MDRegMT(wezel.Action):
     """Perform MDR on all slices using a MT model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None,study=None):
 
-        if series is None:
-            all_series = app.get_selected(3)
-            for sery in all_series:
-                if sery.SeriesDescription == 'MT_OFF_kidneys_cor-oblique_bh':
-                    source = sery
-                    mt_off = sery
-                    break
-            for sery in all_series:
-                if sery.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh':
-                    mt_on = sery
-                    break
-        else:
-            source = series[0]
-            mt_off = series[0]
-            mt_on = series[1]
+        mt_off =series[0]
+        mt_on =series[1]
 
         array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
         array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
@@ -194,13 +187,29 @@ class MDRegMT(weasel.Action):
         elastix_file = 'BSplines_MT.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None')
+        _mdr(app, mt_on, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
+        
+        for i, series in enumerate(app.folder.series()):
+            print(series.SeriesDescription)
+            if series.SeriesDescription == 'MT_ON_kidneys_cor-oblique_bh_mdr_moco':
+                array_mt_moco, header_mt_moco = series.array(['SliceLocation', 'AcquisitionTime'],pixels_first=True)
+                array_mtr = np.zeros((np.shape(array_mt_moco)[0:3]))
+                for s in range (np.shape(array_off)[2]):
+                    temp_off_moco = np.squeeze(array_mt_moco[:,:,s,0])
+                    temp_on_moco  = np.squeeze(array_mt_moco[:,:,s,1])
+                    array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
+                
+                study = series.parent
+                mtr = series.SeriesDescription + '_MTR'
+                mtr = study.new_series(SeriesDescription = mtr)
+                mtr.set_array(array_mtr, np.squeeze(header_on[:,:]), pixels_first=True)
+                app.refresh()
+                break
 
-
-class MDRegDCE(weasel.Action):
+class MDRegDCE(wezel.Action):
     """Perform MDR on all slices using a DCE linear model"""
 
-    def run(self, app, series=None):
+    def run(self, app, series=None, study=None):
 
         if series is None:
             series = app.get_selected(3)[0]
@@ -211,16 +220,16 @@ class MDRegDCE(weasel.Action):
         elastix_file = 'BSplines_DCE.txt'
 
         number_slices = array.shape[2]
-        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE')
+        _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE', study=study)
 
 
-def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,signal_pars,sort_by):
+def _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars,sort_by, study=None):
     """ MDR fit function.  
 
     Args:
     ----
-    app             (Weasel)
-    series          (Weasel series): contains the user selected series in Weasel GUI
+    app             (wezel)
+    series          (wezel series): contains the user selected series in wezel GUI
     number_slices   (numpy.1darray): number of total slices (third dimention of the parameter "array")
     array           (numpy.ndarray): DICOM data with shape [x-dim, y-dim, z-dim (slice), t-dim (time series)]
     header          list containing all DICOM headers  
@@ -259,22 +268,24 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,s
                         orientation = [hdr.ImageOrientationPatient for hdr in header[slice,:,0]] 
                         mdr.signal_parameters = [b_values, b_vectors, orientation]
             elif sort_by =="DCE" and signal_pars==0:                                                
+                        
                         # GET AIF
-                        for sery in app.folder.series():
-                            if 'DCE_ART' in sery.SeriesDescription:
-                                mask, _ = sery.array()
-                                loc = sery.SliceLocation
-                                break
-                        aif = []
-                        for z in range(array.shape[2]):
-                            if header[z,0,0].SliceLocation == loc:
-                                for t in range(array.shape[3]): #loop to average ROIs
-                                    tmask = np.squeeze(array[:,:,z,t,0]) * np.squeeze(mask)
-                                    aif.append(np.median(tmask[tmask!=0]))
+                        cutRatio=0.25             #create a window around the center of the image where the aorta is
+                        filter_kernel=(15,15)     #gaussian kernel for smoothing the image to destroy any noisy single high intensity filter
+                        regGrow_threshold = 2     #threshold for the region growing algorithm
+                        aortaslice = 9
 
-                        time = [hdr.AcquisitionTime for hdr in header[slice,:,0]]
-                        #time -= time[0] ASK STEVEN
-                        time = time[1:]
+                        aif = actions.autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
+
+                        time = np.zeros(header.shape[1])
+                        for i in range(header.shape[1]):
+                            tempTime = header[slice,:,0]['AcquisitionTime']
+                            tempH = int(tempTime[0:2])
+                            tempM = int(tempTime[2:4])
+                            tempS = int(tempTime[4:6])
+                            tempRest = float("0." + tempTime[7:])
+                            time[i] = tempH*3600+tempM*60+tempS+tempRest
+                        time -=time[0]
                
                         baseline = 15
                         hematocrit = 0.45
@@ -302,17 +313,19 @@ def _mdr(app, series, number_slices, array, header, signal_model, elastix_file,s
    # pars = [x,y,z,2]
    # model_fit = [x,y,z,TE]
    # coreg = [x,y,z,TE]
-    
-    #EXPORT RESULTS TO WEASEL GUI USING DICOM
+    if study is None:
+        study = series.parent
+    #EXPORT RESULTS TO wezel GUI USING DICOM
     for p in range(len(parameters)):
         par = series.SeriesDescription + '_mdr_par_' + parameters[p]
-        par = series.new_sibling(SeriesDescription=par)
+        par = study.new_series(SeriesDescription=par)
+        #par = series.new_sibling(SeriesDescription=par)
         par.set_array(np.squeeze(pars[...,p]), np.squeeze(header[:,0]), pixels_first=True)
     fit = series.SeriesDescription + '_mdr_fit'
-    fit = series.new_sibling(SeriesDescription=fit)
+    fit = study.new_series(SeriesDescription=fit)
     fit.set_array(model_fit, np.squeeze(header[:,:]), pixels_first=True)
     moco = series.SeriesDescription + '_mdr_moco'
-    moco = series.new_sibling(SeriesDescription = moco)
+    moco = study.new_series(SeriesDescription = moco)
     moco.set_array(coreg, np.squeeze(header[:,:]), pixels_first=True)
 
     # DISPLAY RESULTS
