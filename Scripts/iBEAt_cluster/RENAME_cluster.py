@@ -6,7 +6,7 @@ Pulse sequence name standardization for iBEAt MR Protcol
 """
 
 import dbdicom as db
-from dbdicom import Folder
+from itertools import chain
 
 def leeds_rename(series): 
     """
@@ -33,12 +33,12 @@ def leeds_rename(series):
 
         if im["SequenceName"] == '*fl3d2':
             sequence = 'T1w_abdomen_dixon_cor_bh'
-            if im["ImageType"][3] == 'OUT_PHASE': return sequence + '_out_phase'
-            if im["ImageType"][3] == 'IN_PHASE': return sequence + '_in_phase'
-            if im["ImageType"][3] == 'FAT': return sequence + '_fat'
-            if im["ImageType"][3] == 'WATER': return sequence + '_water'
+            if im["ImageType"][3] == 'OUT_PHASE' or im["ImageType"][4] == 'OUT_PHASE': return sequence + '_out_phase'
+            if im["ImageType"][3] == 'IN_PHASE'  or im["ImageType"][4] == 'IN_PHASE': return sequence + '_in_phase'
+            if im["ImageType"][3] == 'FAT'       or im["ImageType"][4] == 'FAT': return sequence + '_fat'
+            if im["ImageType"][3] == 'WATER'     or im["ImageType"][4] == 'WATER': return sequence + '_water'
 
-        if im["SequenceName"] == '*fl2d1r4':
+        if im["SequenceName"] == '*fl2d1r4': 
             if im["ImagePositionPatient"][0] < 0:
                 return 'PC_RenalArtery_Right_EcgTrig_fb_120'
             else: 
@@ -68,10 +68,11 @@ def leeds_rename(series):
 
         if im["SequenceName"] == '*tfl2d1r106': 
             sequence = 'T1map_kidneys_cor-oblique_mbh'
-            if im["ImageType"][2] == 'T1 MAP': return sequence + '_T1map'
-            if im["ImageType"][3] == 'MOCO': return sequence + '_moco'
-            if im["ImageType"][2] == 'M': return sequence + '_magnitude'
-            if im["ImageType"][2] == 'P': return sequence + '_phase'
+            res = list(chain.from_iterable(i if isinstance(i, list) else [i] for i in im["ImageType"]))
+            if res[2] == 'T1 MAP': return sequence + '_T1map'
+            if res[3] == 'MOCO': return sequence + '_moco'
+            if res[2] == 'M': return sequence + '_magnitude'
+            if res[2] == 'P': return sequence + '_phase'
 
         if im["SequenceName"] == '*tfl2d1r96':
             sequence = 'T2map_kidneys_cor-oblique_mbh'
@@ -81,7 +82,7 @@ def leeds_rename(series):
             if im["ImageType"][2] == 'P': return sequence + '_phase'
 
         if im["SequenceName"][:5] == '*ep_b':
-            if len(series.files) < 1000:
+            if len(series.files()) < 1000:
                 return 'IVIM_kidneys_cor-oblique_fb'
             else:
                 return 'DTI_kidneys_cor-oblique_fb'
@@ -127,21 +128,10 @@ def leeds_name_extend(series_names):
 
     return series_names
 
-def main(experimentPath):
-
-    list_of_series = Folder(experimentPath).open().series()
-
-    series_names = []  
+def main(folder):
     
-    for series in list_of_series:
-        #print(leeds_rename(series))
-        series_names.append(leeds_rename(series))
+    for series in folder.series():
+        print(leeds_rename(series))
+        series.SeriesDescription = leeds_rename(series)
 
-    series_names = leeds_name_extend(series_names)
-
-    for i,series in enumerate (list_of_series):
-        db.set_value(series.instances(), SeriesDescription=series_names[i])
-        series.save()
-
-    Folder(experimentPath).save()
 

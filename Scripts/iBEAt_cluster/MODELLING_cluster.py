@@ -8,7 +8,7 @@ Find iBEAt motion corrected pulse sequence name (MDR output: *_mdr_moco) and exe
 
 import datetime
 import time
-from dbdicom import Folder
+import dbdicom as db
 import numpy as np
 import models.T2s_pixelwise_fit
 import models.IVIM_pixelwise_fit
@@ -244,6 +244,9 @@ def DTI_Modelling(series=None, mask=None,export_ROI=False, study = None):
         MDmap = dti.mean_diffusivity(tenfit.evals)
 ######FROM DIPY          
 
+        MDmap[MDmap>0.005]=0.005
+        MDmap[MDmap<0]=0
+
         FA_map_series = series_DTI.SeriesDescription + "_DTI_" + "FA_Map"
         FA_map_series = study.new_series(SeriesDescription=FA_map_series)
         FA_map_series.set_array(np.squeeze(FAmap),np.squeeze(header[:,0]),pixels_first=True)
@@ -322,11 +325,11 @@ def DCE_MAX_Modelling(series=None, mask=None,export_ROI=False, study=None):
     DCEArea_map_series = study.new_series(SeriesDescription=DCEArea_map_series)
     DCEArea_map_series.set_array(np.squeeze(DCE_Area_map),np.squeeze(header[:,0]),pixels_first=True)
 
-def main(pathScan,filename_log):
+def main(folder,filename_log):
 
-    list_of_series = Folder(pathScan).open().series()
+    list_of_series = folder.series()
 
-    current_study = list_of_series[0].parent
+    current_study = list_of_series[0].parent()
     study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_ModellingResults')
 
     for i,series in enumerate(list_of_series):
@@ -407,4 +410,4 @@ def main(pathScan,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MTR mapping was NOT completed; error: "+str(e)) 
                     file.close()
 
-    Folder(pathScan).save()
+    folder.save()
