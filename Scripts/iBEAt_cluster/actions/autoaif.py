@@ -38,7 +38,7 @@ def DCEautoAIF(array, header, series,targetslice, cutRatio, filter_kernel, regGr
     max_iteration = 20
     for i in range(max_iteration):
         aif_mask = reg.regionGrow(aortaImgs_cutMaxMin,seeds,regGrow_threshold)
-        if len(aif_mask[aif_mask==1]) < 100:
+        if len(aif_mask[aif_mask==1]) < 25:
             regGrow_threshold = regGrow_threshold + i
             continue
         else:
