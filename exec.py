@@ -27,16 +27,6 @@ from menu.kanishka import iBEAT_dev
 
 if __name__ == "__main__":
 
-    # Otional
-    # This closes the splash screen
-    # pyi_splash is part of pyinstaller
-    try:
-        import pyi_splash
-        pyi_splash.update_text('Loaded wezel..')
-        pyi_splash.close()
-    except:
-        pass
-
     # Main program
     wzl = wezel.app()
     wzl.set_menu(iBEAT_dev)
