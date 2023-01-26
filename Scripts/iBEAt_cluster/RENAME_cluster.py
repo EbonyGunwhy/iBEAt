@@ -15,123 +15,142 @@ def leeds_rename(series):
     """
     
     im = series
-    #print(im["SequenceName"])
-    if im["SequenceName"] is not None:
+    SeqName = im["SequenceName"]
+    print(SeqName)
+    if SeqName is not None:
         
 
-        if im["SequenceName"] == '*tfi2d1_115':
+        if SeqName == '*tfi2d1_115':
             return 'Sequence not recognized'
 
-        if im["SequenceName"] == '*tfi2d1_192':
+        if SeqName == '*tfi2d1_192':
             if im["FlipAngle"] > 30:
                 return 'localizer_bh_fix'
             else: 
                 return 'localizer_bh_ISO'
 
-        if im["SequenceName"] == '*h2d1_320':
+        if SeqName == '*h2d1_320':
             return 'T2w_abdomen_haste_tra_mbh'
 
-        if im["SequenceName"] == '*fl3d2':
+        if SeqName == '*fl3d2':
             sequence = 'T1w_abdomen_dixon_cor_bh'
-            if im["ImageType"][3] == 'OUT_PHASE' or im["ImageType"][4] == 'OUT_PHASE': return sequence + '_out_phase'
-            if im["ImageType"][3] == 'IN_PHASE'  or im["ImageType"][4] == 'IN_PHASE': return sequence + '_in_phase'
-            if im["ImageType"][3] == 'FAT'       or im["ImageType"][4] == 'FAT': return sequence + '_fat'
-            if im["ImageType"][3] == 'WATER'     or im["ImageType"][4] == 'WATER': return sequence + '_water'
+            imType = im["ImageType"]
+            if imType[3] == 'OUT_PHASE' or imType[4] == 'OUT_PHASE': return sequence + '_out_phase'
+            if imType[3] == 'IN_PHASE'  or imType[4] == 'IN_PHASE': return sequence + '_in_phase'
+            if imType[3] == 'FAT'       or imType[4] == 'FAT': return sequence + '_fat'
+            if imType[3] == 'WATER'     or imType[4] == 'WATER': return sequence + '_water'
 
-        if im["SequenceName"] == '*fl2d1r4': 
+        if SeqName == '*fl2d1r4': 
             if im["ImagePositionPatient"][0] < 0:
                 return 'PC_RenalArtery_Right_EcgTrig_fb_120'
             else: 
                 return 'PC_RenalArtery_Left_EcgTrig_fb_120'
 
-        if im["SequenceName"] == '*fl2d1_v120in':
+        if SeqName == '*fl2d1_v120in':
+            imType = im["ImageType"]
             if im["ImagePositionPatient"][0] < 0:
                 sequence = 'PC_RenalArtery_Right_EcgTrig_fb_120'
             else:
+              
                 sequence = 'PC_RenalArtery_Left_EcgTrig_fb_120'
-            if im["ImageType"][2] == 'P': return sequence + '_phase'
-            if im["ImageType"][2] == 'MAG': return sequence + '_magnitude'
+            if imType[2] == 'P': return sequence + '_phase'
+            if imType[2] == 'MAG': return sequence + '_magnitude'
             
-        if im["SequenceName"] == '*fl2d12':
+        if SeqName == '*fl2d12':
+            imType = im["ImageType"]
             if im["InPlanePhaseEncodingDirection"] == 'COL':
                 sequence = 'T2star_map_pancreas_tra_mbh'
             else:
                 sequence = 'T2star_map_kidneys_cor-oblique_mbh'
-            if im["ImageType"][2] == 'M': return sequence + '_magnitude'
-            if im["ImageType"][2] == 'P': return sequence + '_phase'
-            if im["ImageType"][2] == 'T2_STAR MAP': return sequence + '_T2star'
+            if imType[2] == 'M': return sequence + '_magnitude'
+            if imType[2] == 'P': return sequence + '_phase'
+            if imType[2] == 'T2_STAR MAP': return sequence + '_T2star'
 
-        if im["SequenceName"] == '*fl2d1':
+        if SeqName == '*fl2d1':
+            imType = im["ImageType"]
             sequence = 'T1w_kidneys_cor-oblique_mbh'
-            if im["ImageType"][2] == 'M': return sequence + '_magnitude'
-            if im["ImageType"][2] == 'P': return sequence + '_phase'
+            if imType[2] == 'M': return sequence + '_magnitude'
+            if imType[2] == 'P': return sequence + '_phase'
 
-        if im["SequenceName"] == '*tfl2d1r106': 
+        if SeqName == '*tfl2d1r106': 
+            imType = im["ImageType"]
             sequence = 'T1map_kidneys_cor-oblique_mbh'
-            res = list(chain.from_iterable(i if isinstance(i, list) else [i] for i in im["ImageType"]))
+            res = list(chain.from_iterable(i if isinstance(i, list) else [i] for i in imType))
             if res[2] == 'T1 MAP': return sequence + '_T1map'
             if res[3] == 'MOCO': return sequence + '_moco'
             if res[2] == 'M': return sequence + '_magnitude'
             if res[2] == 'P': return sequence + '_phase'
 
-        if im["SequenceName"] == '*tfl2d1r96':
+        if SeqName == '*tfl2d1r96':
+            imType = im["ImageType"]
             sequence = 'T2map_kidneys_cor-oblique_mbh'
-            if im["ImageType"][-1] == 'T2': return sequence + '_T2map'
-            if im["ImageType"][-1] == 'MOCO': return sequence + '_moco'
-            if im["ImageType"][2] == 'M': return sequence + '_magnitude'
-            if im["ImageType"][2] == 'P': return sequence + '_phase'
+            if imType[-1] == 'T2': return sequence + '_T2map'
+            if imType[-1] == 'MOCO': return sequence + '_moco'
+            if imType[2] == 'M': return sequence + '_magnitude'
+            if imType[2] == 'P': return sequence + '_phase'
 
-        if im["SequenceName"][:5] == '*ep_b':
+        if SeqName[:5] == '*ep_b' or SeqName[0][:5] == '*ep_b':
             if len(series.files()) < 1000:
                 return 'IVIM_kidneys_cor-oblique_fb'
             else:
                 return 'DTI_kidneys_cor-oblique_fb'
 
-        if im["SequenceName"] == '*fl3d1':
+        if SeqName == '*fl3d1':
             if im["ScanOptions"] == 'PFP': 
                 return 'MT_OFF_kidneys_cor-oblique_bh'
             else:
                 return 'MT_ON_kidneys_cor-oblique_bh'
 
-        if im["SequenceName"] == '*tfi2d1_154': return 'ASL_planning_bh'
-        if im["SequenceName"] == 'tgse3d1_512': return 'ASL_kidneys_pCASL_cor-oblique_fb'
-        if im["SequenceName"] == 'WIP_tgse3d1_512': return 'ASL_kidneys_pCASL_cor-oblique_fb'
-        if im["SequenceName"] == '*tfl2d1_16': return 'DCE_kidneys_cor-oblique_fb'
-        if im["SequenceName"] == 'RAVE3d1': return 'RAVE_kidneys_fb'
-        if im["SequenceName"] == '*fl3d2': return 'T1w_abdomen_dixon_cor_bh'
+        if SeqName == '*tfi2d1_154': 
+            return 'ASL_planning_bh'
+        if SeqName == 'tgse3d1_512': 
+            return 'ASL_kidneys_pCASL_cor-oblique_fb'
+        if SeqName == 'WIP_tgse3d1_512': 
+            return 'ASL_kidneys_pCASL_cor-oblique_fb'
+        if SeqName == '*tfl2d1_16': 
+            return 'DCE_kidneys_cor-oblique_fb'
+        if SeqName == 'RAVE3d1': 
+            return 'RAVE_kidneys_fb'
+        if SeqName == '*fl3d2': 
+            return 'T1w_abdomen_dixon_cor_bh'
 
         return 'Sequence not recognized'
-    
     else:
-        return None
+        return 'Sequence not recognized'
 
-
-def leeds_name_extend(series_names): 
-    """
-    For some series the name must be extended
-    """
-    if series_names.count('DCE_kidneys_cor-oblique_fb') > 0:
-        inject = series_names.index('DCE_kidneys_cor-oblique_fb')
-        for i, name in enumerate(series_names[inject:]):
-            if name is not None:
-                if name[0:17] == 'T1w_abdomen_dixon':
-                    series_names[inject+i] += '_post_contrast'          
-
-    asl = [i for i, x in enumerate(series_names) if x == 'ASL_kidneys_pCASL_cor-oblique_fb']
-    nr_of_asl_series = int(len(asl)/5)
-    for i in range(nr_of_asl_series):
-        series_names[asl[5*i+0]] += '_M0_moco'
-        series_names[asl[5*i+1]] += '_PW_moco'
-        series_names[asl[5*i+2]] += '_RBF_moco'
-        series_names[asl[5*i+3]] += '_control_moco'
-        series_names[asl[5*i+4]] += '_label0_moco'
-
-    return series_names
 
 def main(folder):
-    
+    DCE=[]
+    ASL_count = []
     for series in folder.series():
-        print(leeds_rename(series))
-        series.SeriesDescription = leeds_rename(series)
+        series.SeriesDescription = (leeds_rename(series))
+
+        #Extende Series Names
+        imDescription = series.SeriesDescription
+        if imDescription == 'DCE_kidneys_cor-oblique_fb':
+            DCE = 1
+        if DCE == 1 and imDescription[0:17] == 'T1w_abdomen_dixon':
+            series.SeriesDescription = (imDescription + '_post_contrast')
+        elif series.SeriesDescription == 'ASL_kidneys_pCASL_cor-oblique_fb' and ASL_count == []:
+            series.SeriesDescription = (imDescription + '_M0_moco')
+            ASL_count = 1
+        elif series.SeriesDescription == 'ASL_kidneys_pCASL_cor-oblique_fb' and ASL_count == 1:
+            series.SeriesDescription = (imDescription + '_PW_moco')
+            ASL_count = 2
+        elif series.SeriesDescription == 'ASL_kidneys_pCASL_cor-oblique_fb' and ASL_count == 2:
+            series.SeriesDescription = (imDescription + '_RBF_moco')
+            ASL_count = 3
+        elif series.SeriesDescription == 'ASL_kidneys_pCASL_cor-oblique_fb' and ASL_count == 3:
+            series.SeriesDescription = (imDescription + '_control_moco')
+            ASL_count = 4
+        elif series.SeriesDescription == 'ASL_kidneys_pCASL_cor-oblique_fb' and ASL_count == 4:
+            series.SeriesDescription = (imDescription + '_label0_moco')
+            ASL_count = []
+        
+        print(series.SeriesDescription)
+
+    folder.save()
+
+    
 
 
