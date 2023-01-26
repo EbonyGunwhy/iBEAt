@@ -312,12 +312,15 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
         
         #print("Part -5  before mdr.fit: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr.fit()
-        
+        if len(np.shape(mdr.model_fit))==3:
+            mdr.model_fit = np.reshape(mdr.model_fit,np.shape(mdr.model_fit)+(1,1,))
+
+        if len(np.shape(mdr.coreg))==3:
+            mdr.coreg = np.reshape(mdr.coreg,np.shape(mdr.coreg)+(1,1,))
+
         model_fit[:,:,slice,:,0] = mdr.model_fit
         coreg[:,:,slice,:,0] = mdr.coreg
         pars[:,:,slice,:] = mdr.pars
-        del mdr
-        gc.collect()
 
    # array = [x,y,z,TE]
    # pars = [x,y,z,2]
@@ -341,15 +344,14 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
 def main(folder,filename_log):
 
     #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
-    list_of_series = folder.series()
 
-    current_study = list_of_series[0].parent()
-    study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
+    current_study = folder.series()[0].parent()
+    study = folder.series()[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
-    for i,series in enumerate(list_of_series):
+    for series in folder.series():
 
         if series["SequenceName"] is not None:
-            #print(series['SeriesDescription'])
+            print(series['SeriesDescription'])
 
             if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
                 try:
@@ -379,7 +381,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    #MDRegT1(series, study=study)
+                    MDRegT1(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -399,7 +401,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    #MDRegT2(series, study=study)
+                    MDRegT2(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -418,7 +420,7 @@ def main(folder,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
                     file.close()
 
-                    #MDRegDTI(series, study=study)
+                    MDRegDTI(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -442,7 +444,7 @@ def main(folder,filename_log):
                             if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                                 MT_ON = series
                                 break
-                    #MDRegMT([MT_OFF, MT_ON], study=study)
+                    MDRegMT([MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -460,7 +462,7 @@ def main(folder,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
                     file.close()
 
-                    #MDRegDCE(series, study=study)
+                    MDRegDCE(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
