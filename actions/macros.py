@@ -15,7 +15,7 @@ from utilities import MDR_cluster as mdr_ut
 from utilities import MODELLING_cluster as modelling_ut
 from dbdicom import Folder
 
-class OPenplusMDRegMacro(wezel.Action):
+class OPenplusMDRegMacro(wezel.gui.Action):
 
     def run(self, app):
         
@@ -82,7 +82,7 @@ class OPenplusMDRegMacro(wezel.Action):
         app.refresh
 
 
-class MDRegMacro(wezel.Action):
+class MDRegMacro(wezel.gui.Action):
 
     def run(self, app):
         
@@ -366,7 +366,7 @@ class MDRegMacro(wezel.Action):
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": All modelling was completed --- %s seconds ---" % (int(time.time() - start_time_loop))) 
         file.close()   
 
-class MDRegMacroNoImport(wezel.Action):
+class MDRegMacroNoImport(wezel.gui.Action):
 
     def run(self, app):
       
@@ -525,11 +525,11 @@ class MDRegMacroNoImport(wezel.Action):
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": All scans motion correction was completed --- %s seconds ---" % (int(time.time() - start_time_loop))) 
         file.close()
 
-class Upload(wezel.Action):
+class Upload(wezel.gui.Action):
     def run(self, app):
         xnat.Upload.run(self, app)
 
-class GenerateExcel(wezel.Action):
+class GenerateExcel(wezel.gui.Action):
     def run(self, app):
 
         filename_log = app.folder.path.split(app.folder.path.split('\\')[-1])[0] + app.folder.path.split('\\')[-1] + ('\\') + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "Excel_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH

@@ -23,7 +23,7 @@ def coreg_menu(parent):
 
 
 
-class CoregisterToElastix(wezel.Action): 
+class CoregisterToElastix(wezel.gui.Action): 
 
     def enable(self, app):
         return app.nr_selected('Series') != 0

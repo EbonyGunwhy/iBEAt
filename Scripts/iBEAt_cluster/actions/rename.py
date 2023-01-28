@@ -2,7 +2,7 @@ import wezel
 import dbdicom as db
 
 
-class Leeds(wezel.Action):
+class Leeds(wezel.gui.Action):
 
     def run(self, app):
 

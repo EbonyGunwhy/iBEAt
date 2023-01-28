@@ -43,7 +43,7 @@ import actions.autoaif
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
 
-class MDRegConst(wezel.Action):
+class MDRegConst(wezel.gui.Action):
     """Perform MDR on all slices using a constant model"""
 
     def enable(self, app):
@@ -76,7 +76,7 @@ class MDRegConst(wezel.Action):
         app.refresh() 
 
 
-class MDRegT2star(wezel.Action):
+class MDRegT2star(wezel.gui.Action):
     """Perform MDR on all slices using a T2star mono-exp model"""
     
     def run(self, app, series=None,study=None):
@@ -94,7 +94,7 @@ class MDRegT2star(wezel.Action):
 
 
 
-class MDRegT2(wezel.Action):
+class MDRegT2(wezel.gui.Action):
     """Perform MDR on all slices using a T2 mono-exp model"""
 
     def run(self, app, series=None, study=None):
@@ -112,7 +112,7 @@ class MDRegT2(wezel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None', study=study)
 
 
-class MDRegT1(wezel.Action):
+class MDRegT1(wezel.gui.Action):
     """Perform MDR on all slices using a T1 mono-exp model"""
 
     def run(self, app, series=None, study=None):
@@ -131,7 +131,7 @@ class MDRegT1(wezel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='InversionTime', study=study)
 
 
-class MDRegDWI(wezel.Action):
+class MDRegDWI(wezel.gui.Action):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
     def run(self, app, series=None,study=None):
@@ -148,7 +148,7 @@ class MDRegDWI(wezel.Action):
         number_slices = array.shape[2]
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='None',study=study)
 
-class MDRegDTI(wezel.Action):
+class MDRegDTI(wezel.gui.Action):
     """Perform MDR on all slices using a DTI model"""
 
     def run(self, app, series=None,study=None):
@@ -166,7 +166,7 @@ class MDRegDTI(wezel.Action):
         _mdr(app, series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DTI',study=study)
 
 
-class MDRegMT(wezel.Action):
+class MDRegMT(wezel.gui.Action):
     """Perform MDR on all slices using a MT model"""
 
     def run(self, app, series=None,study=None):
@@ -206,7 +206,7 @@ class MDRegMT(wezel.Action):
                 app.refresh()
                 break
 
-class MDRegDCE(wezel.Action):
+class MDRegDCE(wezel.gui.Action):
     """Perform MDR on all slices using a DCE linear model"""
 
     def run(self, app, series=None, study=None):

@@ -6,7 +6,7 @@ import actions.reggrow as reg
 import cv2
 import matplotlib.pyplot as plt
 
-class DCEautoAIF(wezel.Action):
+class DCEautoAIF(wezel.gui.Action):
     
     def run(app, array, header, series,targetslice, cutRatio, filter_kernel, regGrow_threshold ):
 
