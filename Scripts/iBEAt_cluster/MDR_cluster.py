@@ -17,7 +17,7 @@ import mdreg.models.DWI_monoexponential
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
 import actions.autoaif
-import dbdicom
+import dbdicom as db
 import os
 import gc
 import matplotlib.pyplot as plt
@@ -26,69 +26,6 @@ import nibabel as nib # unnecessary - remove
 import scipy
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
-
-def downsample_res_avg(im,newShape):
-    print(len(im.shape))
-    if len(im.shape)==4:
-        original_width = im.shape[1]
-        original_height = im.shape[0]
-        width = newShape
-        height = newShape
-        resized_image = np.zeros(shape=(height, width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        scale = int(im.shape[0]/newShape)
-
-        for slice in range (0,im.shape[2]):
-            im_slice = np.squeeze(im[:,:,slice])
-            for dynamics in range (0,im.shape[3]):
-                im_slice_dyn = np.squeeze(im_slice[:,:,dynamics])
-                for i in range(0, original_height, scale):
-                    for j in range(0, original_width, scale):
-                        resized_image[int(i/scale), int(j/scale),slice,dynamics] = np.mean(im_slice_dyn[i:i + scale, j:j+scale], axis=(0,1))
-    elif len(im.shape)==3:
-        original_width = im.shape[1]
-        original_height = im.shape[0]
-        width = newShape
-        height = newShape
-        resized_image = np.zeros(shape=(height, width, im.shape[2]), dtype=np.uint16)
-        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        scale = int(im.shape[0]/newShape)
-
-        for slice in range (0,im.shape[2]):
-            im_slice = np.squeeze(im[:,:,slice])
-            for i in range(0, original_height, scale):
-                for j in range(0, original_width, scale):
-                    resized_image[int(i/scale), int(j/scale),slice] = np.mean(im_slice[i:i + scale, j:j+scale], axis=(0,1))
-
-
-                              
-            # temp_up_image = rescale(np.squeeze(resized_image[:,:,slice,dynamics]), scale,anti_aliasing=False)
-            #print(np.max(np.squeeze(resized_image[:,:,slice,dynamics])))
-            #print(np.min(np.squeeze(resized_image[:,:,slice,dynamics])))
-            #print(np.max(np.squeeze(temp_up_image)))
-            #print(np.min(np.squeeze(temp_up_image)))
-            # temp_up_image = temp_up_image * (np.max(np.squeeze(resized_image[:,:,slice,dynamics]))/np.max(np.squeeze(temp_up_image))) #* (np.max(resized_image) - np.min(resized_image)) + np.min(resized_image)            
-            #print(np.max(np.squeeze(temp_up_image)))
-            #print(np.min(np.squeeze(temp_up_image)))
-            # upsampled_image[:, :,slice,dynamics] = temp_up_image
-    
-    #### VIZUALIZATION ####
-    # Creating figure object
-    # plt.figure()
-    # plt.subplot(141)
-    # plt.imshow(np.squeeze(im[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(142)
-    # plt.imshow(np.squeeze(resized_image[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(143)
-    # plt.imshow(np.squeeze(upsampled_image[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(144)
-    # plt.imshow(np.divide(np.squeeze(im[:,:,0,0])-np.squeeze(upsampled_image[:,:,0,0]),np.squeeze(im[:,:,0,0]))*100,vmin=-10,vmax=10)
-    # plt.colorbar()
-
-    return resized_image
 
 def zoom(input, zoom, **kwargs):
     """
@@ -132,7 +69,7 @@ def MDRegT2star(series=None,study=None):
 
 def MDRegT1(series=None, study=None):
 
-    series = zoom(series, 0.5)
+    #series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
     
     signal_pars = 0
@@ -304,7 +241,7 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
         #STORING RESULTS
         
         #print("Part -6  before set array: " + str(psutil.virtual_memory()[3]/1000000000))
-        mdr.set_array(np.squeeze(array[:,:,slice,:,0]))     
+        mdr.set_array(array[:,:,slice,:,0])    
         mdr.pixel_spacing = header[slice,0,0].PixelSpacing
         mdr.signal_model = signal_model
         mdr.read_elastix(os.path.join(elastix_pars, elastix_file))
@@ -312,11 +249,6 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
         
         #print("Part -5  before mdr.fit: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr.fit()
-        if len(np.shape(mdr.model_fit))==3:
-            mdr.model_fit = np.reshape(mdr.model_fit,np.shape(mdr.model_fit)+(1,1,))
-
-        if len(np.shape(mdr.coreg))==3:
-            mdr.coreg = np.reshape(mdr.coreg,np.shape(mdr.coreg)+(1,1,))
 
         model_fit[:,:,slice,:,0] = mdr.model_fit
         coreg[:,:,slice,:,0] = mdr.coreg
@@ -343,8 +275,6 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
 
 def main(folder,filename_log):
 
-    #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
-
     current_study = folder.series()[0].parent()
     study = folder.series()[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
@@ -361,7 +291,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT2star(series, study=study)
+                    #MDRegT2star(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -381,7 +311,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT1(series, study=study)
+                    #MDRegT1(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -401,7 +331,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT2(series, study=study)
+                    #MDRegT2(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -440,11 +370,11 @@ def main(folder,filename_log):
                     file.close()
 
                     MT_OFF = series
-                    for i_2,series in enumerate (list_of_series):
+                    for series in folder.series():
                             if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                                 MT_ON = series
                                 break
-                    MDRegMT([MT_OFF, MT_ON], study=study)
+                    #MDRegMT([MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -462,7 +392,7 @@ def main(folder,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
                     file.close()
 
-                    MDRegDCE(series, study=study)
+                    #MDRegDCE(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 

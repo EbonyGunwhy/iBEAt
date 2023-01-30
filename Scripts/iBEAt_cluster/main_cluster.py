@@ -63,11 +63,10 @@ if __name__ == '__main__':
     #########################################################################################################################################
 
     #ExperimentName = xnat.main(username, password, path, dataset)
-    ExperimentName = "iBE-4128-061"
+    ExperimentName = "iBE-3128-024"
     pathScan = path + "//" + ExperimentName
     
     folder = db.database(path=pathScan)
-    folder.save()
 
     try: 
         UsedCores = int(len(os.sched_getaffinity(0)))
