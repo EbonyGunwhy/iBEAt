@@ -12,7 +12,7 @@ attributes = [
 ]
 
 
-class Open(wezel.Action):
+class Open(wezel.gui.Action):
 
     def enable(self, app):
 
@@ -37,7 +37,7 @@ class Open(wezel.Action):
         app.status.cursorToNormal()
 
 
-class OpenSubFolders(wezel.Action):
+class OpenSubFolders(wezel.gui.Action):
 
     def enable(self, app):
 
@@ -67,7 +67,7 @@ class OpenSubFolders(wezel.Action):
         app.display(app.folder)
 
 
-class RegionDraw(wezel.Action):
+class RegionDraw(wezel.gui.Action):
 
     def enable(self, app):
         
@@ -84,7 +84,7 @@ class RegionDraw(wezel.Action):
             app.addAsSubWindow(viewer, title=series.label())
 
 
-class FourDimArrayDisplay(wezel.Action):
+class FourDimArrayDisplay(wezel.gui.Action):
 
     def enable(self, app):
         return app.nr_selected(3) != 0
@@ -107,7 +107,7 @@ class FourDimArrayDisplay(wezel.Action):
         app.status.message('')
 
 
-class TimeMIP(wezel.Action):
+class TimeMIP(wezel.gui.Action):
     """Previously known as DCE_create_AIF_button"""
 
     def run(self, app, series=None):

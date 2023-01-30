@@ -12,7 +12,7 @@ import xnat
 
 import wezel
 
-class Download(wezel.Action):
+class Download(wezel.gui.Action):
 
     def run(self, app):
         try:
@@ -99,7 +99,7 @@ class Download(wezel.Action):
                 app.dialog.information("The login details inserted are incorrect!", "XNAT Download") 
 
 
-class Upload(wezel.Action):
+class Upload(wezel.gui.Action):
 
     def run(self, app):
         try:
