@@ -1,5 +1,7 @@
 import wezel
 from dbdicom.wrappers import elastix
+import dbdicom as db
+
 
 
 def iBEAT_dev(parent): 
@@ -13,25 +15,21 @@ def iBEAT_dev(parent):
     coreg_menu(parent.menu('iBEAt-dev'))
     wezel.menu.about.all(parent.menu('About'))
 
-
-
 def coreg_menu(parent): 
 
-    parent.action(CoregisterToElastix, text='Coregister to (elastix)')
-
-    
+    parent.action(CoregisterToElastix, text="Coregister to (elastix)")
 
 
-
-class CoregisterToElastix(wezel.Action): 
+class CoregisterToElastix(wezel.gui.Action): 
 
     def enable(self, app):
         return app.nr_selected('Series') != 0
 
     def run(self, app):
+        # Get input parameters including target for coregistration
         for series in app.selected('Series'):
-            seriesList = series.parent().children()
-            seriesLabels = [s.instance().SeriesDescription for s in seriesList]
+            seriesList = series.parent().parent().series()
+            seriesLabels = [s.label() for s in seriesList]
             transform = ['Rigid', 'Affine', 'Freeform']
             metric = ["AdvancedMeanSquares", "NormalizedMutualInformation", "AdvancedMattesMutualInformation"]
             input = wezel.widgets.UserInput(
@@ -42,13 +40,15 @@ class CoregisterToElastix(wezel.Action):
                 title = "Please select coregistration settings")
             if input.cancel:
                 return
-            fixed = seriesList[input.values[0]["value"]]
-            coregistered = elastix.coregister(series, fixed,
+
+        # Loop over selected sources and perform coregistration
+        fixed = seriesList[input.values[0]["value"]]
+        for source in app.selected('Series'):
+            coregistered = elastix.coregister(source, fixed,
                 transformation = transform[input.values[1]["value"]],
                 metric = metric[input.values[2]["value"]],
                 final_grid_spacing = input.values[3]["value"],
             )
             app.display(coregistered)
         app.refresh()
-
-
+ 
