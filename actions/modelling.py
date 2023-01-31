@@ -12,13 +12,13 @@ from dipy.reconst.dti import fractional_anisotropy, color_fa
 from tqdm import tqdm
 import multiprocessing
 
-class allSeries(wezel.Action):
+class allSeries(wezel.gui.Action):
     pass
 
-class DCE_Button_modelling_only(wezel.Action):
+class DCE_Button_modelling_only(wezel.gui.Action):
     pass
 
-class SiemensT1T2MapButton(wezel.Action):
+class SiemensT1T2MapButton(wezel.gui.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
         
         if series is None:
@@ -136,7 +136,7 @@ class SiemensT1T2MapButton(wezel.Action):
         app.refresh()
 
 
-class SiemensIVIMButton(wezel.Action):
+class SiemensIVIMButton(wezel.gui.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
 
         if series is None:
@@ -171,7 +171,7 @@ class SiemensIVIMButton(wezel.Action):
 
         app.refresh()
 
-class SiemensDTIButton(wezel.Action):
+class SiemensDTIButton(wezel.gui.Action):
     def run(self, app, series=None, mask=None,export_ROI=False):
 
         if series is None:
@@ -209,7 +209,7 @@ class SiemensDTIButton(wezel.Action):
         else:
             app.warning("The selected series doesn't have sufficient requirements to calculate the DTI Parameters.", "DTI Sequence not selected")
 
-class SiemensT2sMapButton(wezel.Action):
+class SiemensT2sMapButton(wezel.gui.Action):
     
     def run(self, app, series=None, mask=None,export_ROI=False,slice=None,Fat_export=False):
 

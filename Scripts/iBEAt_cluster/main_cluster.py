@@ -22,7 +22,7 @@ import multiprocessing
 
 import time
 import datetime
-from dbdicom import Folder
+import dbdicom as db
 import argparse
 
 import XNAT_cluster as xnat
@@ -30,25 +30,26 @@ import RENAME_cluster as rename
 import MDR_cluster as mdr
 import MODELLING_cluster as modelling
 import T1T2_fw_modelling_cluster as T1T2_modelling
+import UPLOAD_cluster as upload
 
 if __name__ == '__main__':
 
     #################### INPUT ######################
-    username = "md1jdsp"
-    password = "K_9X_Vuh3h"
-    path = "//mnt//fastdata//md1jdsp//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
-    #path = "C://Users//md1jdsp//Desktop//CLUSTER//CLUSTER_RESULTS"
+    username = "**********"
+    password = "**********"
+    #path = "//mnt//fastdata//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
+    path = "C://Users//md1jdsp//Desktop//CLUSTER//CHRISTMAS ANALYSIS"
     #################################################
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--num',
-                        dest='num',
-                        help='Define the XNAT dataset',
-                        type=int)
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--num',
+    #                     dest='num',
+    #                     help='Define the XNAT dataset',
+    #                     type=int)
 
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
-    dataset = [6,0,args.num]
+    #dataset = [2,1,args.num]
 
     ################################################# EXAMPLE DATASET SELECTION #############################################################
     #DATASET CODE FOR LEEDS
@@ -61,9 +62,11 @@ if __name__ == '__main__':
     #  7: BEAt-DKD-WP4-Sheffield      4: Leeds_setup_scans                      ->14: Leeds_Patient_4128015
     #########################################################################################################################################
 
-    ExperimentName = xnat.main(username, password, path, dataset)
-    # ExperimentName = "Leeds_Patient_4128003"
+    #ExperimentName = xnat.main(username, password, path, dataset)
+    ExperimentName = "iBE-3128-024"
     pathScan = path + "//" + ExperimentName
+    
+    folder = db.database(path=pathScan)
 
     try: 
         UsedCores = int(len(os.sched_getaffinity(0)))
@@ -82,8 +85,7 @@ if __name__ == '__main__':
     file.close()
     try:
         
-        rename.main(pathScan)
-        Folder(pathScan).scan()
+        rename.main(folder)
         
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -99,9 +101,7 @@ if __name__ == '__main__':
     file.close()
     try:
 
-        mdr.main(pathScan,filename_log)
-        Folder(pathScan).scan()
-        os.remove(pathScan + "//" + ExperimentName + ".csv")
+        mdr.main(folder,filename_log)
         
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -118,8 +118,7 @@ if __name__ == '__main__':
 
     try:
 
-        modelling.main(pathScan,filename_log)
-        Folder(pathScan).scan()
+        modelling.main(folder,filename_log)
 
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -128,6 +127,8 @@ if __name__ == '__main__':
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
         file.close()
+
+    #upload.main(pathScan,filename_log)
 
     # start_time = time.time()
     # file = open(filename_log, 'a')
@@ -146,4 +147,3 @@ if __name__ == '__main__':
     #     file = open(filename_log, 'a')
     #     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 forward modelling was NOT completed; error: "+str(e))
     #     file.close()
-

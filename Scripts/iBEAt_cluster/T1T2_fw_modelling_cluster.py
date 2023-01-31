@@ -1,6 +1,6 @@
 import datetime
 import time
-from dbdicom import Folder
+import dbdicom as db
 import os
 import numpy as np
 import models.iBEAt_Model_Library.single_pixel_forward_models.iBEAT_T1_FM

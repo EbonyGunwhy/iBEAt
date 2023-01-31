@@ -17,85 +17,48 @@ import mdreg.models.DWI_monoexponential
 import mdreg.models.DTI
 import mdreg.models.DCE_2CFM
 import actions.autoaif
-from dbdicom import Folder
+import dbdicom as db
 import os
 import gc
 import matplotlib.pyplot as plt
 from skimage.transform import rescale
+import nibabel as nib # unnecessary - remove
+import scipy
 
 elastix_pars = os.path.join(os.path.join(os.path.dirname(__file__)).split("actions")[0], 'elastix')
 
-def downsample_res_avg(im,newShape):
-    print(len(im.shape))
-    if len(im.shape)==4:
-        original_width = im.shape[1]
-        original_height = im.shape[0]
-        width = newShape
-        height = newShape
-        resized_image = np.zeros(shape=(height, width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        scale = int(im.shape[0]/newShape)
+def zoom(input, zoom, **kwargs):
+    """
+    wrapper for scipy.ndimage.zoom.
 
-        for slice in range (0,im.shape[2]):
-            im_slice = np.squeeze(im[:,:,slice])
-            for dynamics in range (0,im.shape[3]):
-                im_slice_dyn = np.squeeze(im_slice[:,:,dynamics])
-                for i in range(0, original_height, scale):
-                    for j in range(0, original_width, scale):
-                        resized_image[int(i/scale), int(j/scale),slice,dynamics] = np.mean(im_slice_dyn[i:i + scale, j:j+scale], axis=(0,1))
-    elif len(im.shape)==3:
-        original_width = im.shape[1]
-        original_height = im.shape[0]
-        width = newShape
-        height = newShape
-        resized_image = np.zeros(shape=(height, width, im.shape[2]), dtype=np.uint16)
-        #upsampled_image = np.zeros(shape=(original_height, original_width, im.shape[2],im.shape[3]), dtype=np.uint16)
-        scale = int(im.shape[0]/newShape)
+    Parameters
+    ----------
+    input: dbdicom series
 
-        for slice in range (0,im.shape[2]):
-            im_slice = np.squeeze(im[:,:,slice])
-            for i in range(0, original_height, scale):
-                for j in range(0, original_width, scale):
-                    resized_image[int(i/scale), int(j/scale),slice] = np.mean(im_slice[i:i + scale, j:j+scale], axis=(0,1))
-
-
-                              
-            # temp_up_image = rescale(np.squeeze(resized_image[:,:,slice,dynamics]), scale,anti_aliasing=False)
-            #print(np.max(np.squeeze(resized_image[:,:,slice,dynamics])))
-            #print(np.min(np.squeeze(resized_image[:,:,slice,dynamics])))
-            #print(np.max(np.squeeze(temp_up_image)))
-            #print(np.min(np.squeeze(temp_up_image)))
-            # temp_up_image = temp_up_image * (np.max(np.squeeze(resized_image[:,:,slice,dynamics]))/np.max(np.squeeze(temp_up_image))) #* (np.max(resized_image) - np.min(resized_image)) + np.min(resized_image)            
-            #print(np.max(np.squeeze(temp_up_image)))
-            #print(np.min(np.squeeze(temp_up_image)))
-            # upsampled_image[:, :,slice,dynamics] = temp_up_image
-    
-    #### VIZUALIZATION ####
-    # Creating figure object
-    # plt.figure()
-    # plt.subplot(141)
-    # plt.imshow(np.squeeze(im[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(142)
-    # plt.imshow(np.squeeze(resized_image[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(143)
-    # plt.imshow(np.squeeze(upsampled_image[:,:,0,0]),vmin=0,vmax=250)
-    # plt.colorbar()
-    # plt.subplot(144)
-    # plt.imshow(np.divide(np.squeeze(im[:,:,0,0])-np.squeeze(upsampled_image[:,:,0,0]),np.squeeze(im[:,:,0,0]))*100,vmin=-10,vmax=10)
-    # plt.colorbar()
-
-    return resized_image
+    Returns
+    -------
+    zoomed : dbdicom series
+    """
+    suffix = ' [Resize x ' + str(zoom) + ' ]'
+    desc = input.instance().SeriesDescription
+    zoomed = input.copy(SeriesDescription = desc + suffix)
+    images = zoomed.instances()
+    for i, image in enumerate(images):
+        input.status.progress(i+1, len(images), 'Resizing ' + desc)
+        image.read()
+        array = image.array()
+        array = scipy.ndimage.zoom(array, zoom, **kwargs)
+        image.set_array(array)
+        pixel_spacing = image.PixelSpacing
+        image.PixelSpacing = [p/zoom for p in pixel_spacing]
+        image.clear()
+    input.status.hide()
+    return zoomed
 
 def MDRegT2star(series=None,study=None):
 
+    series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'EchoTime'], pixels_first=True)
-    #print(array.shape)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(np.squeeze(array),downsample_shape)
-    array = np.reshape(array, np.shape(array)+(1,))
-    #print(array.shape)
 
     signal_pars = 0
     signal_model = mdreg.models.T2star
@@ -106,16 +69,11 @@ def MDRegT2star(series=None,study=None):
 
 def MDRegT1(series=None, study=None):
 
+    #series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'InversionTime'], pixels_first=True)
-    #print(array.shape)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(np.squeeze(array),downsample_shape)
-    array = np.reshape(array, np.shape(array)+(1,))
-    #print(array.shape)
-
+    
     signal_pars = 0
     signal_model = mdreg.models.T1
-    #signal_model = mdreg.models.constant
     elastix_file = 'BSplines_T1.txt'
     number_slices = array.shape[2]
 
@@ -124,13 +82,9 @@ def MDRegT1(series=None, study=None):
 
 def MDRegT2(series=None, study=None):
     """Perform MDR on all slices using a T2 mono-exp model"""
-
+    
+    series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    #print(array.shape)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(np.squeeze(array),downsample_shape)
-    array = np.reshape(array, np.shape(array)+(1,))
-    #print(array.shape)
 
     signal_pars = [0,30,40,50,60,70,80,90,100,110,120]
     signal_model = mdreg.models.T2
@@ -143,9 +97,8 @@ def MDRegT2(series=None, study=None):
 def MDRegIVIM(series=None,study=None):
     """Perform MDR on all slices using a DWI mono-exp model"""
 
+    series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(array,downsample_shape)
 
     signal_pars = [0,10.000086, 19.99908294, 30.00085926, 50.00168544, 80.007135, 100.0008375, 199.9998135, 300.0027313, 600.0]
     signal_model = mdreg.models.DWI_monoexponential
@@ -157,12 +110,8 @@ def MDRegIVIM(series=None,study=None):
 def MDRegDTI(series=None,study=None):
     """Perform MDR on all slices using a DTI model"""
 
+    series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    #print(array.shape)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(np.squeeze(array),downsample_shape)
-    array = np.reshape(array, np.shape(array)+(1,))
-    #print(array.shape)
 
     signal_pars = 0
     signal_model = mdreg.models.DTI
@@ -179,10 +128,6 @@ def MDRegMT(series=None,study=None):
 
     array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
     array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-
-    downsample_shape = header_off[0,0,0]['AcquisitionMatrix'][header_off[0,0,0]['AcquisitionMatrix']!=0]
-    array_off = downsample_res_avg(np.squeeze(array_off),downsample_shape)
-    array_on = downsample_res_avg(np.squeeze(array_on),downsample_shape)
 
     array_off = np.reshape(array_off,np.shape(array_off)+(1,))
     array_on = np.reshape(array_on,np.shape(array_on)+(1,))
@@ -201,18 +146,15 @@ def MDRegMT(series=None,study=None):
 def MDRegDCE(series=None, study=None):
     """Perform MDR on all slices using a DCE linear model"""
 
+    series = zoom(series, 0.5)
     array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    downsample_shape = header[0,0,0]['AcquisitionMatrix'][header[0,0,0]['AcquisitionMatrix']!=0]
-    array = downsample_res_avg(np.squeeze(array),downsample_shape)
-    array = np.reshape(array, np.shape(array)+(1,))
-    #print(np.shape(array))
+
     signal_pars = 0
     signal_model = mdreg.models.DCE_2CFM
     elastix_file = 'BSplines_DCE.txt'
 
     number_slices = array.shape[2]
     _mdr(series, number_slices, array, header, signal_model, elastix_file, signal_pars, sort_by='DCE', study=study)
-
 
 def _mdr(series, number_slices, array, header, signal_model, elastix_file, signal_pars,sort_by, study=None):
     """ MDR fit function.  
@@ -299,7 +241,7 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
         #STORING RESULTS
         
         #print("Part -6  before set array: " + str(psutil.virtual_memory()[3]/1000000000))
-        mdr.set_array(np.squeeze(array[:,:,slice,:,0]))     
+        mdr.set_array(array[:,:,slice,:,0])    
         mdr.pixel_spacing = header[slice,0,0].PixelSpacing
         mdr.signal_model = signal_model
         mdr.read_elastix(os.path.join(elastix_pars, elastix_file))
@@ -307,12 +249,10 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
         
         #print("Part -5  before mdr.fit: " + str(psutil.virtual_memory()[3]/1000000000))
         mdr.fit()
-        
+
         model_fit[:,:,slice,:,0] = mdr.model_fit
         coreg[:,:,slice,:,0] = mdr.coreg
         pars[:,:,slice,:] = mdr.pars
-        del mdr
-        gc.collect()
 
    # array = [x,y,z,TE]
    # pars = [x,y,z,2]
@@ -333,18 +273,15 @@ def _mdr(series, number_slices, array, header, signal_model, elastix_file, signa
     moco = study.new_series(SeriesDescription = moco)
     moco.set_array(coreg, np.squeeze(header[:,:]), pixels_first=True)
 
-def main(pathScan,filename_log):
+def main(folder,filename_log):
 
-    #filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
-    list_of_series = Folder(pathScan).open().series()
+    current_study = folder.series()[0].parent()
+    study = folder.series()[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
 
-    current_study = list_of_series[0].parent
-    study = list_of_series[0].new_pibling(StudyDescription=current_study.StudyDescription + '_MDRresults')
-
-    for i,series in enumerate(list_of_series):
+    for series in folder.series():
 
         if series["SequenceName"] is not None:
-            #print(series['SeriesDescription'])
+            print(series['SeriesDescription'])
 
             if series['SeriesDescription'] == "T2star_map_kidneys_cor-oblique_mbh_magnitude":
                 try:
@@ -354,7 +291,7 @@ def main(pathScan,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT2star(series, study=study)
+                    #MDRegT2star(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -374,7 +311,7 @@ def main(pathScan,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT1(series, study=study)
+                    #MDRegT1(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -394,7 +331,7 @@ def main(pathScan,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    MDRegT2(series, study=study)
+                    #MDRegT2(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -433,11 +370,11 @@ def main(pathScan,filename_log):
                     file.close()
 
                     MT_OFF = series
-                    for i_2,series in enumerate (list_of_series):
+                    for series in folder.series():
                             if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                                 MT_ON = series
                                 break
-                    MDRegMT([MT_OFF, MT_ON], study=study)
+                    #MDRegMT([MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -455,7 +392,7 @@ def main(pathScan,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction has started")
                     file.close()
 
-                    MDRegDCE(series, study=study)
+                    #MDRegDCE(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -466,6 +403,6 @@ def main(pathScan,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DCE motion correction was NOT completed; error: "+str(e)) 
                     file.close()
 
-    Folder(pathScan).save()
-    Folder(pathScan).close()
+    folder.save()
+
 
