@@ -22,7 +22,21 @@
 
 
 import wezel
-from menu.kanishka import iBEAT_dev
+from menu.kanishka import coreg_menu
+from menu.steven import dummy_menu
+
+
+def iBEAT_dev(parent): 
+
+    wezel.menu.folder.all(parent.menu('File'))
+    wezel.menu.edit.all(parent.menu('Edit'))
+    wezel.menu.view.all(parent.menu('View'))
+    wezel.menu.filter.all(parent.menu('Filter'))
+    wezel.menu.segment.all(parent.menu('Segment'))
+    wezel.menu.transform.all(parent.menu('Transform'))
+    coreg_menu(parent.menu('iBEAt-reg'))
+    dummy_menu(parent.menu('iBEAt-seg'))
+    wezel.menu.about.all(parent.menu('About'))
 
 
 if __name__ == "__main__":
