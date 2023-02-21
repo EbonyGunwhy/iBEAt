@@ -15,15 +15,15 @@
 # to build an executable:
 # -----------------------
 # distribution mode: splash screen, single file and no console
-# pyinstaller --name wezel --clean --onefile --noconsole --additional-hooks-dir=. --splash wezel.jpg exec.py
+# pyinstaller --name iBEAt --clean --onefile --noconsole --additional-hooks-dir=. --splash ibeat-logo.png exec.py
 
 # debugging mode: multiple files & no splash & console included
 # pyinstaller --name wezel --clean --additional-hooks-dir=. exec.py
 
 
 import wezel
-from menu.kanishka import coreg_menu
-from menu.steven import dummy_menu
+#from menu.kanishka import coreg_menu
+from menu.steven import segment_menu
 
 
 def iBEAT_dev(parent): 
@@ -34,8 +34,8 @@ def iBEAT_dev(parent):
     wezel.menu.filter.all(parent.menu('Filter'))
     wezel.menu.segment.all(parent.menu('Segment'))
     wezel.menu.transform.all(parent.menu('Transform'))
-    coreg_menu(parent.menu('iBEAt-reg'))
-    dummy_menu(parent.menu('iBEAt-seg'))
+    #coreg_menu(parent.menu('iBEAt-reg'))
+    segment_menu(parent.menu('iBEAt-seg'))
     wezel.menu.about.all(parent.menu('About'))
 
 
