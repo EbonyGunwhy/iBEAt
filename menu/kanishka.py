@@ -1,19 +1,20 @@
 import wezel
-from dbdicom.wrappers import elastix, mdreg
+from dbdicom.wrappers import elastix
+from wrappers import mdreg
 import dbdicom as db
 
 
-def iBEAT_dev(parent): 
+# def iBEAT_dev(parent): 
 
-    wezel.menu.folder.all(parent.menu('File'))
-    wezel.menu.edit.all(parent.menu('Edit'))
-    wezel.menu.view.all(parent.menu('View'))
-    wezel.menu.filter.all(parent.menu('Filter'))
-    wezel.menu.segment.all(parent.menu('Segment'))
-    wezel.menu.transform.all(parent.menu('Transform'))
-    coreg_menu(parent.menu('iBEAt-dev'))
+#     wezel.menu.folder.all(parent.menu('File'))
+#     wezel.menu.edit.all(parent.menu('Edit'))
+#     wezel.menu.view.all(parent.menu('View'))
+#     wezel.menu.filter.all(parent.menu('Filter'))
+#     wezel.menu.segment.all(parent.menu('Segment'))
+#     wezel.menu.transform.all(parent.menu('Transform'))
+#     coreg_menu(parent.menu('iBEAt-dev'))
 
-    wezel.menu.about.all(parent.menu('About'))
+#     wezel.menu.about.all(parent.menu('About'))
 
 def coreg_menu(parent): 
 
