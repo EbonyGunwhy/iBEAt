@@ -270,9 +270,9 @@ def MTR_Modelling(series=None, mask=None, export_ROI=False, study=None):
 
             array_mtr[:,:,s] = np.divide((temp_off_moco - temp_on_moco),temp_off_moco, out=np.zeros_like(temp_off_moco - temp_on_moco), where=temp_off_moco!=0) * 100
         
-        study = series.parent
+        study = series.parent()
         mtr = series.SeriesDescription + '_MTR'
-        mtr = study.new_series(SeriesDescription = mtr)
+        mtr = study.new_series(SeriesDescription=mtr)
         mtr.set_array(array_mtr, np.squeeze(header_on), pixels_first=True)
 
 
