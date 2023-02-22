@@ -38,7 +38,7 @@ if __name__ == '__main__':
     username = "**********"
     password = "**********"
     #path = "//mnt//fastdata//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
-    path = "C://Users//md1jdsp//Desktop//CLUSTER//CHRISTMAS ANALYSIS"
+    path = "C://Users//md1jdsp//Desktop//PHILIPS_BARI"
     #################################################
 
     # parser = argparse.ArgumentParser()
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     #########################################################################################################################################
 
     #ExperimentName = xnat.main(username, password, path, dataset)
-    ExperimentName = "iBE-3128-024"
+    ExperimentName = "iBE-1128-019"
     pathScan = path + "//" + ExperimentName
     
     folder = db.database(path=pathScan)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     file.close()
     try:
         
-        rename.main(folder)
+        #rename.main(folder)
         
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -115,7 +115,6 @@ if __name__ == '__main__':
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling has started!")
     file.close()
-
     try:
 
         modelling.main(folder,filename_log)
@@ -128,7 +127,10 @@ if __name__ == '__main__':
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
         file.close()
 
-    #upload.main(pathScan,filename_log)
+    #upload_folder.main(pathScan)
+    #gdrive_backup_creator = GoogleDriveUp.GoogleDriveBackupCreator()
+    #gdrive_backup_creator.backup(pathScan)
+    #upload_folder.main(pathScan)
 
     # start_time = time.time()
     # file = open(filename_log, 'a')
