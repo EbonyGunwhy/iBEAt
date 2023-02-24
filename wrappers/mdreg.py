@@ -13,12 +13,7 @@ def fit_DTI(series):
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # (172, 172, 30, 2)
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # (172, 172, 30)
-    print("len(parameters)")
-    print(len(parameters)) # 2
+   
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -118,12 +113,7 @@ def fit_T1(series):
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # (172, 172, 30, 2)
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # (172, 172, 30)
-    print("len(parameters)")
-    print(len(parameters)) # 2
+   
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -168,12 +158,7 @@ def fit_T2(series):
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # (172, 172, 30, 2)
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # (172, 172, 30)
-    print("len(parameters)")
-    print(len(parameters)) # 2
+    
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -217,12 +202,7 @@ def fit_T2star(series):
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # 
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # 
-    print("len(parameters)")
-    print(len(parameters)) # 
+    
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -266,12 +246,7 @@ def fit_IVIM(series):
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # (172, 172, 30, 2)
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # 
-    print("len(parameters)")
-    print(len(parameters)) # 
+    
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -303,35 +278,29 @@ def fit_IVIM(series):
     fit.set_array(model_fit, header, pixels_first=True)
     return fit, series_par
 
-def fit_MT(series): #TBC # HOW TO DECIDE WHICH SERIES IS SELECTED FIRST? MT OFF OR MT ON
+def fit_MT(series1, series2): # MT_OFF (series1) and MT_ON (series2)
 
-    #array, header = series.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    array_off, header_off = mt_off.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
-    array_on, header_on = mt_on.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    array_off, header_off = series1.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
+    array_on, header_on = series2.array(['SliceLocation', 'AcquisitionTime'], pixels_first=True)
     
-    #array_off = np.reshape(array_off,np.shape(array_off)+(1,))
-    #array_on = np.reshape(array_on,np.shape(array_on)+(1,))
     array = np.concatenate((array_off, array_on), axis=3)
     header = np.concatenate((header_off, header_on), axis=1)
+
+    MTR_array = ((array_off - array_on)/array_off)*100
     
     array = np.reshape(array,np.shape(array)+(1,))
-
     signal_model = constant # TBC
     
     # PARAMETER VARIABLES INITIALIZATION
     model_fit = np.empty(array.shape)
+   
     parameters = signal_model.pars()
-    pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) #
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # 
-    print("len(parameters)")
-    print(len(parameters)) # 
+    pars = np.empty(array.shape[:4] + (len(parameters),) )
+   
     # LOOP THROUGH SLICES
-    for i, slice in enumerate(range(array.shape[2])):
+    for i, slice in enumerate(range(array_off.shape[2])):
 
-        series.status.progress(i+1, array.shape[2], 'Fitting constant model..')
+        series1.status.progress(i+1, array_off.shape[2], 'Fitting constant model..')
 
         # Perform the model fit using mdreg
         mdr = mdreg.MDReg()
@@ -340,23 +309,26 @@ def fit_MT(series): #TBC # HOW TO DECIDE WHICH SERIES IS SELECTED FIRST? MT OFF 
         mdr.pixel_spacing = header[slice,0,0].PixelSpacing
         mdr.signal_model = signal_model
         mdr.fit_signal()#mdr.model_fit()
-
+       
         # Store results
         model_fit[:,:,slice,:,0] = mdr.model_fit
         pars[:,:,slice,:] = mdr.pars
 
     #EXPORT RESULTS
-    study = series.new_pibling(StudyDescription = 'MT')
+    study = series1.new_pibling(StudyDescription = 'MT')
     
     series_par = []
     for p in range(len(parameters)):
-        par = series.SeriesDescription + '_MT_' + parameters[p]
+        par = series1.SeriesDescription + '_MT_' + parameters[p]
         par = study.new_series(SeriesDescription=par)
         par.set_array(pars[...,p], header[:,0], pixels_first=True)
         series_par.append(par)
-    fit = series.SeriesDescription + '_MT_fit'
+    fit = series1.SeriesDescription + '_MT_fit'
     fit = study.new_series(SeriesDescription=fit)
     fit.set_array(model_fit, header, pixels_first=True)
+    mtr = series1.SeriesDescription + '_MTR'
+    mtr = study.new_series(SeriesDescription=mtr)
+    mtr.set_array(MTR_array, header, pixels_first=True)
     return fit, series_par
 
 
@@ -370,12 +342,7 @@ def fit_DCE(series): #
     model_fit = np.empty(array.shape)
     parameters = signal_model.pars()
     pars = np.empty(array.shape[:3] + (len(parameters),) )
-    print("shape pars")
-    print(np.shape(pars)) # (384, 384, 9, 4)
-    print("array.shape[:3] ")
-    print(array.shape[:3]) # (384, 384, 9)  
-    print("len(parameters)")
-    print(len(parameters)) # 4
+    
     # LOOP THROUGH SLICES
     for i, slice in enumerate(range(array.shape[2])):
 
@@ -399,8 +366,7 @@ def fit_DCE(series): #
                 aortaslice = 9
 
         aif = autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
-        #actions.autoaif.DCEautoAIF(array, header, series, aortaslice, cutRatio, filter_kernel, regGrow_threshold)
-
+       
         time = np.zeros(header.shape[1])
         for i in range(header.shape[1]):
             tempTime = header[slice,i,0]['AcquisitionTime']

@@ -159,6 +159,34 @@ class MTModelFit(wezel.gui.Action): #TBC MULTI-SERIES SELECTION
                 app.display(p)
         app.refresh()
 
+    def run(self, app):
+        selected = app.selected('Series')
+        if selected == []:
+            return
+        seriesList = selected[0].parent().parent().series()#selected[0].parent().children()
+        value1 = seriesList.index(selected[0])
+        try:
+            value2 = seriesList.index(selected[1])
+        except:
+            value2 = value1
+        
+        seriesLabels = [s.label() for s in seriesList]
+        input = wezel.widgets.UserInput(
+            {"label":"MT_OFF Series", "type":"dropdownlist", "list": seriesLabels, 'value':value1},
+            {"label":"MT_ON Series", "type":"dropdownlist", "list": seriesLabels, 'value':value2},
+            title = "Please select MT-OFF and MT-ON Series")
+        if input.cancel:
+            return
+        series1 = seriesList[input.values[0]["value"]]
+        series2 = seriesList[input.values[1]["value"]]
+        fit, par = mdreg.fit_MT(series1, series2)
+        app.display(fit)
+        for p in par:
+            app.display(p)
+        app.refresh()
+
+
+
 class DCEModelFit(wezel.gui.Action): 
 
     def enable(self, app):
