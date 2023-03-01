@@ -18,7 +18,7 @@
 # pyinstaller --name iBEAt --clean --onefile --noconsole --additional-hooks-dir=. --splash ibeat-logo.png exec.py
 
 # debugging mode: multiple files & no splash & console included
-# pyinstaller --name wezel --clean --additional-hooks-dir=. exec.py
+# pyinstaller --name iBEAt --clean --additional-hooks-dir=. exec.py
 
 
 import wezel
@@ -34,6 +34,7 @@ def iBEAT_dev(parent):
     wezel.menu.filter.all(parent.menu('Filter'))
     wezel.menu.segment.all(parent.menu('Segment'))
     wezel.menu.transform.all(parent.menu('Transform'))
+    wezel.menu.measure.all(parent.menu('Measure'))
     #coreg_menu(parent.menu('iBEAt-reg'))
     segment_menu(parent.menu('iBEAt-seg'))
     wezel.menu.about.all(parent.menu('About'))
