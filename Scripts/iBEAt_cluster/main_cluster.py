@@ -25,20 +25,28 @@ import datetime
 import dbdicom as db
 import argparse
 
-import XNAT_cluster as xnat
+#import XNAT_cluster as xnat
 import RENAME_cluster as rename
 import MDR_cluster as mdr
 import MODELLING_cluster as modelling
 import T1T2_fw_modelling_cluster as T1T2_modelling
-import UPLOAD_cluster as upload
+#import UPLOAD_cluster as upload
+import gdrive_upload as upload
 
-if __name__ == '__main__':
-
+def main(path:str,
+         ExperimentName:str
+         ) -> None:
+    """Import iBEAt_data, rename and perform MDR/modelling.
+    
+    Args:
+        path: Path to input data folder (e.g., "iBEAt_cluster/data")
+        ExperimentName: Name of experiment e.g., "iBE-3128-024"
+    """
     #################### INPUT ######################
-    username = "**********"
-    password = "**********"
+    #username = "**********"
+    #password = "**********"
     #path = "//mnt//fastdata//" + username #CLUSTER PATH TO SAVE DATA, ADD YOUR LOCAL PATH IF YOU WANT TO RUN IT LOCALLY
-    path = "C://Users//md1jdsp//Desktop//PHILIPS_BARI"
+    #path = "C://Users//md1jdsp//Desktop//PHILIPS_BARI"
     #################################################
 
     # parser = argparse.ArgumentParser()
@@ -63,8 +71,9 @@ if __name__ == '__main__':
     #########################################################################################################################################
 
     #ExperimentName = xnat.main(username, password, path, dataset)
-    ExperimentName = "iBE-1128-019"
-    pathScan = path + "//" + ExperimentName
+    #ExperimentName = "iBE-1128-019"
+    dirname = os.path.dirname(__file__)
+    pathScan = dirname + '/' + path + "/" + ExperimentName
     
     folder = db.database(path=pathScan)
 
@@ -115,6 +124,7 @@ if __name__ == '__main__':
     file = open(filename_log, 'a')
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling has started!")
     file.close()
+
     try:
 
         modelling.main(folder,filename_log)
@@ -126,6 +136,9 @@ if __name__ == '__main__':
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was NOT completed; error: "+str(e))
         file.close()
+
+
+    upload.Gdrive_upload(pathScan, filename_log)
 
     #upload_folder.main(pathScan)
     #gdrive_backup_creator = GoogleDriveUp.GoogleDriveBackupCreator()
@@ -149,3 +162,26 @@ if __name__ == '__main__':
     #     file = open(filename_log, 'a')
     #     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 & T2 forward modelling was NOT completed; error: "+str(e))
     #     file.close()
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Import iBEAt_data from \
+                                     filepath of choice, rename and perform \
+                                     MDR and modelling',
+                                     usage='python main_cluster.py --path path_to_data_folder')
+    parser.add_argument("--path",
+                        required=True,
+                        help="Path to input data folder \
+                        e.g., 'data'")
+    parser.add_argument("--ExperimentName",
+                        required=True,
+                        help="Name of experiment \
+                        e.g., 'iBE-3128-024'")
+    # parser.add_argument('--num',
+    #                     dest='num',
+    #                     help='Define the XNAT dataset',
+    #                     type=int)
+
+    args = parser.parse_args()
+    main(args.path, args.ExperimentName)
