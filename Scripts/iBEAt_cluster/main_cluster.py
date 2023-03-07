@@ -72,8 +72,9 @@ def main(path:str,
 
     #ExperimentName = xnat.main(username, password, path, dataset)
     #ExperimentName = "iBE-1128-019"
-    dirname = os.path.dirname(__file__)
-    pathScan = dirname + '/' + path + "/" + ExperimentName
+    #dirname = os.path.dirname(__file__)
+    #pathScan = dirname + '/' + path + "/" + ExperimentName
+    pathScan = path + "/" + ExperimentName
     
     folder = db.database(path=pathScan)
 
