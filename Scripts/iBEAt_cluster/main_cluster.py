@@ -34,13 +34,15 @@ import T1T2_fw_modelling_cluster as T1T2_modelling
 import gdrive_upload as upload
 
 def main(path:str,
-         ExperimentName:str
+         ExperimentName:str,
+         KeyPath:str
          ) -> None:
     """Import iBEAt_data, rename and perform MDR/modelling.
     
     Args:
         path: Path to input data folder (e.g., "iBEAt_cluster/data")
         ExperimentName: Name of experiment e.g., "iBE-3128-024"
+        KeyPath: Path to API keys
     """
     #################### INPUT ######################
     #username = "**********"
@@ -139,7 +141,7 @@ def main(path:str,
         file.close()
 
 
-    upload.Gdrive_upload(pathScan, filename_log)
+    upload.Gdrive_upload(pathScan, filename_log, KeyPath)
 
     #upload_folder.main(pathScan)
     #gdrive_backup_creator = GoogleDriveUp.GoogleDriveBackupCreator()
@@ -179,10 +181,13 @@ if __name__ == '__main__':
                         required=True,
                         help="Name of experiment \
                         e.g., 'iBE-3128-024'")
+    parser.add_argument("--KeyPath",
+                        required=True,
+                        help="Path to API keys")
     # parser.add_argument('--num',
     #                     dest='num',
     #                     help='Define the XNAT dataset',
     #                     type=int)
 
     args = parser.parse_args()
-    main(args.path, args.ExperimentName)
+    main(args.path, args.ExperimentName, args.KeyPath)
