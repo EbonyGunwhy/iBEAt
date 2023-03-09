@@ -77,6 +77,7 @@ def main(path:str,
     #dirname = os.path.dirname(__file__)
     #pathScan = dirname + '/' + path + "/" + ExperimentName
     pathScan = path + "/" + ExperimentName
+    dbdicomPath = path + '/dbdicom/' + ExperimentName
     
     folder = db.database(path=pathScan)
 
@@ -85,7 +86,7 @@ def main(path:str,
     except: 
         UsedCores = int(os.cpu_count())
 
-    filename_log = pathScan + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
+    filename_log = dbdicomPath + datetime.datetime.now().strftime('%Y%m%d_%H%M_') + "MDRauto_LogFile.txt" #TODO FIND ANOTHER WAY TO GET A PATH
     file = open(filename_log, 'a')
     file.write(str(datetime.datetime.now())[0:19] + ": Analysis of " + pathScan.split('//')[-1] +  " has started!")
     file.write("\n"+str(datetime.datetime.now())[0:19] + ": CPU cores: " + str(UsedCores))
@@ -97,7 +98,7 @@ def main(path:str,
     file.close()
     try:
         
-        #rename.main(folder)
+        rename.main(folder)
         
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Renaming was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -141,7 +142,7 @@ def main(path:str,
         file.close()
 
 
-    upload.Gdrive_upload(pathScan, filename_log, KeyPath)
+    upload.Gdrive_upload(dbdicomPath, filename_log, KeyPath)
 
     #upload_folder.main(pathScan)
     #gdrive_backup_creator = GoogleDriveUp.GoogleDriveBackupCreator()

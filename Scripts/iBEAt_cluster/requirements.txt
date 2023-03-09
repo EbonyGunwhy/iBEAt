@@ -1,6 +1,6 @@
 numpy
 tqdm
-dbdicom
+git+https://github.com/EbonyGunwhy/dbdicom.git@ebony
 argparse
 psutil
 git+https://github.com/EbonyGunwhy/mdreg.git@development
