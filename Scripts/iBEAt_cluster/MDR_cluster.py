@@ -327,7 +327,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    #MDRegT2star(series, study=study)
+                    MDRegT2star(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2* motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -347,7 +347,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    #MDRegT1(series, study=study)
+                    MDRegT1(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T1 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -367,7 +367,7 @@ def main(folder,filename_log):
                     #file.write("\n"+str(datetime.datetime.now())[0:19] + ": RAM Used (GB): " + str(psutil.virtual_memory()[3]/1000000000))
                     file.close()
 
-                    #MDRegT2(series, study=study)
+                    MDRegT2(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": T2 motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -386,7 +386,7 @@ def main(folder,filename_log):
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction has started")
                     file.close()
 
-                    #MDRegDTI(series, study=study)
+                    MDRegDTI(series, study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": DTI motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
@@ -410,7 +410,7 @@ def main(folder,filename_log):
                             if series['SeriesDescription'] == "MT_ON_kidneys_cor-oblique_bh":
                                 MT_ON = series
                                 break
-                    #MDRegMT([MT_OFF, MT_ON], study=study)
+                    MDRegMT([MT_OFF, MT_ON], study=study)
 
                     file = open(filename_log, 'a')
                     file.write("\n"+str(datetime.datetime.now())[0:19] + ": MT motion correction was completed --- %s seconds ---" % (int(time.time() - start_time))) 
