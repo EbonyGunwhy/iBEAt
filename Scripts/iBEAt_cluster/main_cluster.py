@@ -114,7 +114,7 @@ def main(path:str,
     file.close()
     try:
 
-        mdr.main(folder,filename_log)
+        #mdr.main(folder,filename_log)
         
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": MDR was completed --- %s seconds ---" % (int(time.time() - start_time)))
@@ -131,7 +131,7 @@ def main(path:str,
 
     try:
 
-        modelling.main(folder,filename_log)
+        #modelling.main(folder,filename_log)
 
         file = open(filename_log, 'a')
         file.write("\n"+str(datetime.datetime.now())[0:19] + ": Modelling was completed --- %s seconds ---" % (int(time.time() - start_time)))
