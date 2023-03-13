@@ -20,7 +20,7 @@ def Gdrive_upload(dbdicomPath, filename_log, KeyPath):
   upload_file_list = [filename_log, dbdicomPath + '.zip']
 
   for upload_file in upload_file_list:
-    gfile = drive.CreateFile({'title':os.path.basename(upload_file) ,'parents': [{'id': '1YRKbUVB-c9blIZtu_r9LSwjbtfzINMfU'}]})
+    gfile = drive.CreateFile({'title':os.path.basename(upload_file) ,'parents': [{'id': '1CMQKXKcVxX_62Ms8rX5cJEMnrMPClm_B'}]})
     # Read file and set it as the content of this instance.
     gfile.SetContentFile(upload_file)
     gfile.Upload(param={'supportsTeamDrives': True}) # Upload the file.
