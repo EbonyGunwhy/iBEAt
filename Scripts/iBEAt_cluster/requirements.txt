@@ -10,3 +10,7 @@ scikit-image
 dipy
 pydrive
 fsspec
+
+# error uploading larger files to GDrive without below specification
+httplib2==0.15.0
+google-api-python-client==1.7.11
